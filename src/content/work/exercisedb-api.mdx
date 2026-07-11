@@ -1,0 +1,83 @@
+---
+summary: "I needed a decent exercise catalog for a fitness app. None existed. So I built the API I wanted to consume."
+facts:
+  - label: "Role"
+    value: "Sole engineer"
+  - label: "Timeline"
+    value: "2026"
+  - label: "Focus"
+    value: "API design, schema, testing"
+---
+
+## The problem
+
+Every fitness app needs a catalog of exercises. It sounds like a solved
+problem. It isn't.
+
+What's actually out there is scraped CSVs with inconsistent naming, paid APIs
+whose free tier dies at a hundred requests, and datasets where "Barbell Bench
+Press" and "Bench Press (Barbell)" are two separate rows with two different
+muscle mappings. I hit this while building [GymPlanner](/work/gymplanner) and
+realised I was about to hand-maintain a spreadsheet forever.
+
+So I stopped and built the catalog properly.
+
+## The constraint that shaped everything
+
+I set one rule up front: **a client should be able to sync the entire catalog
+once and then work offline.**
+
+That single decision cascaded through the whole design. It meant the API had to
+be read-heavy, aggressively cacheable, and boring — which is exactly the right
+shape for a catalog. It meant no clever per-user filtering on the server. It
+meant the response format had to be stable enough that a client could cache it
+for weeks without breaking.
+
+Most of my design decisions after that were just consequences of this one.
+
+## Modelling exercises is harder than it looks
+
+An exercise isn't a name and a muscle. It has:
+
+- a **primary muscle**, plus several secondary ones
+- **equipment**, which changes the exercise's identity — a dumbbell press is
+  genuinely not a barbell press
+- a **movement pattern** — push, pull, hinge, squat, carry
+- and a dozen naming variants that all mean the same thing
+
+Get this schema wrong and every app built on top of it inherits your mess.
+That's the part I actually cared about.
+
+## What I'd defend
+
+**Validate at the edge, then trust the types.** Zod parses every input at the
+route boundary. Past that line, the types are real and I stop writing defensive
+checks. It keeps handlers short and it means a malformed request fails in one
+predictable place instead of five unpredictable ones.
+
+**Test the API, not the functions.** The suite is Vitest plus Supertest, hitting
+real routes and asserting real responses. I don't unit-test helpers that exist
+to serve exactly one endpoint — if the endpoint is right, the helper is right.
+The tests document the contract, which is the only thing a consumer cares about.
+
+**Ship an OpenAPI spec.** Nobody should have to read my source to learn what a
+response looks like. The spec is the product as much as the endpoints are.
+
+## What I got wrong
+
+**The first schema stored muscles as a plain string column.** It worked for
+about a day — right up until I wanted "show me every exercise that hits the
+posterior chain" and realised I'd have to do it with `LIKE`. Migrating to a
+proper join table cost two hours I could have saved with ten minutes of
+thinking. Model the relationship, not the display string.
+
+**I wrote the seeding script before the schema had settled**, then rewrote it
+three times as the schema changed underneath it. Seed data comes last. It is
+the most rewritable code in the project and I treated it as the most permanent.
+
+## Where it's going
+
+Version one is deliberately just the public catalog. Private user-created
+exercises, food data, and workout generation are all sitting in a notes file,
+and they can stay there until the catalog is genuinely solid. Shipping a narrow
+thing that works beats shipping a broad thing that doesn't.

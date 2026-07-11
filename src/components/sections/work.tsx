@@ -2,8 +2,9 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
-import { ArrowUpRight, Code2 } from "lucide-react";
+import { ArrowUpRight, BookOpen, Code2 } from "lucide-react";
 import { featuredProjects, otherProjects, type Project } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
@@ -65,7 +66,20 @@ function ProjectCard({ project }: { project: Project }) {
 
       <div className="relative flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-xl font-medium tracking-tight">{project.name}</h3>
+          <h3 className="text-xl font-medium tracking-tight">
+            {project.slug ? (
+              // Stretched link: the whole card becomes clickable, while the
+              // Source/demo links below still work (they sit above it in z).
+              <Link
+                href={`/work/${project.slug}`}
+                className="transition-colors after:absolute after:inset-0 hover:text-accent"
+              >
+                {project.name}
+              </Link>
+            ) : (
+              project.name
+            )}
+          </h3>
           <span className="shrink-0 font-mono text-xs text-fg-subtle">
             {project.year}
           </span>
@@ -90,7 +104,17 @@ function ProjectCard({ project }: { project: Project }) {
           ))}
         </ul>
 
-        <div className="mt-6 flex items-center gap-4">
+        {/* relative + z-10 so these stay clickable above the stretched link. */}
+        <div className="relative z-10 mt-6 flex items-center gap-4">
+          {project.slug && (
+            <Link
+              href={`/work/${project.slug}`}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition hover:opacity-80"
+            >
+              <BookOpen className="size-4" />
+              Case study
+            </Link>
+          )}
           <a
             href={project.repo}
             target="_blank"

@@ -50,7 +50,7 @@ export const now = [
   },
   {
     label: "Away from the keyboard",
-    value: "Video games, and a playlist that never ends",
+    value: "Video games, and far too much music",
   },
 ] as const;
 
@@ -135,6 +135,9 @@ export const timeline: TimelineEntry[] = [
 
 export type Project = {
   name: string;
+  /** Set this to publish a case study at /work/<slug>. It must match the
+   *  filename of an MDX file in src/content/work/. Omit for repo-only links. */
+  slug?: string;
   blurb: string;
   description: string;
   stack: string[];
@@ -149,6 +152,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     name: "ExerciseDB API",
+    slug: "exercisedb-api",
     blurb: "A production-grade public exercise catalog API for fitness app developers.",
     description:
       "A public exercise catalog that client apps can sync and cache locally. Built with a real test suite, schema validation, and a documented OpenAPI contract — the kind of API I wanted to consume but couldn't find.",
@@ -159,6 +163,7 @@ export const projects: Project[] = [
   },
   {
     name: "GymPlanner",
+    slug: "gymplanner",
     blurb: "A full fitness planner with AM/PM scheduling, nutrition tracking, and cloud sync.",
     description:
       "Workout scheduling, exercise logging, nutrition and health tracking, with local-first persistence and optional Firebase sync. Wrapped in a 'Liquid Glass' interface I designed to feel like a premium mobile app.",

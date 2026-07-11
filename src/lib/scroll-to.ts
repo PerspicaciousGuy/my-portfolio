@@ -5,6 +5,16 @@ export const NAV_OFFSET = 72;
 
 const DURATION = 900;
 
+/**
+ * Reduced-motion users still get an animated scroll, just a brisk one.
+ *
+ * Scrolling to a section is navigation, not decoration: teleporting the page
+ * costs you your sense of place, which is the very thing the preference exists
+ * to protect. What triggers vestibular symptoms is large-scale parallax, spin
+ * and zoom — all of which we do disable. A short linear-ish scroll doesn't.
+ */
+const REDUCED_DURATION = 320;
+
 /** Matches the site's motion curve (the same easing Framer uses elsewhere). */
 function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -18,7 +28,7 @@ let animation = 0;
  * or easing, and some environments ignore it entirely and jump. A rAF loop is
  * predictable everywhere and lets the scroll match the site's motion.
  */
-function animateScrollTo(top: number) {
+function animateScrollTo(top: number, duration: number) {
   cancelAnimationFrame(animation);
 
   const start = window.scrollY;
@@ -28,7 +38,7 @@ function animateScrollTo(top: number) {
   const started = performance.now();
 
   const step = (now: number) => {
-    const t = Math.min((now - started) / DURATION, 1);
+    const t = Math.min((now - started) / duration, 1);
     window.scrollTo(0, start + delta * easeInOutCubic(t));
     if (t < 1) animation = requestAnimationFrame(step);
   };
@@ -68,11 +78,11 @@ export function scrollToSection(href: string): boolean {
   if (window.location.pathname !== "/") return false;
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const duration = reduced ? REDUCED_DURATION : DURATION;
 
   // The wordmark ("/" or "#") means "back to the top".
   if (href === "/" || href === "#") {
-    if (reduced) window.scrollTo(0, 0);
-    else animateScrollTo(0);
+    animateScrollTo(0, duration);
     history.replaceState(null, "", "/");
     return true;
   }
@@ -90,8 +100,7 @@ export function scrollToSection(href: string): boolean {
 
   const top = target.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
 
-  if (reduced) window.scrollTo(0, top);
-  else animateScrollTo(top);
+  animateScrollTo(top, duration);
 
   // Keep the URL in step without triggering another jump.
   history.replaceState(null, "", hash);
