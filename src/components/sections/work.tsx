@@ -41,14 +41,14 @@ function ProjectCard({ project }: { project: Project }) {
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }}
-      className="group relative overflow-hidden rounded-2xl border border-border bg-bg-elevated/60 p-6 backdrop-blur transition-colors hover:border-accent/40 sm:p-7"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-elevated/60 p-6 backdrop-blur transition-colors hover:border-accent/40 sm:p-7"
     >
       <motion.div
         style={{ background: glow }}
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
 
-      <div className="relative">
+      <div className="relative flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-xl font-medium tracking-tight">{project.name}</h3>
           <span className="shrink-0 font-mono text-xs text-fg-subtle">
@@ -64,7 +64,7 @@ function ProjectCard({ project }: { project: Project }) {
           {project.description}
         </p>
 
-        <ul className="mt-5 flex flex-wrap gap-1.5">
+        <ul className="mt-auto flex flex-wrap gap-1.5 pt-5">
           {project.stack.map((s) => (
             <li
               key={s}
@@ -107,7 +107,7 @@ export function Work() {
     <Section id="work" index="04" title="Selected Work">
       <div className="grid gap-5 sm:grid-cols-2">
         {featuredProjects.map((p, i) => (
-          <Reveal key={p.name} delay={(i % 2) * 0.08}>
+          <Reveal key={p.name} delay={(i % 2) * 0.08} className="h-full">
             <ProjectCard project={p} />
           </Reveal>
         ))}
