@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight, FileText } from "lucide-react";
 import { site, socials } from "@/data/site";
 
 const container = {
@@ -63,11 +63,18 @@ export function Hero() {
             <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
           </a>
           <a
-            href={`mailto:${site.email}`}
+            href="#contact"
             className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-elevated/50 px-5 py-2.5 text-sm font-medium backdrop-blur transition hover:border-accent/50 hover:text-accent"
           >
             Get in touch
             <ArrowUpRight className="size-4" />
+          </a>
+          <a
+            href="/resume"
+            className="inline-flex items-center gap-2 rounded-full px-3 py-2.5 text-sm font-medium text-fg-muted transition hover:text-accent"
+          >
+            <FileText className="size-4" />
+            Résumé
           </a>
         </motion.div>
 

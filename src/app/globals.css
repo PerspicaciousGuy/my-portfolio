@@ -168,6 +168,42 @@
 }
 }
 
+/* The résumé prints to PDF via the browser's print dialog. Force a light,
+   ink-friendly rendering regardless of the theme the visitor is using. */
+@media print {
+  @page {
+    margin: 14mm;
+    size: A4;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .resume,
+  .resume * {
+    color: #111 !important;
+    border-color: #ccc !important;
+    background: transparent !important;
+  }
+
+  .resume a {
+    text-decoration: none;
+  }
+
+  /* Backdrop, cursor and grain don't belong on paper. Note: no `header` rule
+     here — the résumé's own <header> carries the name and contact details, and
+     a blanket header{display:none} silently strips them from the PDF. Page
+     chrome is hidden with print:hidden at the call site instead. */
+  canvas,
+  .grain-overlay,
+  .fallback-backdrop {
+    display: none !important;
+  }
+}
+
 .grain-overlay {
   pointer-events: none;
   position: fixed;

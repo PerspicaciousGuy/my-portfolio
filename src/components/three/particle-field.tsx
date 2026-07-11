@@ -6,6 +6,11 @@ import * as THREE from "three";
 
 const COUNT = 4200;
 
+/** Cursor repulsion. The particles spring back because the easing above
+ *  always pulls them toward their target — the push is a per-frame nudge. */
+const REPEL_RADIUS = 1.5;
+const REPEL_STRENGTH = 0.28;
+
 /** Rough humanoid point cloud — a nod to the Open Muscle Map project. */
 function humanoidTarget(i: number, rng: () => number): THREE.Vector3 {
   const t = i / COUNT;
@@ -123,7 +128,9 @@ export function ParticleField({ scroll, isDark }: Props) {
     };
   }, []);
 
+  // Reused each frame — allocating vectors inside useFrame would churn the GC.
   const tmp = useMemo(() => new THREE.Vector3(), []);
+  const cursor = useMemo(() => new THREE.Vector3(), []);
 
   useFrame((state, delta) => {
     const mesh = points.current;
@@ -147,6 +154,18 @@ export function ParticleField({ scroll, isDark }: Props) {
     // a soft, springy feel rather than snapping to the scroll value.
     const ease = 1 - Math.pow(0.0015, delta);
 
+    // Pointer in the mesh's local space, so particles can be pushed away from
+    // it. Doing this once per frame rather than once per particle.
+    tmp.set(pointer.x, pointer.y, 0.5).unproject(state.camera);
+    tmp.sub(state.camera.position).normalize();
+    const dist = -state.camera.position.z / tmp.z;
+    cursor
+      .copy(state.camera.position)
+      .add(tmp.multiplyScalar(dist))
+      .sub(mesh.position);
+
+    const R2 = REPEL_RADIUS * REPEL_RADIUS;
+
     for (let i = 0; i < COUNT; i++) {
       const i3 = i * 3;
       const s = seeds[i];
@@ -163,6 +182,20 @@ export function ParticleField({ scroll, isDark }: Props) {
       arr[i3] += (tx + dx - arr[i3]) * ease;
       arr[i3 + 1] += (ty + dy - arr[i3 + 1]) * ease;
       arr[i3 + 2] += (tz - arr[i3 + 2]) * ease;
+
+      // Repel from the cursor. Squared distance keeps this cheap — no sqrt
+      // unless the particle is actually inside the radius.
+      const ox = arr[i3] - cursor.x;
+      const oy = arr[i3 + 1] - cursor.y;
+      const d2 = ox * ox + oy * oy;
+
+      if (d2 < R2 && d2 > 0.0001) {
+        const d = Math.sqrt(d2);
+        // Falls off to nothing at the edge of the radius.
+        const force = (1 - d / REPEL_RADIUS) ** 2 * REPEL_STRENGTH;
+        arr[i3] += (ox / d) * force;
+        arr[i3 + 1] += (oy / d) * force;
+      }
     }
     attr.needsUpdate = true;
 

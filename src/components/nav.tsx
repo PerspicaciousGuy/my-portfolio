@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { navLinks, site } from "@/data/site";
 import { ThemeToggle } from "./theme-toggle";
+import { CommandPalette } from "./command-palette";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -35,8 +36,8 @@ export function Nav() {
           <span className="text-accent">.</span>
         </a>
 
-        <div className="flex items-center gap-6">
-          <ul className="hidden items-center gap-6 sm:flex">
+        <div className="flex items-center gap-4">
+          <ul className="hidden items-center gap-6 lg:flex">
             {navLinks.map((l) => (
               <li key={l.href}>
                 <a
@@ -48,6 +49,15 @@ export function Nav() {
               </li>
             ))}
           </ul>
+
+          <a
+            href="/resume"
+            className="hidden rounded-full border border-border bg-bg-elevated/60 px-3.5 py-1.5 text-xs font-medium backdrop-blur transition hover:border-accent/50 hover:text-accent sm:inline-flex"
+          >
+            Résumé
+          </a>
+
+          <CommandPalette />
           <ThemeToggle />
         </div>
       </nav>
