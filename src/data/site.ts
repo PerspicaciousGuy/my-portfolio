@@ -30,6 +30,28 @@ export const about = {
   ],
 } as const;
 
+/**
+ * The "Now" card. Keep this current — a stale now-card is worse than none.
+ */
+export const now = [
+  {
+    label: "Building",
+    value: "ExerciseDB API — a public exercise catalog for fitness apps",
+  },
+  {
+    label: "Learning",
+    value: "Testing at scale, and getting properly good at Postgres",
+  },
+  {
+    label: "Wrapping up",
+    value: "My BCA — final semester, graduating August 2026",
+  },
+  {
+    label: "Away from the keyboard",
+    value: "Video games, and a playlist that never ends",
+  },
+] as const;
+
 export type SkillGroup = {
   title: string;
   items: string[];
@@ -116,6 +138,8 @@ export type Project = {
   stack: string[];
   repo: string;
   live?: string;
+  /** Path under /public — shown on hover. Capture from the live deploy. */
+  preview?: string;
   featured: boolean;
   year: string;
 };
@@ -139,6 +163,7 @@ export const projects: Project[] = [
     stack: ["React", "Vite", "JavaScript", "Firebase", "Tailwind CSS"],
     repo: "https://github.com/PerspicaciousGuy/GymPlanner",
     live: "https://gym-planner-green.vercel.app",
+    preview: "/previews/gymplanner.png",
     featured: true,
     year: "2026",
   },
@@ -207,9 +232,10 @@ export const featuredProjects = projects.filter((p) => p.featured);
 export const otherProjects = projects.filter((p) => !p.featured);
 
 export const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Journey", href: "#journey" },
-  { label: "Work", href: "#work" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Journey", href: "/#journey" },
+  { label: "Work", href: "/#work" },
+  { label: "Writing", href: "/blog" },
+  { label: "Contact", href: "/#contact" },
 ] as const;

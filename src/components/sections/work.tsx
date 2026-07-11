@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { ArrowUpRight, Code2 } from "lucide-react";
 import { featuredProjects, otherProjects, type Project } from "@/data/site";
@@ -47,6 +48,20 @@ function ProjectCard({ project }: { project: Project }) {
         style={{ background: glow }}
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
+
+      {project.preview && (
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          <Image
+            src={project.preview}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 100vw, 50vw"
+            className="object-cover object-top"
+          />
+          {/* Keep the copy legible over the screenshot. */}
+          <div className="absolute inset-0 bg-bg-elevated/85 backdrop-blur-[2px]" />
+        </div>
+      )}
 
       <div className="relative flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-4">

@@ -1,0 +1,73 @@
+---
+title: "Why I built an exercise API nobody asked for"
+summary: "Every fitness app needs an exercise catalog. Almost none of them have a good one. So I built the API I kept wishing existed."
+date: "2026-07-05"
+tags: ["backend", "postgres", "api"]
+---
+
+I was building a gym planner and I needed a list of exercises.
+
+That sounds like a solved problem. It isn't. What you find is scraped CSVs
+with inconsistent naming, paid APIs with a free tier that dies at a hundred
+requests, and datasets where "Barbell Bench Press" and "Bench Press (Barbell)"
+are two different rows with two different muscle mappings.
+
+So I stopped building the planner for a while and built the catalog instead.
+
+## The actual problem
+
+An exercise catalog looks trivial until you try to model it. A single exercise
+has a name, but it also has:
+
+- a primary muscle, and usually several secondary ones
+- equipment, which changes the exercise's identity (a dumbbell press is not a
+  barbell press)
+- a movement pattern — push, pull, hinge, squat, carry
+- and a dozen naming variants that all mean the same thing
+
+Get the schema wrong and every app built on top of it inherits your mess. That
+is the part I actually cared about.
+
+## What I built
+
+`exercises-api` is a public exercise catalog that client apps can sync and
+cache locally. Node and Express, PostgreSQL through Supabase, Zod for
+validation at the boundary, and an OpenAPI spec so nobody has to guess what a
+response looks like.
+
+The design constraint I set myself: **a client should be able to sync the whole
+catalog once and then work offline.** That pushed everything toward being
+read-heavy, cacheable, and boring — which is the correct shape for a catalog.
+
+Two decisions I'd defend:
+
+**Validate at the edge, trust nothing after.** Zod parses every input at the
+route boundary. Past that line, the types are real and I stop writing defensive
+checks. It makes the handlers short.
+
+**Test the API, not the functions.** The suite is Vitest plus Supertest, hitting
+real routes and asserting real responses. I don't have unit tests for helpers
+that only exist to serve one endpoint. If the endpoint is right, the helper is
+right.
+
+## What I got wrong
+
+The first schema had muscles as a plain string column. It worked for about a
+day, right up until I wanted "show me every exercise that hits the posterior
+chain" and discovered I'd have to do it with `LIKE`. Migrating to a proper
+join table was two hours of work I could have saved with ten minutes of
+thinking.
+
+The other one: I built the seeding script before I had settled the schema, so I
+rewrote it three times. Seed data last.
+
+## Where it's going
+
+Version one is deliberately just the public catalog. Private user-created
+exercises, food data, and workout generation are all sitting in a notes file,
+and they can stay there until the catalog is genuinely solid.
+
+If you're building a fitness app and you want to use it, it's
+[on GitHub](https://github.com/PerspicaciousGuy/exercises-api). It's the API I
+wanted to consume and couldn't find, which is the only reason any of this is
+worth doing.
