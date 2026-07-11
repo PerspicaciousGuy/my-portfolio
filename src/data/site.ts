@@ -11,6 +11,8 @@ export const site = {
   location: "India",
   email: "joy.0839b@gmail.com",
   url: "https://harshitbishnoi.dev",
+  // ↑ Used by the OG image, sitemap and schema.org markup. Must match the
+  //   deployed domain or none of the SEO resolves.
   available: true,
 } as const;
 
