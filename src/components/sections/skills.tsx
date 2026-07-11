@@ -5,9 +5,13 @@ import { Reveal } from "@/components/ui/reveal";
 export function Skills() {
   return (
     <Section id="skills" index="02" title="Skills">
-      <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
         {skills.map((group, i) => (
-          <Reveal key={group.title} delay={i * 0.06} className="bg-bg-elevated/70 backdrop-blur">
+          <Reveal
+            key={group.title}
+            delay={i * 0.06}
+            className="h-full bg-bg-elevated/70 backdrop-blur sm:last:col-span-2"
+          >
             <div className="h-full p-6">
               <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
                 {group.title}
