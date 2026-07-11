@@ -1,0 +1,65 @@
+---
+summary: "A fitness planner I built because every app I tried made me plan the way it wanted, not the way I train."
+facts:
+  - label: "Role"
+    value: "Sole engineer & designer"
+  - label: "Timeline"
+    value: "2026"
+  - label: "Status"
+    value: "Live"
+---
+
+## Why
+
+I train twice a day some days. Almost every fitness app assumes one session,
+one time, and quietly breaks when you don't fit that. I wanted AM/PM planning
+as a first-class idea rather than a workaround, so I built it.
+
+Building your own tool for a problem you actually have is the only reliable way
+I've found to know whether a feature matters. If I don't reach for it on a
+Tuesday morning, it doesn't ship.
+
+## Local-first, sync second
+
+The thing I'm most glad I got right: **the app works completely offline, and
+the cloud is optional.**
+
+Gyms have terrible signal. An app that spinners at you between sets is useless
+no matter how good the feature list is. So local storage is the source of
+truth, and Firebase sync is a layer on top — if it's there, your data follows
+you to another device; if it isn't, nothing degrades.
+
+This inverts the usual architecture, where the server is authoritative and the
+client is a cache. It's more work, and for this app it was obviously correct.
+The failure mode of "no network" is the *normal* case, not the edge case.
+
+## The interface
+
+I designed the UI around a "Liquid Glass" language — translucency, depth, and
+a lot of restraint. Fitness apps tend toward either clinical spreadsheets or
+neon gamification, and I wanted something that felt like a premium tool you'd
+actually want to open at 6am.
+
+Every screen had to survive one test: **can I use it one-handed, sweaty, mid-set,
+in a hurry?** That killed a lot of otherwise pretty ideas.
+
+## What I got wrong
+
+**I built the nutrition tracker before the workout logger was actually good.**
+Classic mistake — chasing breadth because it feels like progress, while the
+core loop still had rough edges. The logger is the thing you touch forty times
+a session; the nutrition tab you touch three times a day. I had the priority
+exactly backwards for about a month.
+
+**Firebase rules came last.** I got the sync working with permissive rules and
+told myself I'd tighten them later, which is how everyone ends up with an open
+database. I did fix it, but writing the rules first would have shaped the data
+model better and cost nothing.
+
+## What it taught me
+
+This is the project that pushed me into backend work properly. Building the
+planner made me want a real exercise catalog, which became
+[ExerciseDB API](/work/exercisedb-api) — and building that API is what taught
+me what "production-ready" actually means, as opposed to "it runs on my
+machine."

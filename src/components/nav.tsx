@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { navLinks, site } from "@/data/site";
 import { onAnchorClick } from "@/lib/scroll-to";
+import { useActiveSection } from "@/lib/use-active-section";
 import { ThemeToggle } from "./theme-toggle";
 import { CommandPalette } from "./command-palette";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+
+  // Only the in-page links can be "active" — /blog is a separate route.
+  const sectionIds = useMemo(
+    () =>
+      navLinks
+        .filter((l) => l.href.startsWith("/#"))
+        .map((l) => l.href.slice(2)),
+    [],
+  );
+  const active = useActiveSection(sectionIds);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -40,17 +51,30 @@ export function Nav() {
 
         <div className="flex items-center gap-4">
           <ul className="hidden items-center gap-6 lg:flex">
-            {navLinks.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  onClick={onAnchorClick}
-                  className="text-sm text-fg-muted transition-colors hover:text-fg"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
+            {navLinks.map((l) => {
+              const isActive = l.href === `/#${active}`;
+              return (
+                <li key={l.href} className="relative">
+                  <a
+                    href={l.href}
+                    onClick={onAnchorClick}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`text-sm transition-colors ${
+                      isActive ? "text-fg" : "text-fg-muted hover:text-fg"
+                    }`}
+                  >
+                    {l.label}
+                  </a>
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute -bottom-1.5 left-0 h-px w-full bg-accent"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </li>
+              );
+            })}
           </ul>
 
           <a

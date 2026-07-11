@@ -1,6 +1,7 @@
 import { Backdrop } from "@/components/backdrop";
 import { Cursor } from "@/components/cursor";
 import { Loader } from "@/components/loader";
+import { ScrollProgress } from "@/components/scroll-progress";
 import { Terminal } from "@/components/terminal";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -19,6 +20,7 @@ export default function Home() {
       <Loader />
       <Backdrop />
       <div className="grain-overlay" aria-hidden="true" />
+      <ScrollProgress />
       <Cursor />
       <Terminal />
       <Nav />

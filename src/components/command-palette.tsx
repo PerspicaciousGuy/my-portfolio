@@ -71,13 +71,18 @@ export function CommandPalette() {
         icon: FileText,
         run: () => go("/resume"),
       },
+      // A project with a case study opens the write-up; the rest go to source.
       ...projects.map((p) => ({
         id: `proj-${p.name}`,
         label: p.name,
-        hint: p.blurb,
+        hint: p.slug ? "case study" : "source",
         group: "Projects",
         icon: ArrowRight,
         run: () => {
+          if (p.slug) {
+            go(`/work/${p.slug}`);
+            return;
+          }
           close();
           window.open(p.repo, "_blank", "noopener");
         },

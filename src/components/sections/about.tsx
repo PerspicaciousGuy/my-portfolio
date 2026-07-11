@@ -1,6 +1,7 @@
 import { about, now } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
+import { NowPlaying } from "@/components/now-playing";
 
 export function About() {
   return (
@@ -40,6 +41,9 @@ export function About() {
                 </div>
               ))}
             </dl>
+
+            {/* Renders nothing unless Spotify is configured. */}
+            <NowPlaying />
           </div>
         </Reveal>
       </div>
