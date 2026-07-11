@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPost, getPosts, formatDate } from "@/lib/posts";
+import { Footer } from "@/components/footer";
 
 export async function generateStaticParams() {
   const posts = await getPosts();
@@ -41,6 +42,7 @@ export default async function PostPage({
   if (!post) notFound();
 
   return (
+    <>
     <main className="relative mx-auto min-h-svh w-full max-w-2xl px-6 py-24">
       <Link
         href="/blog"
@@ -82,5 +84,7 @@ export default async function PostPage({
         <MDXRemote source={post.content} />
       </article>
     </main>
+    <Footer />
+    </>
   );
 }
