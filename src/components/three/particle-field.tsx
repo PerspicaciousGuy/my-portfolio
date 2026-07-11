@@ -216,13 +216,15 @@ export function ParticleField({ scroll, isDark }: Props) {
     mesh.position.x += (offsetX - mesh.position.x) * 0.05;
     mesh.position.z += (offsetZ - mesh.position.z) * 0.05;
 
-    // The cloud is at full strength only in the hero and at the contact pulse.
-    // Everywhere in between it sits behind body copy, so fade it right back —
-    // at full opacity it renders on top of the text and makes it unreadable.
+    // Ease off through the copy-heavy middle so the cloud never competes with
+    // body text — but only gently. It stays clearly visible: the cloud is kept
+    // out of the reading column by the X offset below, which does the real
+    // work. Fading it to a ghost here just makes the page look empty to anyone
+    // who scrolls past the hero, which is everyone.
     if (material.current) {
       const enterCopy = THREE.MathUtils.smoothstep(p, 0.04, 0.16);
       const leaveCopy = THREE.MathUtils.smoothstep(p, 0.84, 0.96);
-      const opacity = 0.9 - enterCopy * 0.68 + leaveCopy * 0.62;
+      const opacity = 0.9 - enterCopy * 0.28 + leaveCopy * 0.28;
       material.current.opacity +=
         (opacity - material.current.opacity) * 0.06;
     }
@@ -238,10 +240,12 @@ export function ParticleField({ scroll, isDark }: Props) {
           itemSize={3}
         />
       </bufferGeometry>
+      {/* Light mode can't use additive blending (it washes out to nothing on a
+          pale background), so compensate with larger, denser, darker points. */}
       <pointsMaterial
         ref={material}
-        size={isDark ? 0.028 : 0.024}
-        color={isDark ? "#f87171" : "#dc2626"}
+        size={isDark ? 0.028 : 0.036}
+        color={isDark ? "#f87171" : "#c81e1e"}
         transparent
         opacity={0.9}
         sizeAttenuation
