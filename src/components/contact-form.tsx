@@ -65,17 +65,30 @@ export function ContactForm() {
     });
   }
 
+  // Hold the card's height on success. Collapsing to a one-line stub leaves a
+  // hole where the form was and makes the whole section look broken.
   if (state.status === "sent") {
     return (
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 p-5"
+        className="flex min-h-[17rem] flex-col items-center justify-center gap-3 text-center"
       >
-        <Check className="size-5 shrink-0 text-accent" />
-        <p className="text-sm text-fg-muted">
-          Sent. I&apos;ll get back to you.
+        <span className="grid size-11 place-items-center rounded-full border border-accent/40 bg-accent/10">
+          <Check className="size-5 text-accent" />
+        </span>
+        <p className="font-medium">Sent. I&apos;ll get back to you.</p>
+        <p className="max-w-xs text-sm text-fg-muted">
+          Usually within a day or two. If it&apos;s urgent, {site.email} reaches
+          me faster.
         </p>
+        <button
+          type="button"
+          onClick={() => setState({ status: "idle" })}
+          className="mt-2 text-sm text-fg-subtle underline underline-offset-4 transition hover:text-accent"
+        >
+          Send another
+        </button>
       </motion.div>
     );
   }

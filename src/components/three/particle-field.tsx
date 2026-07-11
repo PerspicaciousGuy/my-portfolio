@@ -223,8 +223,13 @@ export function ParticleField({ scroll, isDark }: Props) {
     // who scrolls past the hero, which is everyone.
     if (material.current) {
       const enterCopy = THREE.MathUtils.smoothstep(p, 0.04, 0.16);
-      const leaveCopy = THREE.MathUtils.smoothstep(p, 0.84, 0.96);
-      const opacity = 0.9 - enterCopy * 0.28 + leaveCopy * 0.28;
+      // Swell for the contact pulse, then drop away before the footer. The
+      // cloud recentres at the bottom of the page, so left at full strength it
+      // sits directly on top of the footer links.
+      const pulse = THREE.MathUtils.smoothstep(p, 0.82, 0.92);
+      const clearFooter = THREE.MathUtils.smoothstep(p, 0.94, 1);
+      const opacity =
+        0.9 - enterCopy * 0.28 + pulse * 0.28 - clearFooter * 0.78;
       material.current.opacity +=
         (opacity - material.current.opacity) * 0.06;
     }

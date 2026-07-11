@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getPosts, formatDate } from "@/lib/posts";
 import { Reveal } from "@/components/ui/reveal";
+import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Writing",
@@ -13,6 +14,7 @@ export default async function BlogIndex() {
   const posts = await getPosts();
 
   return (
+    <>
     <main className="relative mx-auto min-h-svh w-full max-w-3xl px-6 py-24">
       <Reveal>
         <Link
@@ -64,5 +66,7 @@ export default async function BlogIndex() {
         </ul>
       )}
     </main>
+    <Footer />
+    </>
   );
 }
