@@ -46,6 +46,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Clears the fixed header when the browser jumps to an anchor directly
+     (e.g. someone lands on /#work from an external link). */
+  section[id] {
+    scroll-margin-top: 72px;
+  }
+
   body {
     background-color: rgb(var(--bg));
     color: rgb(var(--fg));

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { navLinks, site } from "@/data/site";
+import { onAnchorClick } from "@/lib/scroll-to";
 import { ThemeToggle } from "./theme-toggle";
 import { CommandPalette } from "./command-palette";
 
@@ -29,7 +30,8 @@ export function Nav() {
     >
       <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
         <a
-          href="#"
+          href="/"
+          onClick={onAnchorClick}
           className="font-mono text-sm font-medium tracking-tight transition-colors hover:text-accent"
         >
           {site.shortName.toLowerCase()}
@@ -42,6 +44,7 @@ export function Nav() {
               <li key={l.href}>
                 <a
                   href={l.href}
+                  onClick={onAnchorClick}
                   className="text-sm text-fg-muted transition-colors hover:text-fg"
                 >
                   {l.label}

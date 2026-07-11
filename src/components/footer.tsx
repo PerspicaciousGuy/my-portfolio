@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { navLinks, site, socials } from "@/data/site";
+import { SectionLink } from "@/components/ui/section-link";
 
 export function Footer() {
   const links = socials.filter((s) => s.label !== "Email");
@@ -32,12 +33,12 @@ export function Footer() {
             <ul className="mt-4 space-y-2">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <Link
+                  <SectionLink
                     href={l.href}
                     className="text-sm text-fg-muted transition hover:text-accent"
                   >
                     {l.label}
-                  </Link>
+                  </SectionLink>
                 </li>
               ))}
               <li>

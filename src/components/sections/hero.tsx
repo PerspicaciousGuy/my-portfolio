@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight, FileText } from "lucide-react";
 import { site, socials } from "@/data/site";
+import { onAnchorClick } from "@/lib/scroll-to";
 
 const container = {
   hidden: {},
@@ -57,6 +58,7 @@ export function Hero() {
         <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
           <a
             href="#work"
+            onClick={onAnchorClick}
             className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition hover:opacity-90"
           >
             See my work
@@ -64,6 +66,7 @@ export function Hero() {
           </a>
           <a
             href="#contact"
+            onClick={onAnchorClick}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-elevated/50 px-5 py-2.5 text-sm font-medium backdrop-blur transition hover:border-accent/50 hover:text-accent"
           >
             Get in touch

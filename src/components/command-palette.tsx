@@ -15,6 +15,7 @@ import {
   Terminal as TerminalIcon,
 } from "lucide-react";
 import { navLinks, projects, site, socials } from "@/data/site";
+import { scrollToSection } from "@/lib/scroll-to";
 
 type Action = {
   id: string;
@@ -44,16 +45,9 @@ export function CommandPalette() {
   const go = useCallback(
     (href: string) => {
       close();
-      if (href.startsWith("/#")) {
-        // Same-page anchors: route home first if we're on another page.
-        if (window.location.pathname !== "/") router.push(href);
-        else
-          document
-            .querySelector(href.slice(1))
-            ?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        router.push(href);
-      }
+      // scrollToSection handles the same-page case (and the nav offset);
+      // it returns false when this is a real navigation.
+      if (!scrollToSection(href)) router.push(href);
     },
     [close, router],
   );
