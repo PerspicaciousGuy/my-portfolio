@@ -1,5 +1,6 @@
 import { Backdrop } from "@/components/backdrop";
 import { Cursor } from "@/components/cursor";
+import { Loader } from "@/components/loader";
 import { Terminal } from "@/components/terminal";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -15,6 +16,7 @@ import { Contact } from "@/components/sections/contact";
 export default function Home() {
   return (
     <>
+      <Loader />
       <Backdrop />
       <div className="grain-overlay" aria-hidden="true" />
       <Cursor />
