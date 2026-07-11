@@ -172,17 +172,24 @@ export function ParticleField({ scroll, isDark }: Props) {
     mesh.rotation.x += (targetX - mesh.rotation.x) * 0.04;
     mesh.rotation.y += (targetY - mesh.rotation.y) * 0.04;
 
-    // In the hero the figure sits right of centre so it never collides with
-    // the left-aligned headline; it drifts back to centre as you scroll.
-    const offset = (1 - THREE.MathUtils.smoothstep(p, 0, 0.28)) * 2.15;
+    // Keep the cloud out of the reading column. It sits right of centre in the
+    // hero (clear of the headline), stays right through the copy-heavy middle
+    // sections, and only returns to centre for the contact pulse. It also
+    // recedes in Z so it reads as depth rather than as noise over the text.
     const wide = viewport.width > 8;
-    mesh.position.x += ((wide ? offset : 0) - mesh.position.x) * 0.05;
+    const centred = THREE.MathUtils.smoothstep(p, 0.88, 1);
+    const offsetX = wide ? 3.1 * (1 - centred) : 0;
+    const offsetZ = -2.2 * (1 - centred);
+    mesh.position.x += (offsetX - mesh.position.x) * 0.05;
+    mesh.position.z += (offsetZ - mesh.position.z) * 0.05;
 
-    // Fade the cloud back while the Work section is on screen so cards read clearly.
+    // The cloud is at full strength only in the hero and at the contact pulse.
+    // Everywhere in between it sits behind body copy, so fade it right back —
+    // at full opacity it renders on top of the text and makes it unreadable.
     if (material.current) {
-      const dim = THREE.MathUtils.smoothstep(p, 0.52, 0.72);
-      const back = THREE.MathUtils.smoothstep(p, 0.86, 1);
-      const opacity = 0.9 - dim * 0.55 + back * 0.4;
+      const enterCopy = THREE.MathUtils.smoothstep(p, 0.04, 0.16);
+      const leaveCopy = THREE.MathUtils.smoothstep(p, 0.84, 0.96);
+      const opacity = 0.9 - enterCopy * 0.68 + leaveCopy * 0.62;
       material.current.opacity +=
         (opacity - material.current.opacity) * 0.06;
     }

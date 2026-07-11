@@ -9,7 +9,7 @@ export function Contact() {
       className="relative mx-auto w-full max-w-5xl px-6 py-32 sm:py-44"
     >
       <Reveal>
-        <p className="font-mono text-sm text-accent">05 — Contact</p>
+        <p className="font-mono text-sm text-accent">06 — Contact</p>
         <h2 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
           Let&apos;s build something.
         </h2>
