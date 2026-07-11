@@ -21,36 +21,48 @@ export function ContactForm() {
     e.preventDefault();
     if (state.status === "sending") return;
 
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    // Hold the element: React pools the synthetic event, so e.currentTarget is
+    // null once we're past an await. Touching it there throws, and the throw
+    // lands in the catch below — reporting a network error for a request that
+    // actually succeeded.
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
     setState({ status: "sending" });
 
+    let res: Response;
+    let json: { error?: string };
+
+    // Only the network call belongs in the try. A broad try/catch around the
+    // whole handler turns any bug in the success path into a bogus "couldn't
+    // reach the server" — which is exactly what it did.
     try {
-      const res = await fetch("/api/contact", {
+      res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const json = await res.json();
-
-      if (res.ok) {
-        setState({ status: "sent" });
-        e.currentTarget.reset();
-        return;
-      }
-
-      setState({
-        status: "error",
-        message:
-          json.error === "unconfigured"
-            ? `The form isn't hooked up yet — email me at ${site.email}.`
-            : (json.error ?? "Something went wrong."),
-      });
+      json = await res.json();
     } catch {
       setState({
         status: "error",
         message: `Couldn't reach the server. Email me at ${site.email}.`,
       });
+      return;
     }
+
+    if (res.ok) {
+      setState({ status: "sent" });
+      form.reset();
+      return;
+    }
+
+    setState({
+      status: "error",
+      message:
+        json.error === "unconfigured"
+          ? `The form isn't hooked up yet — email me at ${site.email}.`
+          : (json.error ?? "Something went wrong."),
+    });
   }
 
   if (state.status === "sent") {
