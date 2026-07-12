@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { getNowPlaying } from "@/lib/spotify";
+import { getNowPlaying } from "@/lib/lastfm";
 
-/** Renders nothing at all when Spotify isn't configured. */
+/** Renders nothing at all when Last.fm isn't configured. */
 export async function NowPlaying() {
   const track = await getNowPlaying();
   if (!track) return null;
