@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      // Spotify album art.
-      { protocol: "https", hostname: "i.scdn.co" },
+      // Last.fm album art.
+      { protocol: "https", hostname: "lastfm.freetls.fastly.net" },
     ],
   },
 };
