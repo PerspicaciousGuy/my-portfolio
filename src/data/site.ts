@@ -153,11 +153,12 @@ export const projects: Project[] = [
   {
     name: "ExerciseDB API",
     slug: "exercisedb-api",
-    blurb: "A production-grade public exercise catalog API for fitness app developers.",
+    blurb: "A metered, production API product — catalog, incremental sync, API keys, billing, dashboard and docs.",
     description:
-      "A public exercise catalog that client apps can sync and cache locally. Built with a real test suite, schema validation, and a documented OpenAPI contract — the kind of API I wanted to consume but couldn't find.",
-    stack: ["Node.js", "Express", "PostgreSQL", "Supabase", "Zod", "Vitest", "OpenAPI"],
+      "A public exercise catalog client apps can sync and cache offline. Beyond the endpoints: API-key auth with usage tiers and rate limiting, an incremental sync protocol with tombstones, RFC 9457 errors, Lemon Squeezy billing, a developer dashboard and a docs site. 116 tests. You can run real requests against it from the case study.",
+    stack: ["Node.js", "Express", "PostgreSQL", "Supabase", "Zod", "Vitest", "OpenAPI", "Vue"],
     repo: "https://github.com/PerspicaciousGuy/exercises-api",
+    live: "https://docs.harshitbishnoi.dev",
     featured: true,
     year: "2026",
   },

@@ -1,18 +1,18 @@
 ---
-summary: "I needed a decent exercise catalog for a fitness app. None existed. So I built the API I wanted to consume."
+summary: "I needed a decent exercise catalog for a fitness app. None existed. So I built one — and then discovered that shipping an API to other developers is a completely different job from shipping an endpoint."
 facts:
   - label: "Role"
     value: "Sole engineer"
-  - label: "Timeline"
-    value: "2026"
-  - label: "Focus"
-    value: "API design, schema, testing"
+  - label: "Scope"
+    value: "API, dashboard, docs, billing"
+  - label: "Tests"
+    value: "116 across 25 files"
 ---
 
 ## The problem
 
-Every fitness app needs a catalog of exercises. It sounds like a solved
-problem. It isn't.
+Every fitness app needs a catalog of exercises. It sounds like a solved problem.
+It isn't.
 
 What's actually out there is scraped CSVs with inconsistent naming, paid APIs
 whose free tier dies at a hundred requests, and datasets where "Barbell Bench
@@ -20,7 +20,8 @@ Press" and "Bench Press (Barbell)" are two separate rows with two different
 muscle mappings. I hit this while building [GymPlanner](/work/gymplanner) and
 realised I was about to hand-maintain a spreadsheet forever.
 
-So I stopped and built the catalog properly.
+So I stopped and built the catalog properly. Then it turned into something
+bigger than a catalog.
 
 <Playground />
 
@@ -50,36 +51,96 @@ An exercise isn't a name and a muscle. It has:
 Get this schema wrong and every app built on top of it inherits your mess.
 That's the part I actually cared about.
 
+## Sync is the hard part
+
+Handing someone a list of exercises is easy. Letting them keep that list
+correct, forever, without re-downloading it — that's the actual engineering.
+
+`GET /sync/exercises` returns changes since a timestamp. Which sounds simple
+until you deal with the parts that bite:
+
+**Deletions have to be visible.** A record that vanishes from a response is
+indistinguishable from one that didn't change. So deletions come back as
+**tombstones** — explicit "this is gone" / "this is deprecated" events — and the
+client applies them rather than inferring them.
+
+**A write during a sync must not be lost.** Every page of a single sync reports
+the same `latestChangeAt`, captured *before the first page was read*. So a record
+written halfway through your sync doesn't slip into a gap between pages — it
+just arrives on your next run. Getting this wrong gives you silent, permanent
+data loss on the client, which is the worst kind of bug: invisible and
+unrecoverable.
+
+**Pagination is over change events, not records.** So `limit` bounds events, and
+a full page can return fewer exercises than the limit. Clients page on
+`hasMore`, never on `exercises.length`.
+
+## Then it stopped being just an API
+
+Once it was good, the obvious question was whether anyone else could use it.
+That turned a project into a product, and the product work was its own
+education:
+
+- **API keys and metered access.** Every request is authenticated, counted
+  against a quota, and answered with `X-RateLimit-Remaining` so a client can see
+  where it stands before it gets cut off.
+- **Usage tiers**, with premium endpoints gated by plan.
+- **Billing**, provider-neutral by design and wired to Lemon Squeezy first:
+  checkout, signature-verified webhooks, idempotent delivery, automatic upgrade
+  on activation and downgrade on cancellation, expiry, pause, or failed payment.
+  *(Implemented and tested — the store isn't switched on yet.)*
+- **A developer dashboard** for keys and usage, and a **docs site**, both drawing
+  from one shared design system so they read as one product.
+
 ## What I'd defend
 
+**Errors are RFC 9457.** Every failure returns `application/problem+json` with a
+machine-readable `type`, a stable `code`, and a `requestId`. A developer hitting
+a wall can quote that id back at me and I can find the exact log line. Try the
+"trigger an error" button above — that's a real 404 from production.
+
 **Validate at the edge, then trust the types.** Zod parses every input at the
-route boundary. Past that line, the types are real and I stop writing defensive
-checks. It keeps handlers short and it means a malformed request fails in one
-predictable place instead of five unpredictable ones.
+route boundary. Past that line the types are real and I stop writing defensive
+checks. A malformed request fails in one predictable place instead of five
+unpredictable ones.
 
-**Test the API, not the functions.** The suite is Vitest plus Supertest, hitting
-real routes and asserting real responses. I don't unit-test helpers that exist
-to serve exactly one endpoint — if the endpoint is right, the helper is right.
-The tests document the contract, which is the only thing a consumer cares about.
-
-**Ship an OpenAPI spec.** Nobody should have to read my source to learn what a
-response looks like. The spec is the product as much as the endpoints are.
+**Test the API, not the functions.** 116 tests across 25 files, Vitest and
+Supertest, hitting real routes and asserting real responses. I don't unit-test
+helpers that exist to serve exactly one endpoint — if the endpoint is right, the
+helper is right. The tests document the contract, which is the only thing a
+consumer cares about.
 
 ## What I got wrong
 
-**The first schema stored muscles as a plain string column.** It worked for
-about a day — right up until I wanted "show me every exercise that hits the
-posterior chain" and realised I'd have to do it with `LIKE`. Migrating to a
-proper join table cost two hours I could have saved with ten minutes of
-thinking. Model the relationship, not the display string.
+**The first schema stored muscles as a plain string column.** It worked for about
+a day — right up until I wanted "every exercise that hits the posterior chain"
+and realised I'd have to do it with `LIKE`. Migrating to a proper join table cost
+two hours I could have saved with ten minutes of thinking. Model the
+relationship, not the display string.
 
-**I wrote the seeding script before the schema had settled**, then rewrote it
-three times as the schema changed underneath it. Seed data comes last. It is
-the most rewritable code in the project and I treated it as the most permanent.
+**`include_deprecated=true` returns deprecated records in both `exercises` and
+`tombstones`.** So a caller who explicitly asked for deprecated data still has to
+filter it back out of the tombstone array. It's a wart. I know it's a wart. It's
+in a success-response shape, so fixing it is a breaking change — which is exactly
+the lesson: a bad public contract is expensive in a way a bad internal function
+never is. Get the shape right before anyone depends on it.
+
+**None of my migrations have a `down`.** Every one is a one-way door. It's fine
+right up until the day it isn't, and by then it's a project-wide problem rather
+than a five-minute one.
+
+**Webhooks are processed synchronously, with no reconciliation job.** If Lemon
+Squeezy's delivery fails permanently, nothing repairs the state — I'd find out
+when a customer emailed me. It's one database write today so it holds, but I've
+written down the failure mode rather than pretending it isn't there.
 
 ## Where it's going
 
-Version one is deliberately just the public catalog. Private user-created
-exercises, food data, and workout generation are all sitting in a notes file,
-and they can stay there until the catalog is genuinely solid. Shipping a narrow
-thing that works beats shipping a broad thing that doesn't.
+Version one is deliberately narrow: the public catalog and sync. Private
+user-created exercises, food data, and workout generation are all sitting in a
+notes file, and they can stay there until the catalog is genuinely solid.
+Shipping a narrow thing that works beats shipping a broad thing that doesn't.
+
+The API is live at [api.harshitbishnoi.dev](https://api.harshitbishnoi.dev), with
+[docs](https://docs.harshitbishnoi.dev) and a
+[developer dashboard](https://app.harshitbishnoi.dev).
