@@ -1,0 +1,75 @@
+---
+title: "Local-first, then sync"
+summary: "A workout app that stalls on the gym's terrible wifi is useless. So I built GymPlanner to treat the network as optional — and it made everything feel instant."
+date: "2026-07-10"
+tags: ["frontend", "architecture", "react"]
+---
+
+Gyms have terrible wifi. This is a universal law.
+
+You're mid-workout, you tap to log a set, and a spinner appears while the app
+phones home. That half-second of doubt — did it save? — is enough to make a
+fitness app feel broken, no matter how nice it looks.
+
+So when I built GymPlanner, I made a rule: **the network is optional.** The app
+has to work, fully and instantly, with the phone in airplane mode. Sync is a
+bonus that happens in the background, never something the user waits on.
+
+## Local is the source of truth
+
+The mental flip that makes this work: the local store isn't a cache of the
+server. The server is a backup of the local store.
+
+Every action — scheduling an AM or PM session, logging a set, jotting down what
+you ate — writes to local persistence *first* and updates the UI immediately.
+There's no loading state, because there's nothing to load. The data is already
+on the device. The interface reacts at the speed of a keystroke because it never
+leaves the device to respond.
+
+## Where Firebase comes in
+
+Sync runs behind all of that. When you're signed in and online, changes reconcile
+up to Firebase so your data survives a lost phone and follows you to another
+device. When you're signed out, or on that awful gym wifi, nothing about the app
+changes — it just keeps working, and syncs later.
+
+The hard part of sync is conflicts: log a workout on your phone and your laptop
+and now two versions disagree. I kept the resolution deliberately dumb —
+last-write-wins at the record level — because a workout tracker is not a
+collaborative document, and a simple rule I understand beats a clever one I
+don't. Knowing how *little* to build was most of the work.
+
+## Making the web feel native
+
+The other half of the project was the interface. I wanted it to feel like a
+premium mobile app, not a website in a phone browser — so I built a "Liquid
+Glass" look: layered translucency, soft depth, motion that responds to touch
+instead of just decorating.
+
+The restraint that kept it from looking cheap: glass effects earn their keep
+only when there's something behind them worth blurring, and only if they never
+cost readability. Every blur got pulled back until the text on top stayed
+perfectly crisp. A pretty interface you can't read is just a worse interface.
+
+## What I got wrong
+
+I built it network-first, the obvious way. Firebase was the source of truth, the
+UI subscribed to it, and every write did a round trip before the screen updated.
+On my laptop it felt fine. On a phone with two bars it felt like wading through
+mud — exactly the spinner-and-doubt problem I'd set out to avoid.
+
+Flipping it to local-first wasn't a tweak; it was a rewrite of how state flowed.
+But the moment the UI stopped waiting for the network, the whole app felt like a
+different, better product. I should have started there. Offline-first is not a
+feature you bolt on at the end — it's a decision you make on day one, and it
+shapes everything after it.
+
+## The takeaway
+
+Users don't experience your architecture, they experience its latency. Local-first
+is the difference between an app that feels alive in your hand and one that feels
+like it's asking permission. Build for the worst network your user will ever be
+on, and the good network takes care of itself.
+
+GymPlanner is [live here](https://gym-planner-green.vercel.app) and
+[on GitHub](https://github.com/PerspicaciousGuy/GymPlanner).
