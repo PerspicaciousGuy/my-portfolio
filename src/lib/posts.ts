@@ -57,10 +57,6 @@ export async function getPost(slug: string): Promise<Post | null> {
   return posts.find((p) => p.slug === slug) ?? null;
 }
 
-export function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
+// Lives in its own module so client components can import it without dragging
+// node:fs along. Re-exported here so existing callers don't have to change.
+export { formatDate } from "@/lib/format-date";
