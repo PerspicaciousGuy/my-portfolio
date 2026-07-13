@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import type { Heading } from "@/lib/case-studies";
+import type { Heading } from "@/lib/headings";
 import { NAV_OFFSET, onAnchorClick } from "@/lib/scroll-to";
 
 /**

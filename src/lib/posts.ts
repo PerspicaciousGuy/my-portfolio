@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
+import { extractHeadings, type Heading } from "@/lib/headings";
 
 const DIR = path.join(process.cwd(), "src", "content", "posts");
 
@@ -13,7 +14,11 @@ export type PostMeta = {
   tags: string[];
 };
 
-export type Post = PostMeta & { content: string };
+export type Post = PostMeta & {
+  content: string;
+  /** The `##` sections, in order — drives the table of contents. */
+  headings: Heading[];
+};
 
 function readingTime(text: string) {
   return Math.max(1, Math.round(text.split(/\s+/).length / 200));
@@ -30,6 +35,7 @@ async function readPost(file: string): Promise<Post> {
     date: data.date ?? "1970-01-01",
     tags: data.tags ?? [],
     readingTime: readingTime(content),
+    headings: extractHeadings(content),
     content,
   };
 }
