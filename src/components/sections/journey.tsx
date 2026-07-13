@@ -16,20 +16,16 @@ export function Journey() {
         {timeline.map((entry, i) => {
           const Icon = icons[entry.kind];
           return (
-            <Reveal key={entry.title} delay={i * 0.05}>
-              <li className="relative">
-                <span className="absolute -left-[41px] grid size-6 place-items-center rounded-full border border-border bg-bg text-accent sm:-left-[49px]">
-                  <Icon className="size-3" />
-                </span>
-                <p className="font-mono text-xs text-fg-subtle">{entry.period}</p>
-                <h3 className="mt-1.5 text-lg font-medium">{entry.title}</h3>
-                {entry.org && (
-                  <p className="text-sm text-accent">{entry.org}</p>
-                )}
-                <p className="mt-2 max-w-xl text-pretty leading-relaxed text-fg-muted">
-                  {entry.description}
-                </p>
-              </li>
+            <Reveal as="li" key={entry.title} delay={i * 0.05} className="relative">
+              <span className="absolute -left-[41px] grid size-6 place-items-center rounded-full border border-border bg-bg text-accent sm:-left-[49px]">
+                <Icon className="size-3" />
+              </span>
+              <p className="font-mono text-xs text-fg-subtle">{entry.period}</p>
+              <h3 className="mt-1.5 text-lg font-medium">{entry.title}</h3>
+              {entry.org && <p className="text-sm text-accent">{entry.org}</p>}
+              <p className="mt-2 max-w-xl text-pretty leading-relaxed text-fg-muted">
+                {entry.description}
+              </p>
             </Reveal>
           );
         })}
