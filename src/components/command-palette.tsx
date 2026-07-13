@@ -201,7 +201,6 @@ export function CommandPalette() {
         type="button"
         onClick={() => setOpen(true)}
         className="hidden items-center gap-2 rounded-full border border-border bg-bg-elevated/60 px-3 py-1.5 text-xs text-fg-subtle backdrop-blur transition hover:border-accent/50 hover:text-accent sm:inline-flex"
-        aria-label="Open command palette"
       >
         <Search className="size-3.5" />
         <span>Search</span>
