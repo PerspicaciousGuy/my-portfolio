@@ -8,7 +8,7 @@ export const site = {
   shortName: "Harshit",
   role: "Full-Stack Developer",
   tagline: "I build APIs, apps, and bots that do something useful.",
-  location: "India",
+  location: "Ganganagar, Rajasthan, India",
   email: "joy.0839b@gmail.com",
   url: "https://harshitbishnoi.dev",
   // ↑ Used by the OG image, sitemap and schema.org markup. Must match the

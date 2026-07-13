@@ -16,7 +16,8 @@ export function StructuredData() {
     address: {
       "@type": "PostalAddress",
       addressCountry: "IN",
-      addressLocality: site.location,
+      addressRegion: "Rajasthan",
+      addressLocality: "Ganganagar",
     },
     sameAs: socials
       .filter((s) => s.label !== "Email")

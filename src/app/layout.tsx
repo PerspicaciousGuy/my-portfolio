@@ -34,6 +34,8 @@ export const metadata: Metadata = {
     "React",
     "Next.js",
     "portfolio",
+    "Ganganagar",
+    "Rajasthan",
     "India",
   ],
   authors: [{ name: site.name, url: site.url }],
