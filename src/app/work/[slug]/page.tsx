@@ -7,6 +7,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getCaseStudy, getCaseStudySlugs } from "@/lib/case-studies";
 import { slugifyHeading } from "@/lib/headings";
 import { ApiPlayground } from "@/components/api-playground";
+import { Figure } from "@/components/figure";
 import { Toc } from "@/components/toc";
 import { Footer } from "@/components/footer";
 
@@ -148,7 +149,7 @@ export default async function CaseStudyPage({
               into their MDX. Only the API study uses it. */}
           <MDXRemote
             source={study.content}
-            components={{ Playground: ApiPlayground, h2: H2 }}
+            components={{ Playground: ApiPlayground, Figure, h2: H2 }}
           />
         </article>
         </main>

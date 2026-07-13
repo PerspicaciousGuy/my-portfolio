@@ -101,7 +101,10 @@ export const skills: SkillGroup[] = [
     title: "Testing & shipping",
     note: "Integration tests against real routes. 116 of them on the API alone.",
     items: ["Vitest", "Supertest", "Docker", "Git", "Vercel"],
-    proof: { label: "Test the API, not the function", href: "/work/exercisedb-api" },
+    proof: {
+      label: "Test the API, not the function",
+      href: "/blog/test-the-api-not-the-function",
+    },
   },
 ];
 

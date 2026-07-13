@@ -1,0 +1,106 @@
+---
+title: "Test the API, not the function"
+summary: "I have 116 tests on my API and almost no unit tests. That isn't laziness — it's the only way I've found to make a test suite that catches real bugs instead of guarding trivia."
+date: "2026-07-14"
+tags: ["testing", "backend", "api"]
+---
+
+I have 116 tests on the exercise API. Almost none of them test a function.
+
+They send a real HTTP request to a real route and assert on the real response —
+Vitest for the runner, Supertest for the requests. And when people see that,
+the reaction is usually that I've skipped a step. Where are the unit tests?
+
+I didn't skip them. I decided against them, deliberately, and I'd make the same
+call again.
+
+## What a consumer actually depends on
+
+Nobody using my API depends on `parseExerciseFilters()`. They can't see it. They
+couldn't import it if they wanted to. If I renamed it tomorrow, nothing in their
+app would break.
+
+What they depend on is this:
+
+> `GET /exercises?category=strength&limit=3` returns a 200, with an array of at
+> most three exercises, each with these fields, and an `updatedAt` they can sync
+> against.
+
+**That** is the contract. That's the promise. So that's the thing I write tests
+against — because a test suite should fail when a promise breaks, and pass when
+it doesn't.
+
+A unit test on `parseExerciseFilters()` doesn't do that. It fails when the
+*implementation* changes, which is a completely different event, and one I
+usually caused on purpose.
+
+## The helper is right if the endpoint is right
+
+Here's the case that convinced me. Say I unit-test the filter parser, and it
+passes. Then I test the route, and it passes.
+
+What did the unit test tell me that the route test didn't?
+
+Nothing. The helper exists to serve exactly one endpoint. It has no other
+caller, no independent life, no meaning outside that route. If the endpoint
+returns the right thing, the helper worked. If the endpoint returns the wrong
+thing, the helper is where I'll go looking. The unit test isn't a safety net —
+it's a duplicate assertion with extra maintenance.
+
+So my rule is simple: **if a function has exactly one caller, its caller is its
+test.**
+
+## What this buys you
+
+**The tests survive a refactor.** I have restructured the internals of this API
+more than once — extracted repositories, moved validation, changed how filters
+compose. The tests didn't move, because none of them knew what the internals
+looked like. That's the whole point. A suite that breaks every time you tidy up
+is a suite that punishes you for tidying up, and eventually you stop.
+
+**The tests document the API.** Someone new can read
+`tests/exerciseRoutes.test.js` and learn what the API does, because it's a list
+of real requests and real responses. A file of mocked unit tests teaches you
+about my abstractions, which is the least interesting thing about the project.
+
+**They catch the bugs that actually happen.** Every real bug I've shipped lived
+in the seams — a route wired to the wrong handler, a validation rule that let a
+bad value through, a response shape that quietly changed. Unit tests are blind
+to all three, because each individual piece was behaving perfectly.
+
+## When I do write a unit test
+
+I'm not against them. I'm against them as a default. I write one when a piece of
+logic is:
+
+- **genuinely independent** — several callers, its own reason to exist
+- **algorithmically tricky** — the sync watermark logic, where the edge cases are
+  the entire point and driving them through HTTP would be absurd
+- **hard to reach from the outside** — some failure paths are painful to trigger
+  through a route, and a direct test is just the cheaper tool
+
+That's a small set. Most of my code doesn't qualify, and pretending otherwise
+would give me a bigger number and a worse suite.
+
+## What I got wrong
+
+For a long stretch my tests all used **one user**. They passed, consistently, and
+they were lying — because a whole class of bug only exists the moment a *second*
+person shows up. My ownership checks were broken and my green suite had no
+opinion about it. (I wrote about that in
+[Auth is the part you can't fake](/blog/auth-is-the-part-you-cant-fake).)
+
+That taught me the sharper version of the lesson. It isn't really "integration
+over unit." It's: **your tests must model the world your API actually lives in.**
+Mine had exactly one user in it, so it caught exactly the bugs a world with one
+user can have.
+
+Coverage percentage says nothing about that. A suite can cover every line and
+still model a world that doesn't exist.
+
+## The takeaway
+
+Test the promise you made, not the way you happened to keep it.
+
+The implementation is yours to change. The contract belongs to whoever's building
+on it — and that's the only thing worth guarding.
