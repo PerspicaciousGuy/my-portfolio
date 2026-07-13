@@ -1,4 +1,4 @@
-import { site, socials, skills } from "@/data/site";
+import { site, socials, skills, alsoUsed } from "@/data/site";
 
 /**
  * schema.org Person markup. This is what lets Google show a knowledge panel
@@ -22,7 +22,9 @@ export function StructuredData() {
     sameAs: socials
       .filter((s) => s.label !== "Email")
       .map((s) => s.href),
-    knowsAbout: skills.flatMap((g) => g.items),
+    // The page de-emphasises the long tail, but search engines should still see
+    // everything he's worked with.
+    knowsAbout: [...skills.flatMap((g) => g.items), ...alsoUsed],
     alumniOf: {
       "@type": "EducationalOrganization",
       name: "Bachelor of Computer Applications (BCA)",

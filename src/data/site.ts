@@ -7,7 +7,8 @@ export const site = {
   name: "Harshit Bishnoi",
   shortName: "Harshit",
   role: "Full-Stack Developer",
-  tagline: "I build APIs, apps, and bots that do something useful.",
+  tagline:
+    "I build production APIs — and the billing, docs and dashboards that turn them into products.",
   location: "Ganganagar, Rajasthan, India",
   email: "joy.0839b@gmail.com",
   url: "https://harshitbishnoi.dev",
@@ -56,30 +57,64 @@ export const now = [
 
 export type SkillGroup = {
   title: string;
+  /** One line on what this actually means in practice — a tag cloud proves
+   *  nothing on its own. */
+  note: string;
   items: string[];
+  /** Where on the site this skill is demonstrated. Evidence beats adjectives. */
+  proof?: { label: string; href: string };
 };
 
+/**
+ * The core stack: what I actually ship with, and where you can see it running.
+ * Deliberately not a list of everything I've ever opened — that flattens the
+ * things I'm good at into the things I've merely touched.
+ */
 export const skills: SkillGroup[] = [
   {
-    title: "Languages",
-    items: ["TypeScript", "JavaScript", "Python", "SQL", "HTML", "CSS"],
+    title: "Backend & APIs",
+    note: "Where I'm strongest. REST design, auth, validation at the boundary, rate limiting, versioned contracts.",
+    items: [
+      "Node.js",
+      "Express",
+      "REST APIs",
+      "JWT & API keys",
+      "Zod",
+      "OpenAPI",
+      "RFC 9457",
+    ],
+    proof: { label: "Run my API live", href: "/work/exercisedb-api" },
   },
   {
-    title: "Backend",
-    items: ["Node.js", "Express", "REST APIs", "JWT Auth", "Zod", "OpenAPI"],
+    title: "Data",
+    note: "Schema design I'd defend, incremental sync, and the migrations I got wrong first.",
+    items: ["PostgreSQL", "Supabase", "MongoDB", "Firebase"],
+    proof: { label: "How the sync protocol works", href: "/work/exercisedb-api" },
   },
   {
     title: "Frontend",
-    items: ["React", "Next.js", "Tailwind CSS", "Vite", "Framer Motion"],
+    note: "Local-first apps that stay usable when the network isn't.",
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Vite"],
+    proof: { label: "Local-first, then sync", href: "/blog/local-first-then-sync" },
   },
   {
-    title: "Data & Infra",
-    items: ["PostgreSQL", "Supabase", "MongoDB", "Firebase", "Docker"],
+    title: "Testing & shipping",
+    note: "Integration tests against real routes. 116 of them on the API alone.",
+    items: ["Vitest", "Supertest", "Docker", "Git", "Vercel"],
+    proof: { label: "Test the API, not the function", href: "/work/exercisedb-api" },
   },
-  {
-    title: "Testing & Tools",
-    items: ["Vitest", "Supertest", "Git", "Vercel", "Heroku"],
-  },
+];
+
+/** Everything else I've worked with. Honest, but not competing for attention. */
+export const alsoUsed = [
+  "Python",
+  "SQL",
+  "Vue",
+  "Framer Motion",
+  "Telegram API",
+  "Heroku",
+  "HTML",
+  "CSS",
 ];
 
 export type TimelineEntry = {
@@ -121,15 +156,15 @@ export const timeline: TimelineEntry[] = [
     period: "Early 2026",
     title: "Went deep on backend",
     description:
-      "Shipped two production-grade REST APIs with JWT auth, PostgreSQL, validation, rate limiting and an OpenAPI spec. Learned what 'production-ready' really means.",
+      "Shipped production REST APIs with JWT auth, PostgreSQL, validation, rate limiting and an OpenAPI spec. Learned what 'production-ready' actually costs.",
     kind: "build",
   },
   {
     period: "2026 — now",
-    title: "Full-stack & open source",
+    title: "Shipped a product, not just an API",
     description:
-      "Built GymPlanner end to end, and open-sourced a detailed human muscle map for anyone building fitness software.",
-    kind: "build",
+      "ExerciseDB went from a catalog to a metered API product: API keys and usage tiers, an incremental sync protocol, RFC 9457 errors, billing, a developer dashboard and a docs site. Live in production, 116 tests. That's where I learned the difference between writing an endpoint and running a service other people depend on.",
+    kind: "milestone",
   },
 ];
 
@@ -253,6 +288,9 @@ export const highlightProject = projects.find((p) => p.highlight);
 /** Featured, minus the lead — these fill the grid beneath it. */
 export const featuredProjects = projects.filter((p) => p.featured && !p.highlight);
 export const otherProjects = projects.filter((p) => !p.featured);
+/** Everything featured, lead first. A CV has no "hero card" — it just needs
+ *  the best work listed, in order. */
+export const resumeProjects = projects.filter((p) => p.featured);
 
 export const navLinks = [
   { label: "About", href: "/#about" },

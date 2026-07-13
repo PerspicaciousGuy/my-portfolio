@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { site, socials, about, skills, timeline, featuredProjects } from "@/data/site";
+import {
+  site,
+  socials,
+  about,
+  skills,
+  alsoUsed,
+  timeline,
+  resumeProjects,
+} from "@/data/site";
 import { PrintButton } from "@/components/print-button";
 
 export const metadata: Metadata = {
@@ -62,12 +70,18 @@ export default function ResumePage() {
                 <dd className="text-fg-muted">{g.items.join(" · ")}</dd>
               </div>
             ))}
+            <div className="flex gap-3 text-sm">
+              <dt className="w-32 shrink-0 font-medium">Also used</dt>
+              <dd className="text-fg-muted">{alsoUsed.join(" · ")}</dd>
+            </div>
           </dl>
         </Block>
 
         <Block title="Projects">
           <ul className="space-y-4">
-            {featuredProjects.map((p) => (
+            {/* The lead project is excluded from featuredProjects (it gets its
+                own card on the site) — a CV must still list it, and first. */}
+            {resumeProjects.map((p) => (
               <li key={p.name}>
                 <div className="flex items-baseline justify-between gap-4">
                   <h3 className="font-medium">
