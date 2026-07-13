@@ -7,12 +7,16 @@ type Props = {
   children: ReactNode;
   delay?: number;
   className?: string;
+  /** Render as an <li> when the Reveal is a direct child of a list, so the
+   *  animation wrapper doesn't break <ul>/<ol> → <li> semantics. */
+  as?: "div" | "li";
 };
 
 /** Fades and lifts content into view once, when it first scrolls on screen. */
-export function Reveal({ children, delay = 0, className }: Props) {
+export function Reveal({ children, delay = 0, className, as = "div" }: Props) {
+  const Tag = as === "li" ? motion.li : motion.div;
   return (
-    <motion.div
+    <Tag
       className={className}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -20,6 +24,6 @@ export function Reveal({ children, delay = 0, className }: Props) {
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
-    </motion.div>
+    </Tag>
   );
 }
