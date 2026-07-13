@@ -1,0 +1,123 @@
+---
+title: "The agent is not the engineer"
+summary: "I built a metered API — sync protocol, billing webhooks, 116 tests — working with coding agents most of the way. The speed was real. So was everything it quietly got wrong."
+date: "2026-07-15"
+tags: ["ai", "workflow", "engineering"]
+---
+
+I built ExerciseDB with coding agents. An incremental sync protocol with
+tombstones and watermarks, API keys with usage tiers, signature-verified billing
+webhooks, RFC 9457 errors, 116 tests. Agents were involved in most of it.
+
+The speed is real. I'm not going to be coy about that — I shipped something in
+months that would have taken me a lot longer alone.
+
+But "AI made me fast" is a boring and slightly dishonest way to describe what
+actually happened, because the speed wasn't the hard part. **Deciding what to
+point it at, and catching what it got wrong, was the hard part.** That's the
+part nobody writes about, so that's what this is about.
+
+## Agents are fast at typing, not at deciding
+
+An agent will happily write you a sync endpoint. It'll be plausible. It'll have
+pagination and a timestamp filter and it will look completely correct.
+
+It will also, unless you tell it otherwise, quietly get this wrong:
+
+- **Deletions.** A record that disappears from a response is indistinguishable
+  from one that didn't change. You need explicit tombstones. An agent won't
+  volunteer that, because nothing in "write me a sync endpoint" implies it.
+- **The watermark.** If you capture "now" *after* reading the last page, any
+  record written mid-sync falls into the gap and is lost forever, on the client,
+  silently. That's a data-loss bug with no error message and no stack trace.
+
+Neither of those is a coding problem. They're *modelling* problems — you have to
+already know that the failure mode exists to ask for the thing that prevents it.
+The agent typed the endpoint in two minutes. Knowing what to make it do took me
+considerably longer, and that was the actual work.
+
+The pattern generalises: **agents collapse the cost of writing code, which makes
+the cost of knowing what to write the whole job.**
+
+## So I stopped prompting and started writing rules
+
+The first weeks were a mess. I'd get code that worked and violated conventions I
+hadn't articulated. I'd correct it, and the next session it would drift right
+back, because I was re-explaining myself from scratch every time. I was the
+context window, and I was a bad one.
+
+So I built `agents-guidelines/` — a portable rules library that lives in the
+repo. Not prompts. Rules, split by concern: security, testing, git, deployment,
+API design, data access. It's shared across my projects, and it doesn't get
+edited to suit whichever one I'm in today.
+
+The three habits that did the most work:
+
+**An `AGENTS.md` that defines a protocol, not a personality.** Plan before you
+touch anything. Say what you'll change and what you won't. Stay in scope. Report
+what you actually did — including what you noticed and *didn't* fix.
+
+**A mandatory `HANDOFF.md`.** Updated at the end of every single task: current
+state, last action, known issues, what's pending. It exists because an agent
+starts every session with amnesia and I don't. It's how the project remembers
+itself. It's also, incidentally, the best project documentation I've ever kept —
+which is a slightly embarrassing thing to learn about myself.
+
+**A `conventions.md` for deliberate deviations.** When the project knowingly
+breaks a rule, the reason gets written down. My OpenAPI spec is 1,529 lines and
+the rules say split at 500. I didn't split it. The reasoning is recorded, so
+neither I nor an agent re-litigates it in three months.
+
+That last file taught me something I didn't expect. Writing down *why* I was
+departing from a rule forced me to check whether the rule was actually wrong. In
+one case it was — my library assumed every Express stack is TypeScript, and this
+project is plain JavaScript. That's a gap in my rules, not a defect in the
+codebase. I'd never have noticed if I hadn't had to justify myself in writing to
+a machine.
+
+## The stuff it will get wrong, reliably
+
+None of this is a solved problem. These are the failure modes I've had to watch
+for, every time:
+
+**It's confidently wrong at the seams.** Individual functions come out fine.
+Bugs live in the wiring — the route pointing at the wrong handler, the validation
+that lets a bad value through, the response shape that quietly changed. Which is
+exactly why my tests hit real routes and assert real responses rather than
+mocking the pieces. ([More on that here.](/blog/test-the-api-not-the-function))
+
+**It will not tell you what it didn't do.** A missing reconciliation job, a
+migration with no `down`, a webhook processed synchronously with no retry — none
+of those produce an error. They produce a green checkmark and a liability. You
+only catch them by knowing the shape of the thing you're building well enough to
+notice a hole.
+
+**It optimises for looking finished.** It will produce something that runs. Whether
+it should *ship* is a question it isn't equipped to answer, and it will not raise
+its hand.
+
+**Scope creep is the default.** Ask for a fix and you'll get a fix plus a
+refactor plus a helper you didn't want. Half of `AGENTS.md` exists to say: do
+exactly this, and nothing else, and tell me what else you noticed.
+
+## What I actually think
+
+The framing I keep seeing — *is AI going to replace developers* — is the wrong
+question, and juniors keep asking it because it's the one that scares them.
+
+Here's what I found instead: **agents are an enormous multiplier on judgment you
+already have, and a very efficient way to generate plausible garbage if you
+don't.** They made me faster at the parts I understood. They made me *dangerous*
+at the parts I didn't, because they'd hand me something that looked right and I
+had no basis to disagree.
+
+Which means the leverage isn't in prompting better. It's in the same boring
+things it always was: knowing what a correct sync protocol has to guarantee.
+Knowing that authentication isn't authorization. Knowing that a public contract
+is expensive to change and an internal function isn't. Those are the things that
+let you look at a plausible diff and say *no, that's subtly wrong, and here's
+why.*
+
+The agent typed most of my code. It didn't decide any of it.
+
+That distinction is the entire job, and it's the one I'd want to be hired for.
