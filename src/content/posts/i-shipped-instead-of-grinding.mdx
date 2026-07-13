@@ -1,0 +1,114 @@
+---
+title: "I shipped instead of grinding"
+summary: "Three years of a BCA in a small city in Rajasthan. No internship, no referrals, no LeetCode streak. I built things that run in production instead — and I want to be honest about what that cost."
+date: "2026-07-16"
+tags: ["career", "learning"]
+---
+
+I'm finishing a BCA in Ganganagar, a city in Rajasthan that has never appeared
+on a tech company's map. I have no internship. No referral. No alumni network
+that ends in a warm intro. I have never completed a LeetCode streak.
+
+What I have instead is an API running in production with paying-tier
+infrastructure, a sync protocol, and 116 tests.
+
+I want to write about that choice honestly — including the parts that didn't
+work out — because most posts like this are written by people it worked out for,
+which makes them useless as advice.
+
+## The choice
+
+The standard path was obvious enough. Grind DSA, do the puzzles, get good at the
+ninety-minute interview, hope a recruiter looks at a college they've never heard
+of.
+
+I couldn't make myself believe in it. Not because it's *wrong* — it demonstrably
+works for a lot of people — but because I'd be competing on the exact axis where
+my disadvantages were largest. Every candidate from a tier-1 college with a
+referral was playing that game too, and they were playing it with better
+equipment.
+
+So I picked the axis nobody was competing on: **actually shipping things that
+other people could use.**
+
+Not clones. Not tutorials with my variable names. Things that run, that break at
+3am, that have to be correct when nobody is watching.
+
+## What that actually looked like
+
+It looked like being wrong a lot, in public, on a schedule nobody set.
+
+I needed a list of exercises for an app I was building. There wasn't a decent
+one, so I built the catalog. Then the catalog needed to sync to a phone that
+loses signal in a basement gym, which turned out to be a genuinely hard
+distributed-systems problem hiding inside a fitness app. Then it needed API keys,
+so people couldn't just drain it. Then keys needed tiers. Then tiers needed
+billing.
+
+Nobody assigned me any of that. Each thing was just the next thing that had to be
+true for the last thing to matter.
+
+That's the entire method, and it isn't clever: **build something you actually
+want to exist, then refuse to stop when it gets boring.** The boring part is
+where the learning is. Anyone can build the fun 60%. The last 40% — errors,
+edge cases, the migration you can't roll back — is the part that teaches you what
+production means, and it's the part tutorials skip because it doesn't demo well.
+
+## What it cost me
+
+Here's the part these posts usually leave out.
+
+**I can't pass your interview.** If you sit me down and ask me to invert a binary
+tree in twenty minutes on a whiteboard, I will be slower than someone who has
+done four hundred of them. That's not a complaint about the format — it's just
+true. I optimised for a different thing, and the bill comes due in the room.
+
+**I have no team scars.** I've never merged into a codebase with forty other
+people in it. Never had a design doc torn apart. Never inherited something awful
+from someone who left. Everything I know about working with others is theory, and
+I know it's theory.
+
+**Self-directed means self-inflicted.** No senior looked at my first schema and
+said "that's going to hurt you in a week." I had to ship the mistake, feel it,
+and fix it. That's a real education, but it's an *expensive* one — the slowest
+possible way to learn a thing someone could have told me in one sentence.
+
+**Nobody is coming.** There's no campus placement cell fixing this. If it works,
+it works because somebody read something I built and thought *huh, this person
+can think*. That's a thin thread, and some weeks it feels very thin.
+
+## What I think it bought me
+
+**I know what I don't know, precisely.** I can tell you exactly where my API is
+weak — the tombstone wart I can't fix without a breaking change, the webhooks
+with no reconciliation job, the migrations with no `down`. That's not modesty.
+It's the map. You only get a map like that from having to live somewhere.
+
+**I've made real decisions with real consequences.** Not "which framework" —
+things like *what does this API guarantee to a client that goes offline for a
+week*. Get that wrong and someone's data disappears with no error message.
+Answering questions like that changes how you think in a way no exercise does.
+
+**I have something to point at.** When someone asks what I can do, I don't
+describe it. I give them a URL and they run it. That's a fundamentally different
+conversation.
+
+## Would I recommend it?
+
+Honestly? **Only if you'd do it anyway.**
+
+If you're grinding DSA and it's working, keep going — this is not a moral
+argument and I'm not the guy to take advice from about a path I didn't take.
+
+But if you're in a small city with no network, on a résumé nobody's going to
+shortlist, and the standard path feels like queueing for a door that isn't going
+to open for you — then the alternative is not a hack or a shortcut. It's just
+harder, and slower, and it works differently: **you stop asking to be let in and
+start building something they have to look at.**
+
+I don't know yet if it worked. I'm graduating in August with a product, a blog,
+and no offer. Ask me in six months.
+
+But I'd rather be judged on something I actually built than on how fast I can
+reverse a linked list — and if that costs me some interviews, I think I can live
+with that.
