@@ -11,53 +11,39 @@ const COUNT = 4200;
 const REPEL_RADIUS = 1.5;
 const REPEL_STRENGTH = 0.28;
 
-/** Rough humanoid point cloud — a nod to the Open Muscle Map project. */
-function humanoidTarget(i: number, rng: () => number): THREE.Vector3 {
+/**
+ * A (2,3) torus knot — the classic trefoil, a single looping curve that twists
+ * through itself. Most particles ride the curve as a soft "rope" of points; a
+ * few drift off as ambient dust so it sits in space rather than floating alone.
+ */
+function torusKnotTarget(i: number, rng: () => number): THREE.Vector3 {
   const t = i / COUNT;
-  const r = rng();
 
-  // head
-  if (t < 0.09) {
-    const v = new THREE.Vector3().randomDirection().multiplyScalar(0.52);
-    return v.add(new THREE.Vector3(0, 2.35, 0));
+  // Ambient dust — a sparse halo around the knot.
+  if (t > 0.94) {
+    return new THREE.Vector3()
+      .randomDirection()
+      .multiplyScalar(3.2 + rng() * 2.6);
   }
-  // torso
-  if (t < 0.42) {
-    const y = 0.35 + rng() * 1.55;
-    const taper = 1 - Math.abs(y - 1.15) * 0.18;
-    const a = rng() * Math.PI * 2;
-    const rad = (0.42 + rng() * 0.34) * taper;
-    return new THREE.Vector3(Math.cos(a) * rad * 1.5, y, Math.sin(a) * rad * 0.62);
-  }
-  // arms
-  if (t < 0.62) {
-    const side = rng() > 0.5 ? 1 : -1;
-    const d = rng();
-    const x = side * (0.72 + d * 1.28);
-    const y = 1.86 - d * 1.45;
-    const j = 0.13;
-    return new THREE.Vector3(
-      x + (rng() - 0.5) * j,
-      y + (rng() - 0.5) * j,
-      (rng() - 0.5) * j,
-    );
-  }
-  // legs
-  if (t < 0.92) {
-    const side = rng() > 0.5 ? 1 : -1;
-    const d = rng();
-    const x = side * (0.3 + d * 0.12);
-    const y = 0.35 - d * 2.15;
-    const j = 0.17;
-    return new THREE.Vector3(
-      x + (rng() - 0.5) * j,
-      y + (rng() - 0.5) * j,
-      (rng() - 0.5) * j,
-    );
-  }
-  // ambient dust
-  const v = new THREE.Vector3().randomDirection().multiplyScalar(2.6 + r * 2.4);
-  return v;
+
+  const p = 2;
+  const q = 3;
+  const R = 1.9;
+  // Spread the on-curve particles evenly along the full knot parameter.
+  const u = (t / 0.94) * p * Math.PI * 2;
+  const quOverP = (q / p) * u;
+  const ring = (2 + Math.cos(quOverP)) * 0.5;
+  const x = R * ring * Math.cos(u);
+  const y = R * ring * Math.sin(u);
+  const z = R * Math.sin(quOverP) * 0.5 * 1.6; // exaggerate depth a touch
+
+  // Tube thickness: a soft random offset so the knot reads as a rope of points
+  // rather than a thin wire. sqrt() biases toward the core for a dense centre.
+  const off = new THREE.Vector3()
+    .randomDirection()
+    .multiplyScalar(Math.sqrt(rng()) * 0.16);
+
+  return new THREE.Vector3(x, y, z).add(off);
 }
 
 function sphereTarget(rng: () => number): THREE.Vector3 {
@@ -107,7 +93,7 @@ export function ParticleField({ scroll, isDark }: Props) {
       const r = makeRng(1000 + stage * 77);
       for (let i = 0; i < COUNT; i++) {
         let v: THREE.Vector3;
-        if (stage === 0) v = humanoidTarget(i, r);
+        if (stage === 0) v = torusKnotTarget(i, r);
         else if (stage === 1) v = sphereTarget(r);
         else if (stage === 2) v = fieldTarget(r);
         else v = convergeTarget(r);
