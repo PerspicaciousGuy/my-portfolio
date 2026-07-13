@@ -146,6 +146,11 @@ export type Project = {
   /** Path under /public — shown on hover. Capture from the live deploy. */
   preview?: string;
   featured: boolean;
+  /** The one project that leads the section, in a full-width card. Exactly one
+   *  project should set this — if everything is emphasised, nothing is. */
+  highlight?: boolean;
+  /** Hard numbers for the lead card. Evidence beats adjectives. */
+  metrics?: { label: string; value: string }[];
   year: string;
 };
 
@@ -160,6 +165,13 @@ export const projects: Project[] = [
     repo: "https://github.com/PerspicaciousGuy/exercises-api",
     live: "https://docs.harshitbishnoi.dev",
     featured: true,
+    highlight: true,
+    metrics: [
+      { label: "Tests", value: "116" },
+      { label: "Errors", value: "RFC 9457" },
+      { label: "Auth", value: "API keys + tiers" },
+      { label: "Status", value: "Live in production" },
+    ],
     year: "2026",
   },
   {
@@ -202,7 +214,7 @@ export const projects: Project[] = [
       "Monitors the Sydney, Tokyo, London and New York sessions, firing 30-minute warnings, 5-minute prep pings, and open/close/overlap alerts so traders can time their day.",
     stack: ["Python", "Telegram API", "Scheduling"],
     repo: "https://github.com/PerspicaciousGuy/Forex-News-Bot",
-    featured: true,
+    featured: false,
     year: "2026",
   },
   {
@@ -212,7 +224,7 @@ export const projects: Project[] = [
       "Shorten-URL API with a timed interstitial page for monetization and basic click analytics. Built on Node, Express and MongoDB.",
     stack: ["Node.js", "Express", "MongoDB"],
     repo: "https://github.com/PerspicaciousGuy/Shortener",
-    featured: true,
+    featured: false,
     year: "2025",
   },
   {
@@ -236,7 +248,10 @@ export const projects: Project[] = [
   },
 ];
 
-export const featuredProjects = projects.filter((p) => p.featured);
+/** The lead project, shown full-width above the grid. */
+export const highlightProject = projects.find((p) => p.highlight);
+/** Featured, minus the lead — these fill the grid beneath it. */
+export const featuredProjects = projects.filter((p) => p.featured && !p.highlight);
 export const otherProjects = projects.filter((p) => !p.featured);
 
 export const navLinks = [
