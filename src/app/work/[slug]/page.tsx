@@ -4,9 +4,16 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, Code2 } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getCaseStudy, getCaseStudySlugs } from "@/lib/case-studies";
+import { getCaseStudy, getCaseStudySlugs, slugifyHeading } from "@/lib/case-studies";
 import { ApiPlayground } from "@/components/api-playground";
+import { Toc } from "@/components/toc";
 import { Footer } from "@/components/footer";
+
+/** Give every section a stable anchor the table of contents can link to. */
+function H2({ children }: { children?: React.ReactNode }) {
+  const text = typeof children === "string" ? children : String(children ?? "");
+  return <h2 id={slugifyHeading(text)}>{children}</h2>;
+}
 
 export async function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
@@ -45,7 +52,14 @@ export default async function CaseStudyPage({
 
   return (
     <>
-      <main className="relative mx-auto w-full max-w-2xl px-6 py-24">
+      {/* The article stays a fixed, readable column. On xl the grid adds a
+          left gutter for the TOC — space that was dead margin anyway. */}
+      <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-12 px-6 py-24 xl:max-w-6xl xl:grid-cols-[15rem_minmax(0,42rem)] xl:justify-center">
+        <aside className="hidden xl:block">
+          <Toc headings={study.headings} />
+        </aside>
+
+        <main className="relative w-full min-w-0">
         <Link
           href="/#work"
           className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
@@ -133,10 +147,11 @@ export default async function CaseStudyPage({
               into their MDX. Only the API study uses it. */}
           <MDXRemote
             source={study.content}
-            components={{ Playground: ApiPlayground }}
+            components={{ Playground: ApiPlayground, h2: H2 }}
           />
         </article>
-      </main>
+        </main>
+      </div>
       <Footer />
     </>
   );
