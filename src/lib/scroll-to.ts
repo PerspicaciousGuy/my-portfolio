@@ -73,9 +73,14 @@ if (typeof window !== "undefined") {
 export function scrollToSection(href: string): boolean {
   if (typeof window === "undefined") return false;
 
-  // Only ever handle in-page targets, and only while we're on the home page.
-  // From /blog or /resume these are real navigations — let the router do it.
-  if (window.location.pathname !== "/") return false;
+  const onHome = window.location.pathname === "/";
+
+  // A bare "#section" is same-page wherever we are (the case-study table of
+  // contents uses these). The "/#section" form, though, is a real navigation
+  // from /blog or /work — only treat it as a scroll while we're on the home
+  // page, and otherwise let the router handle it.
+  const isBareHash = href.startsWith("#");
+  if (!isBareHash && !onHome) return false;
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const duration = reduced ? REDUCED_DURATION : DURATION;
@@ -83,15 +88,11 @@ export function scrollToSection(href: string): boolean {
   // The wordmark ("/" or "#") means "back to the top".
   if (href === "/" || href === "#") {
     animateScrollTo(0, duration);
-    history.replaceState(null, "", "/");
+    history.replaceState(null, "", onHome ? "/" : window.location.pathname);
     return true;
   }
 
-  const hash = href.startsWith("/#")
-    ? href.slice(1)
-    : href.startsWith("#")
-      ? href
-      : null;
+  const hash = isBareHash ? href : href.startsWith("/#") ? href.slice(1) : null;
 
   if (!hash) return false;
 
