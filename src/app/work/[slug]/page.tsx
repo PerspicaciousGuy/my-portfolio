@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, Code2 } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getCaseStudy, getCaseStudySlugs } from "@/lib/case-studies";
+import { ApiPlayground } from "@/components/api-playground";
 import { Footer } from "@/components/footer";
 
 export async function generateStaticParams() {
@@ -128,7 +129,12 @@ export default async function CaseStudyPage({
         </div>
 
         <article className="prose-portfolio mt-14">
-          <MDXRemote source={study.content} />
+          {/* Case studies opt into the live console by dropping <Playground />
+              into their MDX. Only the API study uses it. */}
+          <MDXRemote
+            source={study.content}
+            components={{ Playground: ApiPlayground }}
+          />
         </article>
       </main>
       <Footer />
