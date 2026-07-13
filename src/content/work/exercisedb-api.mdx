@@ -88,7 +88,10 @@ education:
 - **Billing**, provider-neutral by design and wired to Lemon Squeezy first:
   checkout, signature-verified webhooks, idempotent delivery, automatic upgrade
   on activation and downgrade on cancellation, expiry, pause, or failed payment.
-  *(Implemented and tested — the store isn't switched on yet.)*
+  Built and tested end to end; it's waiting on Lemon Squeezy's merchant
+  verification, not on code. Which is why the provider sits behind an interface —
+  if that approval never lands, swapping in Stripe or Paddle is a new adapter,
+  not a rewrite.
 - **A developer dashboard** for keys and usage, and a **docs site**, both drawing
   from one shared design system so they read as one product.
 
