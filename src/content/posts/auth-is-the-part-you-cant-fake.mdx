@@ -1,0 +1,87 @@
+---
+title: "Auth is the part you can't fake"
+summary: "Anyone can wire up a login form. The part that separates a real backend from a toy is what happens on every request after it."
+date: "2026-07-13"
+tags: ["backend", "security", "auth"]
+---
+
+You can tell a lot about a backend by how it handles auth.
+
+Not the login screen — the login screen is easy. `POST /register`, `POST /login`,
+hand back a token, done. The part that actually matters is invisible: what
+happens on the thousandth request, when a logged-in user asks for a record that
+isn't theirs.
+
+That's the line between authentication and authorization, and it's where most
+hobby backends quietly leak.
+
+## The bar I set
+
+For the exercise API I built the usual three doors — `register`, `login`, and
+`me` — but I treated everything past them as the real work. A user can create
+exercises, edit them, delete them, organise them into categories. Every one of
+those actions has to answer two separate questions:
+
+- **Authentication:** are you who you say you are?
+- **Authorization:** are you allowed to touch *this specific thing*?
+
+Getting the first right is table stakes. Getting the second wrong is how you end
+up letting user 5 delete user 12's data with a URL they guessed.
+
+## Passwords and tokens, the boring correct way
+
+Passwords go through `bcrypt` before they ever hit the database, and the
+plaintext never gets logged, echoed, or returned — not even in an error. If my
+database leaks, the attacker gets hashes, not accounts.
+
+Login hands back a **JWT**. The payload carries the user's id and nothing
+sensitive — no email, no role I'd be sad to see decoded, because anyone can read
+a JWT payload; it's signed, not encrypted. The token expires, and the client
+sends it on every request as a bearer token.
+
+None of this is clever. That's the point. Auth is not where you want to be
+clever.
+
+## The check that actually matters
+
+Here's the one that separates real from fake. When a request comes in to edit an
+exercise, it isn't enough that the token is *valid*. The row being edited has to
+*belong to the user in that token*.
+
+So ownership isn't a route-level decoration — it lives in the query. The update
+doesn't just match on the record id; it matches on the record id **and** the
+owner id from the token. If they don't line up, the row simply isn't found, and
+the caller gets a 404 rather than a hint that it exists at all.
+
+## Hardening the front door
+
+A couple of things that aren't optional once real people can reach it:
+
+- **`helmet`** for sane security headers, so I'm not shipping defaults that leak
+  information.
+- **A CORS allowlist**, not `*`. The API decides who's allowed to call it.
+- **Rate limiting on the auth routes specifically.** `login` is the brute-force
+  target, not `GET /exercises`. Throttling the whole API annoys legitimate
+  clients; throttling the login route stops the attack.
+
+## What I got wrong
+
+The first version authenticated everything and authorized nothing. Every
+protected route checked "is this a valid token?" and stopped there. Which meant
+any logged-in user could edit any record by id — a textbook insecure direct
+object reference, sitting in my own code.
+
+It worked in every test I'd written, because all my tests used one user. The
+bug only exists the moment a second person shows up. Now I write the second-user
+test first: log in as A, create a thing, then try to touch it as B and assert
+that it fails. If that test isn't there, I don't trust the endpoint.
+
+## The takeaway
+
+Auth is the part of a backend you can't bluff, because the failure mode isn't a
+crash you'll notice — it's a quiet hole someone else finds. The code for it
+should be boring, obvious, and enforced at the layer that touches the data. If
+it's interesting, something is probably wrong.
+
+The API is [on GitHub](https://github.com/PerspicaciousGuy/gymlogger_backend) if
+you want to see how the pieces fit.
