@@ -82,19 +82,37 @@
   }
 }
 
-/* Backdrop for devices that can't (or shouldn't) run WebGL */
-.fallback-backdrop {
-  background:
-    radial-gradient(
-      ellipse 80% 60% at 50% 0%,
-      rgb(var(--glow) / 0.16),
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 60% 50% at 80% 70%,
-      rgb(var(--glow) / 0.07),
-      transparent 65%
-    );
+/* ── Hero texture ─────────────────────────────────────────────────────────
+   A faint static dot grid behind the hero, masked so it fades out before the
+   content sections. Just enough texture to feel intentional, never busy. The
+   dot colour tracks the foreground token, so it adapts to light and dark. */
+.hero-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: -10;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    rgb(var(--fg)) 1px,
+    transparent 1.6px
+  );
+  background-size: 24px 24px;
+  opacity: 0.14;
+  /* Fade the grid out toward the edges and bottom so it's a soft halo behind
+     the hero, not a hard sheet across the whole viewport. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 68% at 42% 34%,
+    #000 0%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 68% at 42% 34%,
+    #000 0%,
+    transparent 72%
+  );
 }
 
 /* Article body. Kept hand-rolled so it stays on the same tokens as the site.
