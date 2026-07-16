@@ -226,6 +226,17 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
+    name: "Quiet Library",
+    blurb: "A PWA audiobook player that streams from your own Google Drive — and keeps playing offline.",
+    description:
+      "Streams audiobook files straight from a user's Google Drive through an authenticated bounded-Range proxy, without ever copying them to app storage. Versioned progress sync with atomic stale-write rejection, an offline-first PWA (service worker, OPFS/Cache downloads via Dexie, airplane-mode playback), Media Session controls, RLS-backed Supabase, and RFC 9457 errors behind CSP/HSTS.",
+    stack: ["Next.js", "TypeScript", "Supabase", "Dexie", "PWA", "Web Audio", "Zod"],
+    repo: "https://github.com/PerspicaciousGuy/audiobooks-player",
+    live: "https://greasy-bethanne-ebooks-0926d76e.koyeb.app",
+    featured: true,
+    year: "2026",
+  },
+  {
     name: "Exercise Library API",
     blurb: "A REST API with JWT auth, ownership checks, and user-authored content.",
     description:
