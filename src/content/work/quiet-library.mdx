@@ -1,0 +1,118 @@
+---
+summary: "An audiobook player for people who keep their own files in Google Drive. It streams straight from Drive, keeps playing offline, and never loses your place — which sounds simple and is three hard problems in a trench coat."
+facts:
+  - label: "Role"
+    value: "Sole engineer"
+  - label: "Type"
+    value: "Next.js PWA"
+  - label: "Tests"
+    value: "64, 71% coverage"
+---
+
+## The problem
+
+I have a folder of audiobook files in Google Drive, like a lot of people who buy
+audiobooks that aren't locked inside an app. There was no good way to actually
+*listen* to them: play one, keep my place, pick up on my phone where I left off
+on my laptop, and have it still work on the metro with no signal.
+
+The apps that exist want to own your files. I wanted the opposite — the files
+stay in your Drive, the player just knows how to read them. That constraint is
+the whole project, and it's what makes it interesting, because "don't copy the
+files" quietly forbids all the easy answers.
+
+## Constraint one: stream from Drive without hosting anything
+
+The obvious version — download the file to my server, serve it — is off the
+table by design. The audio has to come from the user's Drive, on demand, without
+ever landing in app storage.
+
+So the server is a **bounded-Range streaming proxy**. When the player seeks to
+2:14:30 in a six-hour file, the browser asks for a byte range; the server
+forwards *one capped Range request* to Drive with the user's authorization and
+pipes the response straight back. Nothing is buffered to disk. Nothing is cached
+server-side. The server is a valve, not a warehouse.
+
+"Capped" matters: without a bound, a client could ask for an arbitrarily large
+range and turn my proxy into someone else's bandwidth. The range is validated
+and limited before it ever reaches Drive.
+
+## Constraint two: never lose your place
+
+Progress sync is where audiobook apps quietly fail. You listen on your phone,
+then open your laptop, and it's ten minutes behind — so you either lose your
+place or overwrite the good position with a stale one.
+
+The fix is to treat progress as **versioned, with atomic stale-write rejection.**
+Every position carries a version. A write only lands if it's newer than what the
+server already has; a stale timestamp or an out-of-date expected version is
+*rejected*, not applied. Last-write-wins would let your phone — which was paused
+an hour ago — clobber the position your laptop just saved. Version-checked writes
+make that impossible: the newer truth always wins, regardless of which device is
+noisier.
+
+And because a device is often offline exactly when it makes progress, writes go
+into a **bounded retry queue** and reconcile when the connection comes back —
+bounded so a device that's been in a bag for a week doesn't come online and
+replay a thousand stale updates.
+
+## Constraint three: work on the metro
+
+Offline isn't a feature bolted on at the end here; it's a second runtime.
+
+The installable PWA has an update-aware **service worker**, and downloads are
+**explicit** — you choose what to take offline, it isn't a silent cache that
+fills your phone. Completed downloads live in **OPFS / Cache Storage, indexed
+with Dexie**, with real storage accounting so you can see what you're using.
+Offline playback spans multiple files with continuation, the same as online.
+
+The nasty part is reconciliation: a file you downloaded can be *evicted* by the
+browser under storage pressure, or partially written if a download was
+interrupted. So the offline layer reconciles partial and evicted files rather
+than trusting its own index — because the one time it matters is the one time
+you're offline and can't recover gracefully.
+
+## What I'd defend
+
+**Files stay in Drive; offline copies stay on the device.** The server never
+becomes a place your audiobooks live. That's a privacy and a liability decision
+as much as an architectural one — I can't leak what I never hold.
+
+**Drive authorization is separate from sign-in.** Signing into the app and
+granting Drive access are two different consents, so the app can exist in your
+account without holding the keys to your whole Drive until you explicitly hand
+them over for a specific action.
+
+**The boring hardening is done.** RLS-backed Supabase sessions, RFC 9457 error
+responses, CSP and one-year HSTS, private database-backed quotas, account
+deletion, redacted structured logs. 64 tests, ~71% coverage.
+
+## What I got wrong
+
+**I found missing indexes the way you're not supposed to — from an advisor, after
+the fact.** Nullable foreign keys on `bookmarks`, `chapters`, and
+`playback_progress` had no indexes. Nothing was slow yet because the data is
+small, which is exactly how this bites you later: it's invisible until it's a
+production incident. Indexes are cheap to add now and expensive to need.
+
+**A database test is wrong and I've left it wrong, on purpose.** A pgTAP
+assertion wraps a text-returning check in a boolean one, so it fails. I haven't
+silently "fixed" it, because correcting a test that guards behavior is its own
+task with its own review — patching it in passing is how a green suite starts
+lying to you. It's flagged, not buried.
+
+**Codec support is a promise I can't fully keep.** Browsers disagree about audio
+formats, especially OGG. I can build the player perfectly and still hand you a
+file your browser won't decode. The honest position is that final playback
+behavior needs real devices and real files, not my confidence.
+
+## Where it stands
+
+The app is live and hardened; the shell, library, player, sync, and offline
+layers are built and tested. The one thing between it and a full end-to-end demo
+is Google OAuth configuration — no credentials were invented or committed to get
+there faster. It's the same shape as the rest of my work: real, deployed, and one
+honest config step from done.
+
+[Source](https://github.com/PerspicaciousGuy/audiobooks-player) ·
+[Live](https://greasy-bethanne-ebooks-0926d76e.koyeb.app)

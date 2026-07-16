@@ -227,6 +227,7 @@ export const projects: Project[] = [
   },
   {
     name: "Quiet Library",
+    slug: "quiet-library",
     blurb: "A PWA audiobook player that streams from your own Google Drive — and keeps playing offline.",
     description:
       "Streams audiobook files straight from a user's Google Drive through an authenticated bounded-Range proxy, without ever copying them to app storage. Versioned progress sync with atomic stale-write rejection, an offline-first PWA (service worker, OPFS/Cache downloads via Dexie, airplane-mode playback), Media Session controls, RLS-backed Supabase, and RFC 9457 errors behind CSP/HSTS.",
