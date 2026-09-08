@@ -39,6 +39,11 @@ section updates. No component changes needed.
 
 ## Local development
 
+The homepage header includes a keyboard-accessible Menu disclosure below the
+desktop navigation breakpoint, with section links, Writing, and Résumé. Escape,
+outside clicks, and moving focus outside close it. The About grid constrains long
+Last.fm track titles so they truncate within the card on narrow screens.
+
 ```bash
 npm install
 npm run dev     # http://localhost:3000
