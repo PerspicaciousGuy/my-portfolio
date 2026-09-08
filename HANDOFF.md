@@ -2,11 +2,12 @@
 Personal Next.js portfolio with project case studies, writing, and Last.fm activity.
 
 ## Current State
+LinkedIn profile is included in the shared social links used by the hero, contact section, footer, résumé, and profile metadata.
 Existing portfolio implementation. Last.fm image optimization now allows both the existing and lastfm-img.freetls.fastly.net HTTPS hosts.
 Homepage navigation includes a native mobile disclosure below lg. About grid columns shrink to the viewport even with long Last.fm track titles.
 
 ## Last Action
-2026-09-08: Added mobile-nav.tsx and integrated it in nav.tsx. Added constrained columns to sections/about.tsx. Updated README.md. Playwright verified no document overflow at 320, 390, 768, 1024, and 1440 px with synthetic long track content; original automatic grid expanded to 3061 px versus 390 px after correction. Verified seven links, Escape with focus restoration, Work anchor navigation, outside dismissal, desktop/mobile resize, and Writing navigation. Inspected the menu screenshot. TypeScript and targeted ESLint passed. No dependencies installed or persistent test suite added.
+2026-09-08: Added https://www.linkedin.com/in/harshitbishnoi to socials in src/data/site.ts, labeled LinkedIn with display name Harshit Bishnoi. TypeScript, targeted ESLint, and whitespace checks passed. Updated this handoff. No packages installed or new files created.
 
 ## In Progress
 None.
@@ -21,5 +22,6 @@ Other prior audit findings remain outside this task. The earlier attribution of 
 - Created: HANDOFF.md (session handoff); src/components/mobile-nav.tsx (native mobile navigation disclosure). Earlier project creation history is not reconstructed.
 - Modified: next.config.ts (prior artwork hostname fix); src/components/nav.tsx (mobile navigation integration); src/components/sections/about.tsx (constrained grid columns); README.md (navigation documentation); HANDOFF.md (verification results).
 - Currently Being Edited: None.
+- Modified this task: src/data/site.ts (LinkedIn profile), HANDOFF.md (session record).
 - Planned to Edit: None.
 - Untouched: Other src/ files, package.json, package-lock.json, environment files.
