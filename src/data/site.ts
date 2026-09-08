@@ -18,6 +18,7 @@ export const site = {
 } as const;
 
 export const socials = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/harshitbishnoi", handle: "Harshit Bishnoi" },
   { label: "GitHub", href: "https://github.com/PerspicaciousGuy", handle: "@PerspicaciousGuy" },
   { label: "X", href: "https://x.com/obrakar", handle: "@obrakar" },
   { label: "Instagram", href: "https://instagram.com/perspicaciousguy", handle: "@perspicaciousguy" },
