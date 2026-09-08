@@ -6,7 +6,7 @@ import { NowPlaying } from "@/components/now-playing";
 export function About() {
   return (
     <Section id="about" index="01" title="About">
-      <div className="grid gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-16">
         <div className="space-y-6">
           {about.paragraphs.map((p, i) => (
             <Reveal key={i} delay={i * 0.08}>
