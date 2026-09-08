@@ -7,6 +7,7 @@ import { onAnchorClick } from "@/lib/scroll-to";
 import { useActiveSection } from "@/lib/use-active-section";
 import { ThemeToggle } from "./theme-toggle";
 import { CommandPalette } from "./command-palette";
+import { MobileNav } from "./mobile-nav";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -86,6 +87,7 @@ export function Nav() {
 
           <CommandPalette />
           <ThemeToggle />
+          <MobileNav active={active} />
         </div>
       </nav>
     </motion.header>
