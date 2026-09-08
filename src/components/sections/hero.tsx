@@ -51,8 +51,7 @@ export function Hero() {
           variants={item}
           className="mt-6 max-w-xl text-pretty text-lg text-fg-muted sm:text-xl"
         >
-          <span className="text-fg">{site.role}</span> based in {site.location}.{" "}
-          {site.tagline}
+          {site.heroIntro}
         </motion.p>
 
         <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">

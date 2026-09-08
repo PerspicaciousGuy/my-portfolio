@@ -7,6 +7,7 @@ export const site = {
   name: "Harshit Bishnoi",
   shortName: "Harshit",
   role: "Full-Stack Developer",
+  heroIntro: "Full-stack developer building production APIs and the apps around them.",
   tagline:
     "I build production APIs — and the billing, docs and dashboards that turn them into products.",
   location: "Ganganagar, Rajasthan, India",
