@@ -8,7 +8,7 @@ Existing portfolio implementation. Last.fm image optimization now allows both th
 Homepage navigation includes a native mobile disclosure below lg. About grid columns shrink to the viewport even with long Last.fm track titles.
 
 ## Last Action
-2026-09-08: Added site.heroIntro in src/data/site.ts and rendered it in src/components/sections/hero.tsx, removing the location and longer tagline from the hero only. TypeScript, targeted ESLint, and whitespace checks passed. Updated this handoff. No packages installed or new files created. User-provided image.png left untouched.
+Fixed all ESLint errors and warnings (lint, typecheck and build pass), synced package-lock.json, rewrote README.md to match the actual stack (no Three.js), and wrote a local AGENTS.md (gitignored, imported by CLAUDE.md).
 
 ## In Progress
 None.
