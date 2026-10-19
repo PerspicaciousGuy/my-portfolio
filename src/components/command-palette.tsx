@@ -169,8 +169,6 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, [close]);
 
-  useEffect(() => setActive(0), [query]);
-
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -233,7 +231,10 @@ export function CommandPalette() {
                 <input
                   autoFocus
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setActive(0);
+                  }}
                   onKeyDown={onKeyDown}
                   placeholder="Search or jump to…"
                   aria-label="Search commands"

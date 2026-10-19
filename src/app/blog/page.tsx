@@ -44,7 +44,14 @@ export default async function BlogIndex() {
             {/* Strip the content: the index only needs metadata, and shipping
                 every post's body to the browser would be absurd. */}
             <PostList
-              posts={posts.map(({ content: _content, headings: _h, ...meta }) => meta)}
+              posts={posts.map((p) => ({
+                slug: p.slug,
+                title: p.title,
+                summary: p.summary,
+                date: p.date,
+                readingTime: p.readingTime,
+                tags: p.tags,
+              }))}
             />
           </div>
         )}

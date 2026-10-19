@@ -20,16 +20,12 @@ export function ApiPlayground() {
   const [active, setActive] = useState(playgroundRequests[0]);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Ignore a slow response if the user has since picked another request.
   const requestSeq = useRef(0);
 
-  const run = useCallback(async (path: string) => {
-    const seq = ++requestSeq.current;
-    setLoading(true);
-    setError(null);
-
+  const fetchResult = useCallback(async (path: string, seq: number) => {
     try {
       const res = await fetch(
         `/api/playground?path=${encodeURIComponent(path)}`,
@@ -50,10 +46,20 @@ export function ApiPlayground() {
     }
   }, []);
 
-  // Run the first request on mount so the panel is never empty.
+  function run(path: string) {
+    const seq = ++requestSeq.current;
+    setLoading(true);
+    setError(null);
+    return fetchResult(path, seq);
+  }
+
+  // Run the first request on mount so the panel is never empty. Loading starts
+  // true, so this only has to fetch — no state is set before the await.
   useEffect(() => {
-    run(playgroundRequests[0].path);
-  }, [run]);
+    // The rule can't see that fetchResult only sets state after its await.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchResult(playgroundRequests[0].path, ++requestSeq.current);
+  }, [fetchResult]);
 
   function select(id: string) {
     const next = playgroundRequests.find((r) => r.id === id);
