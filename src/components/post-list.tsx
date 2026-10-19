@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import type { PostMeta } from "@/lib/posts";
 import { formatDate } from "@/lib/format-date";
-import { Reveal } from "@/components/ui/reveal";
 
 /**
  * The writing index: a tag sidebar that filters the list.
