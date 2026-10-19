@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { navLinks, site } from "@/data/site";
 import { onAnchorClick } from "@/lib/scroll-to";
@@ -41,14 +42,14 @@ export function Nav() {
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
-        <a
+        <Link
           href="/"
           onClick={onAnchorClick}
           className="font-mono text-sm font-medium tracking-tight transition-colors hover:text-accent"
         >
           {site.shortName.toLowerCase()}
           <span className="text-accent">.</span>
-        </a>
+        </Link>
 
         <div className="flex items-center gap-4">
           <ul className="hidden items-center gap-6 lg:flex">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 /**
@@ -8,7 +9,9 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
  * Fine-pointer devices only — never shown on touch, where there is no cursor.
  */
 export function Cursor() {
-  const [enabled, setEnabled] = useState(false);
+  const fine = useMediaQuery("(pointer: fine)");
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const enabled = fine && !reduced;
   const [hovering, setHovering] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -18,11 +21,7 @@ export function Cursor() {
   const sy = useSpring(y, { stiffness: 500, damping: 32, mass: 0.4 });
 
   useEffect(() => {
-    const fine =
-      window.matchMedia("(pointer: fine)").matches &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine) return;
-    setEnabled(true);
+    if (!enabled) return;
 
     const move = (e: MouseEvent) => {
       x.set(e.clientX);
@@ -41,7 +40,7 @@ export function Cursor() {
       window.removeEventListener("mousemove", move);
       document.removeEventListener("mouseleave", leave);
     };
-  }, [x, y]);
+  }, [enabled, x, y]);
 
   if (!enabled) return null;
 

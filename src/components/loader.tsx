@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { site } from "@/data/site";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 /**
  * Covers the blank flash while fonts and the WebGL scene initialise.
@@ -12,12 +13,10 @@ import { site } from "@/data/site";
 export function Loader() {
   const [done, setDone] = useState(false);
   const [pct, setPct] = useState(0);
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDone(true);
-      return;
-    }
+    if (reduced) return;
 
     document.body.style.overflow = "hidden";
 
@@ -37,7 +36,7 @@ export function Loader() {
       cancelAnimationFrame(raf);
       document.body.style.overflow = "";
     };
-  }, []);
+  }, [reduced]);
 
   useEffect(() => {
     if (done) document.body.style.overflow = "";
@@ -45,7 +44,7 @@ export function Loader() {
 
   return (
     <AnimatePresence>
-      {!done && (
+      {!done && !reduced && (
         <motion.div
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
