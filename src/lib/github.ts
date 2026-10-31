@@ -1,5 +1,3 @@
-import { site } from "@/data/site";
-
 const USER = "PerspicaciousGuy";
 
 /**
@@ -163,6 +161,3 @@ export async function getGitHubStats(): Promise<GitHubStats> {
     return fallback;
   }
 }
-
-export const githubUrl = `https://github.com/${USER}`;
-export { site };

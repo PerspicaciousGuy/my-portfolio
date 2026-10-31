@@ -224,8 +224,7 @@
      a blanket header{display:none} silently strips them from the PDF. Page
      chrome is hidden with print:hidden at the call site instead. */
   canvas,
-  .grain-overlay,
-  .fallback-backdrop {
+  .grain-overlay {
     display: none !important;
   }
 }

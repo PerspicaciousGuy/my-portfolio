@@ -6,7 +6,7 @@ import { site } from "@/data/site";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 /**
- * Covers the blank flash while fonts and the WebGL scene initialise.
+ * Covers the blank flash while fonts and the page initialise.
  * Deliberately brief — a loading screen that outstays its welcome is worse
  * than none. Skipped entirely for reduced-motion users.
  */
