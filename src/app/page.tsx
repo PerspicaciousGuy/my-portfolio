@@ -1,4 +1,4 @@
-import { Backdrop } from "@/components/backdrop";
+import { Backdrop } from "@/components/pixel/backdrop";
 import { Cursor } from "@/components/cursor";
 import { Loader } from "@/components/loader";
 import { ScrollProgress } from "@/components/scroll-progress";
