@@ -7,7 +7,7 @@ import { RainToggle } from "./pixel/rain-toggle";
 /** Sticky header: logo, section links, résumé, and the theme and weather toggles. */
 export function Nav() {
   return (
-    <div className="sticky top-0 z-40 border-b-4 border-border bg-bg">
+    <div className="sticky top-0 z-40 border-b-4 border-border bg-bg print:hidden">
       <div className="px-wrap flex min-h-[76px] flex-wrap items-center justify-between gap-6">
         <Link
           href="/"
