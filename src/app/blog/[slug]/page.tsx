@@ -4,15 +4,9 @@ import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPost, getPosts, formatDate } from "@/lib/posts";
-import { slugifyHeading } from "@/lib/headings";
+import { H2 } from "@/components/mdx";
 import { Toc } from "@/components/toc";
 import { Footer } from "@/components/footer";
-
-/** Give every section a stable anchor the table of contents can link to. */
-function H2({ children }: { children?: React.ReactNode }) {
-  const text = typeof children === "string" ? children : String(children ?? "");
-  return <h2 id={slugifyHeading(text)}>{children}</h2>;
-}
 
 export async function generateStaticParams() {
   const posts = await getPosts();

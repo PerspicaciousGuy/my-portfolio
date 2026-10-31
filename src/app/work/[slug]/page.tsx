@@ -5,17 +5,11 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, Code2 } from "lucide-react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getCaseStudy, getCaseStudySlugs } from "@/lib/case-studies";
-import { slugifyHeading } from "@/lib/headings";
+import { H2 } from "@/components/mdx";
 import { ApiPlayground } from "@/components/api-playground";
 import { Figure } from "@/components/figure";
 import { Toc } from "@/components/toc";
 import { Footer } from "@/components/footer";
-
-/** Give every section a stable anchor the table of contents can link to. */
-function H2({ children }: { children?: React.ReactNode }) {
-  const text = typeof children === "string" ? children : String(children ?? "");
-  return <h2 id={slugifyHeading(text)}>{children}</h2>;
-}
 
 export async function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
