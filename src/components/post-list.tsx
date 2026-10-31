@@ -1,11 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
 import type { PostMeta } from "@/lib/posts";
-import { formatDate } from "@/lib/format-date";
+import { PostEntry } from "@/components/post-entry";
 
 /**
  * The writing index: a tag sidebar that filters the list.
@@ -130,25 +128,7 @@ export function PostList({ posts }: { posts: PostMeta[] }) {
         <ul className="divide-y divide-border border-y border-border max-xl:mt-8">
           {shown.map((p) => (
             <li key={p.slug}>
-              <Link
-                href={`/blog/${p.slug}`}
-                className="group flex flex-col gap-2 py-7 transition-colors"
-              >
-                <div className="flex items-center gap-3 font-mono text-xs text-fg-subtle">
-                  <time dateTime={p.date}>{formatDate(p.date)}</time>
-                  <span>·</span>
-                  <span>{p.readingTime} min read</span>
-                </div>
-
-                <h2 className="flex items-start gap-2 text-xl font-medium tracking-tight transition-colors group-hover:text-accent">
-                  {p.title}
-                  <ArrowUpRight className="mt-1 size-4 shrink-0 opacity-0 transition-all group-hover:opacity-100" />
-                </h2>
-
-                <p className="text-pretty leading-relaxed text-fg-muted">
-                  {p.summary}
-                </p>
-              </Link>
+              <PostEntry post={p} variant="index" />
             </li>
           ))}
         </ul>
