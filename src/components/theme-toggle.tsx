@@ -1,32 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/lib/use-theme";
 
+const LABEL = {
+  night: "Night theme. Click to follow your clock.",
+  auto: "Theme follows your clock. Click for day.",
+  day: "Day theme. Click for night.",
+} as const;
+
+const BADGE = { night: "night", auto: "auto", day: "day" } as const;
+
+/** Cycles night, auto (the visitor's clock) and day. */
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const { mode, cycle } = useTheme();
 
-  useEffect(() => setMounted(true), []);
-
-  const isDark = resolvedTheme === "dark";
-
-  // The resolved theme is unknown during SSR, so anything derived from it
-  // (label, icon) must stay neutral until mount or React reports a
-  // hydration mismatch.
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} theme` : "Toggle theme"}
-      className="grid size-9 place-items-center rounded-full border border-border bg-bg-elevated/60 text-fg-muted backdrop-blur transition hover:border-accent/50 hover:text-accent"
+      onClick={cycle}
+      aria-label={LABEL[mode]}
+      title={LABEL[mode]}
+      className="inline-flex h-11 min-w-11 cursor-pointer items-center justify-center gap-1.5 text-fg"
     >
-      {mounted && !isDark ? (
-        <Sun className="size-4" />
-      ) : (
-        <Moon className="size-4" />
-      )}
+      <svg
+        width="33"
+        height="33"
+        viewBox="0 0 11 11"
+        shapeRendering="crispEdges"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M4 4h3v3H4zM5 0h1v2H5zM5 9h1v2H5zM0 5h2v1H0zM9 5h2v1H9zM2 2h1v1H2zM8 2h1v1H8zM2 8h1v1H2zM8 8h1v1H8z" />
+      </svg>
+      <span className="px-label text-[11px]">{BADGE[mode]}</span>
     </button>
   );
 }

@@ -1,0 +1,192 @@
+/* The ground at the end of the page: a row of buildings, a pavement with
+   lamps, and a two-lane road. Cars drive on CSS animations alone. */
+:root {
+  --rd-back: #b3c3d4;
+  --rd-front: #9cb0c4;
+  --rd-lit: #8399ae;
+  --rd-off: #8399ae;
+  --rd-off-back: #9aaec2;
+  --rd-walk: #c3ccd8;
+  --rd-road: #596175;
+  --rd-curb: #3a4150;
+  --rd-pole: #5c677a;
+  --rd-lamp: #c9cfda;
+  --rd-glow: none;
+}
+.dark {
+  --rd-back: #23262f;
+  --rd-front: #2c2f3a;
+  --rd-lit: #ffc933;
+  --rd-off: #22242d;
+  --rd-off-back: #1a1c23;
+  --rd-walk: #2e313b;
+  --rd-road: #23252d;
+  --rd-curb: #15161b;
+  --rd-pole: #3a3e50;
+  --rd-lamp: #ffe27a;
+  --rd-glow: block;
+}
+
+.rd {
+  position: relative;
+  z-index: 2;
+  height: 390px;
+  overflow-x: clip;
+  /* Below the fold and full of box-shadows: skip its layout and paint until it is near the viewport. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 390px;
+}
+.rd-city {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 244px;
+  overflow: hidden;
+}
+.rd-row {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: flex-end;
+}
+.rd-bld {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+}
+.rd-bld i {
+  position: absolute;
+  left: -30px;
+  top: -30px;
+  width: 8px;
+  height: 10px;
+}
+.rd-ground {
+  position: absolute;
+  inset: 244px 0 auto 0;
+  height: 150px;
+}
+.rd-walk {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 34px;
+  background: var(--rd-walk);
+  border-top: 8px solid rgb(var(--border));
+}
+.rd-road {
+  position: absolute;
+  inset: 34px 0 auto 0;
+  height: 116px;
+  background: var(--rd-road);
+}
+.rd-line {
+  position: absolute;
+  inset: 90px 0 auto 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, #ffc933 0 36px, transparent 36px 72px);
+}
+.rd-cross {
+  position: absolute;
+  left: 47%;
+  top: 34px;
+  width: 96px;
+  height: 112px;
+  background: repeating-linear-gradient(0deg, rgba(236, 236, 240, 0.8) 0 10px, transparent 10px 22px);
+}
+.rd-curb {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 10px;
+  background: var(--rd-curb);
+}
+.rd-lamp {
+  position: absolute;
+  bottom: 116px;
+  width: 0;
+  height: 0;
+}
+.rd-lamp b {
+  position: absolute;
+  display: block;
+  background: var(--rd-pole);
+}
+.rd-glow {
+  position: absolute;
+  left: -12px;
+  bottom: -40px;
+  width: 110px;
+  height: 104px;
+  background: linear-gradient(rgba(255, 226, 140, 0.3), rgba(255, 226, 140, 0));
+  clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+  display: var(--rd-glow);
+}
+
+.rd-car {
+  all: unset;
+  position: absolute;
+  left: 0;
+  cursor: pointer;
+  animation: rd-drive var(--dur) linear var(--delay) infinite;
+}
+.rd-car:focus-visible {
+  outline: 4px solid #ffc933;
+  outline-offset: 4px;
+}
+.rd-car[data-dir="-1"] {
+  animation-name: rd-drive-back;
+}
+.rd-car-in {
+  position: relative;
+  display: block;
+}
+.rd-car-head {
+  position: absolute;
+  top: 35%;
+  width: 70px;
+  height: 40%;
+  background: linear-gradient(90deg, rgba(255, 226, 140, 0.38), rgba(255, 226, 140, 0));
+  display: var(--rd-glow);
+}
+@keyframes rd-drive {
+  from { transform: translateX(-15vw); }
+  to { transform: translateX(115vw); }
+}
+@keyframes rd-drive-back {
+  from { transform: translateX(115vw); }
+  to { transform: translateX(-15vw); }
+}
+@keyframes rd-hop {
+  50% { transform: translateY(-3px); }
+}
+
+.rd-sign {
+  position: absolute;
+  top: -46px;
+  left: 66%;
+  display: block;
+  text-decoration: none;
+}
+.rd-sign:focus-visible {
+  outline: 4px solid #ffc933;
+  outline-offset: 4px;
+}
+.rd-sign span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px 10px 5px;
+  color: #fff;
+  background: #2b6ce0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  box-shadow: 0 0 0 3px #fff, 4px 6px 0 rgba(0, 0, 0, 0.35);
+}
+
+@media print {
+  .rd {
+    display: none;
+  }
+}

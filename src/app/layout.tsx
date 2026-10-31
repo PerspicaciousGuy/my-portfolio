@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Pixelify_Sans, VT323 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { site } from "@/data/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StructuredData } from "@/components/structured-data";
+import { THEME_SCRIPT } from "@/lib/theme-script";
+import { PixelWorld } from "@/components/pixel/pixel-world";
+import { Nav } from "@/components/nav";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Pixel display face for headings and labels, pixel mono for everything else.
+const pixelify = Pixelify_Sans({
+  variable: "--font-pixelify",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const vt323 = VT323({
+  variable: "--font-vt323",
   subsets: ["latin"],
+  weight: "400",
+  display: "swap",
 });
 
 const description = `${site.role} based in ${site.location}. ${site.tagline}`;
@@ -66,10 +74,17 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${pixelify.variable} ${vt323.variable} dark h-full`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <PixelWorld />
+          <Nav />
+          {children}
+        </ThemeProvider>
         <StructuredData />
         <Analytics />
         <SpeedInsights />

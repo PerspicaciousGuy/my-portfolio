@@ -1,34 +1,28 @@
-import { GraduationCap, Hammer, Sparkles } from "lucide-react";
 import { timeline, type TimelineEntry } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 
-const icons: Record<TimelineEntry["kind"], typeof Hammer> = {
-  education: GraduationCap,
-  build: Hammer,
-  milestone: Sparkles,
+const MARK: Record<TimelineEntry["kind"], string> = {
+  education: "bg-violet",
+  build: "bg-accent",
+  milestone: "bg-green",
 };
+const KIND: Record<TimelineEntry["kind"], string> = { education: "Education", build: "Build", milestone: "Milestone" };
 
 export function Journey() {
   return (
-    <Section id="journey" index="03" title="Journey">
-      <ol className="relative space-y-10 border-l border-border pl-8 sm:pl-10">
-        {timeline.map((entry, i) => {
-          const Icon = icons[entry.kind];
-          return (
-            <Reveal as="li" key={entry.title} delay={i * 0.05} className="relative">
-              <span className="absolute -left-[41px] grid size-6 place-items-center rounded-full border border-border bg-bg text-accent sm:-left-[49px]">
-                <Icon className="size-3" />
-              </span>
-              <p className="font-mono text-xs text-fg-subtle">{entry.period}</p>
-              <h3 className="mt-1.5 text-lg font-medium">{entry.title}</h3>
-              {entry.org && <p className="text-sm text-accent">{entry.org}</p>}
-              <p className="mt-2 max-w-xl text-pretty leading-relaxed text-fg-muted">
-                {entry.description}
-              </p>
-            </Reveal>
-          );
-        })}
+    <Section id="journey" index="04" title="Journey">
+      <ol className="m-0 ml-3 list-none border-l-4 border-border p-0 pl-1">
+        {timeline.map((entry, i) => (
+          <Reveal as="li" key={entry.title} className={`relative pl-11 ${i < timeline.length - 1 ? "pb-11" : ""}`}>
+            <span aria-hidden="true" className={`absolute -left-[14px] top-1.5 size-5 shadow-[0_0_0_4px_rgb(var(--bg))] ${MARK[entry.kind]}`} />
+            <p className="px-label m-0">
+              {entry.period} · {KIND[entry.kind]}
+            </p>
+            <h3 className="m-0 mt-1.5 font-display text-[28px] font-semibold uppercase">{entry.title}</h3>
+            <p className="m-0 mt-2 max-w-[760px] text-[24px] text-fg-muted">{entry.description}</p>
+          </Reveal>
+        ))}
       </ol>
     </Section>
   );

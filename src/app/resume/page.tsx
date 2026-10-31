@@ -1,148 +1,130 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import {
-  site,
-  socials,
-  about,
-  skills,
-  alsoUsed,
-  timeline,
-  resumeProjects,
-} from "@/data/site";
-import { PrintButton } from "@/components/print-button";
+import { site, socials, about, skills, alsoUsed, timeline, resumeProjects } from "@/data/site";
+import { Critter } from "@/components/pixel/critter";
+import { Icon } from "@/components/pixel/icon";
+import { ResumeActions } from "@/components/pixel/resume-actions";
+import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Résumé",
   description: `Résumé of ${site.name}, ${site.role}.`,
 };
 
+const bare = (url: string) => url.replace(/^https?:\/\//, "");
+
+/** The résumé is a paper sheet on a desk. The sheet is exactly what prints. */
 export default function ResumePage() {
   const links = socials.filter((s) => s.label !== "Email");
+  const summary = `${about.paragraphs[0]} ${about.paragraphs[1]}`;
+
+  const plain = [
+    site.name,
+    site.role,
+    `${site.location} · ${site.email}`,
+    links.map((s) => bare(s.href)).join(" · "),
+    "",
+    "SUMMARY",
+    summary,
+    "",
+    "SKILLS",
+    ...skills.map((g) => `${g.title}: ${g.items.join(", ")}`),
+    `Also used: ${alsoUsed.join(", ")}`,
+    "",
+    "PROJECTS",
+    ...resumeProjects.map((p) => `${p.name} (${p.year}): ${p.blurb} ${bare(p.repo)}`),
+    "",
+    "EDUCATION & TIMELINE",
+    ...timeline.map((t) => `${t.period}: ${t.title}${t.org ? ` (${t.org})` : ""}`),
+  ].join("\n");
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-16 print:max-w-none print:p-0">
-      {/* Screen-only chrome; hidden in the printed PDF. */}
-      <div className="mb-12 flex items-center justify-between print:hidden">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
-        >
-          <ArrowLeft className="size-3.5" />
-          back
-        </Link>
-        <PrintButton />
-      </div>
-
-      <article className="resume">
-        <header className="border-b border-border pb-6">
-          <h1 className="text-4xl font-semibold tracking-tight">{site.name}</h1>
-          <p className="mt-1.5 text-lg text-fg-muted">{site.role}</p>
-
-          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-fg-muted">
-            <li>{site.location}</li>
-            <li>
-              <a href={`mailto:${site.email}`} className="hover:text-accent">
-                {site.email}
-              </a>
-            </li>
-            {links.map((s) => (
-              <li key={s.label}>
-                <a href={s.href} className="hover:text-accent">
-                  {s.href.replace(/^https?:\/\//, "")}
+    <>
+      <main className="px-wrap relative z-[1] flex flex-1 flex-wrap items-start gap-14 pt-14 print:block print:max-w-none print:p-0">
+        <article className="px-sheet resume">
+          <h1 className="m-0 font-display text-[44px] font-bold uppercase leading-[0.95]">{site.name}</h1>
+          <div className="mt-1.5 font-display text-xl font-semibold uppercase" style={{ color: "#9A5A00" }}>
+            {site.role}
+          </div>
+          <div className="m mt-2.5">
+            {site.location} ·{" "}
+            <a href={`mailto:${site.email}`} className="underline underline-offset-2">
+              {site.email}
+            </a>
+            <br />
+            {links.map((s, i) => (
+              <span key={s.label}>
+                {i > 0 && " · "}
+                <a href={s.href} className="underline underline-offset-2">
+                  {bare(s.href)}
                 </a>
-              </li>
+              </span>
             ))}
-          </ul>
-        </header>
+          </div>
 
-        <Block title="Summary">
-          <p className="leading-relaxed text-fg-muted">
-            {about.paragraphs[0]} {about.paragraphs[1]}
-          </p>
-        </Block>
+          <h2>Summary</h2>
+          <p className="m m-0">{summary}</p>
 
-        <Block title="Skills">
-          <dl className="space-y-1.5">
-            {skills.map((g) => (
-              <div key={g.title} className="flex gap-3 text-sm">
-                <dt className="w-32 shrink-0 font-medium">{g.title}</dt>
-                <dd className="text-fg-muted">{g.items.join(" · ")}</dd>
-              </div>
-            ))}
-            <div className="flex gap-3 text-sm">
-              <dt className="w-32 shrink-0 font-medium">Also used</dt>
-              <dd className="text-fg-muted">{alsoUsed.join(" · ")}</dd>
+          <h2>Skills</h2>
+          {skills.map((g) => (
+            <div key={g.title}>
+              {g.title} <span className="m">{g.items.join(" · ")}</span>
             </div>
-          </dl>
-        </Block>
+          ))}
+          <div>
+            Also used <span className="m">{alsoUsed.join(" · ")}</span>
+          </div>
 
-        <Block title="Projects">
-          <ul className="space-y-4">
-            {/* The lead project is excluded from featuredProjects (it gets its
-                own card on the site) — a CV must still list it, and first. */}
-            {resumeProjects.map((p) => (
-              <li key={p.name}>
-                <div className="flex items-baseline justify-between gap-4">
-                  <h3 className="font-medium">
-                    {p.name}
-                    <span className="ml-2 font-mono text-xs font-normal text-fg-subtle">
-                      {p.stack.slice(0, 4).join(" · ")}
-                    </span>
-                  </h3>
-                  <span className="shrink-0 font-mono text-xs text-fg-subtle">
-                    {p.year}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm leading-relaxed text-fg-muted">
-                  {p.blurb}
-                </p>
-                <p className="mt-0.5 font-mono text-xs text-fg-subtle">
-                  {p.repo.replace(/^https?:\/\//, "")}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Block>
+          <h2>Projects</h2>
+          {resumeProjects.map((p) => (
+            <div key={p.name} className="mb-3">
+              <div className="r">
+                <h3>{p.name}</h3>
+                <span className="d">{p.year}</span>
+              </div>
+              <div className="m">{p.blurb}</div>
+              <div className="m text-[0.85em]">{bare(p.repo)}</div>
+            </div>
+          ))}
 
-        <Block title="Education & Timeline">
-          <ul className="space-y-3">
-            {timeline.map((t) => (
-              <li key={t.title} className="flex gap-4 text-sm">
-                <span className="w-36 shrink-0 font-mono text-xs text-fg-subtle">
-                  {t.period}
-                </span>
+          <h2>Education &amp; timeline</h2>
+          {timeline.map((t) => (
+            <div key={t.title} className="mb-2">
+              <div className="r">
                 <span>
-                  <span className="font-medium">{t.title}</span>
-                  {t.org && (
-                    <span className="text-fg-subtle"> — {t.org}</span>
-                  )}
-                  <span className="mt-0.5 block leading-relaxed text-fg-muted">
-                    {t.description}
-                  </span>
+                  <b className="font-normal">{t.title}</b>
+                  {t.org && <span className="m"> — {t.org}</span>}
                 </span>
-              </li>
-            ))}
-          </ul>
-        </Block>
-      </article>
-    </main>
-  );
-}
+                <span className="d">{t.period}</span>
+              </div>
+            </div>
+          ))}
+        </article>
 
-function Block({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="mt-8 break-inside-avoid">
-      <h2 className="mb-3 font-mono text-xs uppercase tracking-widest text-accent">
-        {title}
-      </h2>
-      {children}
-    </section>
+        <aside className="sticky top-[100px] min-w-[260px] flex-1 print:hidden">
+          <Link href="/" className="px-label inline-flex min-h-11 items-center gap-2 hover:text-accent">
+            <Icon name="left" />
+            Back
+          </Link>
+          <h1 className="m-0 mt-5 font-display text-[44px] font-bold uppercase leading-none">Résumé</h1>
+          <p className="mb-6 mt-3.5 text-[26px] text-fg-muted">
+            The sheet on the left is exactly what prints: no sky, no shadows, black on white.
+          </p>
+          <ResumeActions text={plain} />
+          <div className="px-panel mt-10 px-[22px] py-5">
+            <div className="px-label">Desk note</div>
+            <div className="mt-1.5 text-[23px] text-fg-muted">On screen the critter waves from the desk. It is not on the printed sheet.</div>
+          </div>
+          <div className="relative mt-[30px] h-[68px] w-[104px]">
+            <div className="absolute bottom-0 left-0">
+              <Critter u={4} face="happy" arms="wave1" />
+            </div>
+          </div>
+        </aside>
+      </main>
+      <div className="print:hidden">
+        <Footer />
+      </div>
+    </>
   );
 }

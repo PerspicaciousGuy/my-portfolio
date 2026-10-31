@@ -2,70 +2,116 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Pixel design system ─────────────────────────────────────────────────
+   Two palettes, as space-separated RGB channels so Tailwind's opacity
+   modifiers work. :root is the day theme; .dark is the night theme (the
+   default). The old token names (bg, fg, border, accent) still exist so
+   pages that haven't been redrawn keep working. */
 :root {
-  --bg: 250 250 249;
-  --bg-elevated: 255 255 255;
-  --fg: 12 12 14;
-  --fg-muted: 92 92 102;
-  --fg-subtle: 112 112 124;
-  --border: 226 226 224;
-  --accent: 220 38 38;
+  --bg: 228 236 244;
+  --bg-elevated: 251 249 243;
+  --raised: 236 231 216;
+  --slot: 213 223 234;
+  --fg: 20 22 28;
+  --fg-muted: 69 76 92;
+  --fg-subtle: 69 76 92;
+  --border: 27 29 36;
+  --edge: 124 138 160;
+  --shade: 154 169 188;
+  --accent: 154 90 0;
   --accent-fg: 255 255 255;
-  --glow: 220 38 38;
+  --green: 10 122 61;
+  --green-edge: 10 122 61;
+  --violet: 91 51 214;
 }
 
 .dark {
-  --bg: 8 8 10;
-  --bg-elevated: 18 18 22;
-  --fg: 245 245 244;
-  --fg-muted: 160 160 170;
-  --fg-subtle: 128 128 140;
-  --border: 38 38 44;
-  --accent: 248 88 88;
-  --accent-fg: 12 12 14;
-  --glow: 248 88 88;
+  --bg: 19 20 24;
+  --bg-elevated: 26 27 33;
+  --raised: 35 37 45;
+  --slot: 22 23 28;
+  --fg: 236 236 240;
+  --fg-muted: 169 172 184;
+  --fg-subtle: 169 172 184;
+  --border: 53 56 68;
+  --edge: 90 95 112;
+  --shade: 7 8 11;
+  --accent: 255 201 51;
+  --accent-fg: 19 20 24;
+  --green: 107 245 154;
+  --green-edge: 47 143 87;
+  --violet: 155 123 255;
 }
 
 @theme inline {
   --color-bg: rgb(var(--bg));
   --color-bg-elevated: rgb(var(--bg-elevated));
+  --color-panel: rgb(var(--bg-elevated));
+  --color-raised: rgb(var(--raised));
+  --color-slot: rgb(var(--slot));
   --color-fg: rgb(var(--fg));
   --color-fg-muted: rgb(var(--fg-muted));
   --color-fg-subtle: rgb(var(--fg-subtle));
   --color-border: rgb(var(--border));
+  --color-edge: rgb(var(--edge));
+  --color-shade: rgb(var(--shade));
   --color-accent: rgb(var(--accent));
   --color-accent-fg: rgb(var(--accent-fg));
+  --color-green: rgb(var(--green));
+  --color-green-edge: rgb(var(--green-edge));
+  --color-violet: rgb(var(--violet));
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-vt323), ui-monospace, monospace;
+  --font-mono: var(--font-vt323), ui-monospace, monospace;
+  --font-display: var(--font-pixelify), var(--font-vt323), ui-monospace, monospace;
+
+}
+
+/* VT323 is a small-looking face, so the text scale is one step larger than
+   Tailwind's default. Headings (text-3xl and up) keep the default sizes. */
+@theme {
+  --text-xs: 1rem;
+  --text-xs--line-height: 1.2;
+  --text-sm: 1.125rem;
+  --text-sm--line-height: 1.25;
+  --text-base: 1.3125rem;
+  --text-base--line-height: 1.3;
+  --text-lg: 1.5rem;
+  --text-lg--line-height: 1.3;
+  --text-xl: 1.75rem;
+  --text-xl--line-height: 1.2;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 1.15;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
   }
 
-  /* Clears the fixed header when the browser jumps to an anchor directly
+  /* Clears the sticky header when the browser jumps to an anchor directly
      (e.g. someone lands on /#work from an external link). */
   section[id] {
-    scroll-margin-top: 72px;
+    scroll-margin-top: 84px;
   }
 
   body {
     background-color: rgb(var(--bg));
     color: rgb(var(--fg));
     font-family: var(--font-sans);
-    transition: background-color 0.4s ease, color 0.4s ease;
+    font-size: 1.3125rem;
+    line-height: 1.25;
   }
 
   ::selection {
-    background-color: rgb(var(--accent) / 0.25);
+    background-color: rgb(var(--accent) / 0.35);
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
-    outline-offset: 3px;
+    outline: 4px solid rgb(var(--accent));
+    outline-offset: 4px;
   }
 }
 
@@ -82,160 +128,514 @@
   }
 }
 
-/* ── Hero texture ─────────────────────────────────────────────────────────
-   A faint static dot grid behind the hero, masked so it fades out before the
-   content sections. Just enough texture to feel intentional, never busy. The
-   dot colour tracks the foreground token, so it adapts to light and dark. */
-.hero-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  z-index: -10;
-  pointer-events: none;
-  background-image: radial-gradient(
-    circle,
-    rgb(var(--fg)) 1px,
-    transparent 1.6px
-  );
-  background-size: 24px 24px;
-  opacity: 0.14;
-  /* Fade the grid out toward the edges and bottom so it's a soft halo behind
-     the hero, not a hard sheet across the whole viewport. */
-  -webkit-mask-image: radial-gradient(
-    ellipse 80% 68% at 42% 34%,
-    #000 0%,
-    transparent 72%
-  );
-  mask-image: radial-gradient(
-    ellipse 80% 68% at 42% 34%,
-    #000 0%,
-    transparent 72%
-  );
-}
-
-/* Article body. Kept hand-rolled so it stays on the same tokens as the site.
-   Must sit in the utilities layer: Tailwind's base reset flattens heading and
-   list styles, and an unlayered rule loses to it. */
-@layer utilities {
-.prose-portfolio {
-  color: rgb(var(--fg-muted));
-  font-size: 1.0625rem;
-  line-height: 1.75;
-}
-
-.prose-portfolio > * + * {
-  margin-top: 1.25em;
-}
-
-.prose-portfolio h2 {
-  margin-top: 2.5em;
-  margin-bottom: 0.75em;
-  color: rgb(var(--fg));
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  /* Clears the fixed header when the TOC jumps to a section. */
-  scroll-margin-top: 96px;
-}
-
-.prose-portfolio h3 {
-  margin-top: 2em;
-  color: rgb(var(--fg));
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.prose-portfolio strong {
-  color: rgb(var(--fg));
-  font-weight: 600;
-}
-
-.prose-portfolio a {
-  color: rgb(var(--accent));
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.prose-portfolio ul {
-  padding-left: 1.25rem;
-  list-style: disc;
-}
-
-.prose-portfolio li + li {
-  margin-top: 0.5em;
-}
-
-.prose-portfolio li::marker {
-  color: rgb(var(--accent));
-}
-
-.prose-portfolio code {
-  border: 1px solid rgb(var(--border));
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  color: rgb(var(--fg));
-}
-
-.prose-portfolio pre {
-  overflow-x: auto;
-  border: 1px solid rgb(var(--border));
-  border-radius: 12px;
-  background: rgb(var(--bg-elevated));
-  padding: 1.15rem;
-}
-
-.prose-portfolio pre code {
-  border: 0;
-  padding: 0;
-}
-}
-
-/* The résumé prints to PDF via the browser's print dialog. Force a light,
-   ink-friendly rendering regardless of the theme the visitor is using. */
-@media print {
-  @page {
-    margin: 14mm;
-    size: A4;
+/* ── Pixel components ─────────────────────────────────────────────────────
+   Hard edges, no blur, no rounded corners. A "border" is a stack of box
+   shadows so the corners stay square, and every raised surface casts an
+   offset block shadow instead of a soft one. */
+@layer components {
+  .px-panel {
+    background: rgb(var(--bg-elevated));
+    margin: 4px;
+    box-shadow:
+      -4px 0 0 rgb(var(--border)),
+      4px 0 0 rgb(var(--border)),
+      0 -4px 0 rgb(var(--border)),
+      0 4px 0 rgb(var(--border)),
+      8px 12px 0 rgb(var(--shade));
   }
 
+  .px-panel-hi {
+    background: rgb(var(--bg-elevated));
+    margin: 4px;
+    box-shadow:
+      -4px 0 0 rgb(var(--accent)),
+      4px 0 0 rgb(var(--accent)),
+      0 -4px 0 rgb(var(--accent)),
+      0 4px 0 rgb(var(--accent)),
+      8px 12px 0 rgb(var(--shade));
+  }
+
+  .px-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    margin: 4px;
+    padding: 14px 24px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: transform 0.12s steps(2);
+  }
+  .px-btn:hover {
+    transform: translate(-2px, -2px);
+  }
+  .px-btn:active {
+    transform: translate(3px, 3px);
+  }
+  .px-btn-sm {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+  .px-btn-primary {
+    color: #fff;
+    background: #5b33d6;
+    box-shadow:
+      -4px 0 0 #7c4dff,
+      4px 0 0 #7c4dff,
+      0 -4px 0 #7c4dff,
+      0 4px 0 #7c4dff,
+      4px 8px 0 rgb(var(--shade));
+  }
+  .px-btn-primary:hover {
+    background: #6b43ea;
+  }
+  .px-btn-ghost {
+    color: rgb(var(--green));
+    background: transparent;
+    box-shadow:
+      -4px 0 0 rgb(var(--green-edge)),
+      4px 0 0 rgb(var(--green-edge)),
+      0 -4px 0 rgb(var(--green-edge)),
+      0 4px 0 rgb(var(--green-edge));
+  }
+  .px-btn-ghost:hover {
+    color: rgb(var(--bg));
+    background: rgb(var(--green));
+  }
+
+  .px-chip {
+    display: inline-block;
+    margin: 2px;
+    padding: 5px 10px 4px;
+    font-size: 1.25rem;
+    line-height: 1;
+    background: rgb(var(--raised));
+    box-shadow: 0 0 0 2px rgb(var(--border));
+    transition: transform 0.1s steps(2);
+  }
+  .px-chip:hover {
+    transform: translateY(-3px);
+  }
+
+  .px-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    color: rgb(var(--fg-muted));
+    background: rgb(var(--slot));
+    border: 4px dashed rgb(var(--edge));
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .px-label {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgb(var(--fg-muted));
+  }
+
+  /* Section heading: yellow square, index, title. */
+  .px-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin: 0 0 44px;
+  }
+  .px-heading > i {
+    font-style: normal;
+    font-size: 1.625rem;
+    color: rgb(var(--green));
+  }
+  .px-heading > h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .px-heading > span {
+    display: block;
+    align-self: center;
+    width: 16px;
+    height: 16px;
+    background: rgb(var(--accent));
+  }
+}
+
+/* The résumé prints to PDF through the browser's print dialog: only the paper
+   sheet prints, black on white, with no sky, shadows or page chrome. */
+@media print {
+  @page {
+    margin: 12mm;
+    size: A4;
+  }
   html,
   body {
     background: #fff !important;
-    color: #000 !important;
   }
-
-  .resume,
-  .resume * {
-    color: #111 !important;
-    border-color: #ccc !important;
-    background: transparent !important;
-  }
-
-  .resume a {
-    text-decoration: none;
-  }
-
-  /* Backdrop, cursor and grain don't belong on paper. Note: no `header` rule
-     here — the résumé's own <header> carries the name and contact details, and
-     a blanket header{display:none} silently strips them from the PDF. Page
-     chrome is hidden with print:hidden at the call site instead. */
-  canvas,
-  .grain-overlay,
-  .fallback-backdrop {
-    display: none !important;
+  .px-sheet {
+    width: auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
   }
 }
 
-.grain-overlay {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+/* Scroll reveal: elements step in as they enter the viewport. Pure CSS, and
+   everything stays visible where scroll-driven animation is unsupported. */
+@keyframes px-rv {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@supports (animation-timeline: view()) {
+  .px-reveal {
+    animation: px-rv steps(6) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+.px-wrap {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1240px;
+  padding-inline: 40px;
+}
+@media (max-width: 900px) {
+  .px-wrap {
+    padding-inline: 20px;
+  }
+}
+
+/* Interaction */
+.px-card {
+  transition: transform 0.18s steps(3);
+}
+.px-card:hover {
+  transform: translate(-4px, -8px);
+}
+.px-link:hover {
+  color: rgb(var(--accent));
+}
+@keyframes px-blink-dot {
+  50% {
+    opacity: 0.25;
+  }
+}
+.px-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: rgb(var(--green));
+  animation: px-blink-dot 1.2s steps(2) infinite;
+}
+
+/* Pixel cursors: a white arrow, and a yellow one over anything clickable. */
+:root {
+  --px-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' shape-rendering='crispEdges'%3E%3Cpath fill='%2314161C' d='M0 0h2v2h-2zM2 0h2v2h-2zM4 0h2v2h-2zM0 2h2v2h-2zM4 2h2v2h-2zM6 2h2v2h-2zM0 4h2v2h-2zM6 4h2v2h-2zM8 4h2v2h-2zM0 6h2v2h-2zM8 6h2v2h-2zM10 6h2v2h-2zM0 8h2v2h-2zM10 8h2v2h-2zM12 8h2v2h-2zM0 10h2v2h-2zM12 10h2v2h-2zM14 10h2v2h-2zM0 12h2v2h-2zM14 12h2v2h-2zM16 12h2v2h-2zM0 14h2v2h-2zM16 14h2v2h-2zM18 14h2v2h-2zM0 16h2v2h-2zM18 16h2v2h-2zM20 16h2v2h-2zM0 18h2v2h-2zM20 18h2v2h-2zM22 18h2v2h-2zM0 20h2v2h-2zM22 20h2v2h-2zM0 22h2v2h-2zM14 22h2v2h-2zM16 22h2v2h-2zM18 22h2v2h-2zM20 22h2v2h-2zM22 22h2v2h-2zM0 24h2v2h-2zM8 24h2v2h-2zM16 24h2v2h-2zM0 26h2v2h-2zM6 26h2v2h-2zM8 26h2v2h-2zM16 26h2v2h-2zM18 26h2v2h-2zM0 28h2v2h-2zM4 28h2v2h-2zM6 28h2v2h-2zM8 28h2v2h-2zM10 28h2v2h-2zM18 28h2v2h-2zM0 30h2v2h-2zM2 30h2v2h-2zM4 30h2v2h-2zM10 30h2v2h-2zM18 30h2v2h-2zM10 32h2v2h-2zM12 32h2v2h-2zM18 32h2v2h-2zM12 34h2v2h-2zM14 34h2v2h-2zM16 34h2v2h-2zM18 34h2v2h-2z'/%3E%3Cpath fill='%23FFFFFF' d='M2 2h2v2h-2zM2 4h2v2h-2zM4 4h2v2h-2zM2 6h2v2h-2zM4 6h2v2h-2zM6 6h2v2h-2zM2 8h2v2h-2zM4 8h2v2h-2zM6 8h2v2h-2zM8 8h2v2h-2zM2 10h2v2h-2zM4 10h2v2h-2zM6 10h2v2h-2zM8 10h2v2h-2zM10 10h2v2h-2zM2 12h2v2h-2zM4 12h2v2h-2zM6 12h2v2h-2zM8 12h2v2h-2zM10 12h2v2h-2zM12 12h2v2h-2zM2 14h2v2h-2zM4 14h2v2h-2zM6 14h2v2h-2zM8 14h2v2h-2zM10 14h2v2h-2zM12 14h2v2h-2zM14 14h2v2h-2zM2 16h2v2h-2zM4 16h2v2h-2zM6 16h2v2h-2zM8 16h2v2h-2zM10 16h2v2h-2zM12 16h2v2h-2zM14 16h2v2h-2zM16 16h2v2h-2zM2 18h2v2h-2zM4 18h2v2h-2zM6 18h2v2h-2zM8 18h2v2h-2zM10 18h2v2h-2zM12 18h2v2h-2zM14 18h2v2h-2zM16 18h2v2h-2zM18 18h2v2h-2zM2 20h2v2h-2zM4 20h2v2h-2zM6 20h2v2h-2zM8 20h2v2h-2zM10 20h2v2h-2zM12 20h2v2h-2zM14 20h2v2h-2zM16 20h2v2h-2zM18 20h2v2h-2zM20 20h2v2h-2zM2 22h2v2h-2zM4 22h2v2h-2zM6 22h2v2h-2zM8 22h2v2h-2zM10 22h2v2h-2zM12 22h2v2h-2zM2 24h2v2h-2zM4 24h2v2h-2zM6 24h2v2h-2zM10 24h2v2h-2zM12 24h2v2h-2zM14 24h2v2h-2zM2 26h2v2h-2zM4 26h2v2h-2zM10 26h2v2h-2zM12 26h2v2h-2zM14 26h2v2h-2zM2 28h2v2h-2zM12 28h2v2h-2zM14 28h2v2h-2zM16 28h2v2h-2zM12 30h2v2h-2zM14 30h2v2h-2zM16 30h2v2h-2zM14 32h2v2h-2zM16 32h2v2h-2z'/%3E%3C/svg%3E");
+  --px-hand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='36' shape-rendering='crispEdges'%3E%3Cpath fill='%2314161C' d='M0 0h2v2h-2zM2 0h2v2h-2zM4 0h2v2h-2zM0 2h2v2h-2zM4 2h2v2h-2zM6 2h2v2h-2zM0 4h2v2h-2zM6 4h2v2h-2zM8 4h2v2h-2zM0 6h2v2h-2zM8 6h2v2h-2zM10 6h2v2h-2zM0 8h2v2h-2zM10 8h2v2h-2zM12 8h2v2h-2zM0 10h2v2h-2zM12 10h2v2h-2zM14 10h2v2h-2zM0 12h2v2h-2zM14 12h2v2h-2zM16 12h2v2h-2zM0 14h2v2h-2zM16 14h2v2h-2zM18 14h2v2h-2zM0 16h2v2h-2zM18 16h2v2h-2zM20 16h2v2h-2zM0 18h2v2h-2zM20 18h2v2h-2zM22 18h2v2h-2zM0 20h2v2h-2zM22 20h2v2h-2zM0 22h2v2h-2zM14 22h2v2h-2zM16 22h2v2h-2zM18 22h2v2h-2zM20 22h2v2h-2zM22 22h2v2h-2zM0 24h2v2h-2zM8 24h2v2h-2zM16 24h2v2h-2zM0 26h2v2h-2zM6 26h2v2h-2zM8 26h2v2h-2zM16 26h2v2h-2zM18 26h2v2h-2zM0 28h2v2h-2zM4 28h2v2h-2zM6 28h2v2h-2zM8 28h2v2h-2zM10 28h2v2h-2zM18 28h2v2h-2zM0 30h2v2h-2zM2 30h2v2h-2zM4 30h2v2h-2zM10 30h2v2h-2zM18 30h2v2h-2zM10 32h2v2h-2zM12 32h2v2h-2zM18 32h2v2h-2zM12 34h2v2h-2zM14 34h2v2h-2zM16 34h2v2h-2zM18 34h2v2h-2z'/%3E%3Cpath fill='%23FFC933' d='M2 2h2v2h-2zM2 4h2v2h-2zM4 4h2v2h-2zM2 6h2v2h-2zM4 6h2v2h-2zM6 6h2v2h-2zM2 8h2v2h-2zM4 8h2v2h-2zM6 8h2v2h-2zM8 8h2v2h-2zM2 10h2v2h-2zM4 10h2v2h-2zM6 10h2v2h-2zM8 10h2v2h-2zM10 10h2v2h-2zM2 12h2v2h-2zM4 12h2v2h-2zM6 12h2v2h-2zM8 12h2v2h-2zM10 12h2v2h-2zM12 12h2v2h-2zM2 14h2v2h-2zM4 14h2v2h-2zM6 14h2v2h-2zM8 14h2v2h-2zM10 14h2v2h-2zM12 14h2v2h-2zM14 14h2v2h-2zM2 16h2v2h-2zM4 16h2v2h-2zM6 16h2v2h-2zM8 16h2v2h-2zM10 16h2v2h-2zM12 16h2v2h-2zM14 16h2v2h-2zM16 16h2v2h-2zM2 18h2v2h-2zM4 18h2v2h-2zM6 18h2v2h-2zM8 18h2v2h-2zM10 18h2v2h-2zM12 18h2v2h-2zM14 18h2v2h-2zM16 18h2v2h-2zM18 18h2v2h-2zM2 20h2v2h-2zM4 20h2v2h-2zM6 20h2v2h-2zM8 20h2v2h-2zM10 20h2v2h-2zM12 20h2v2h-2zM14 20h2v2h-2zM16 20h2v2h-2zM18 20h2v2h-2zM20 20h2v2h-2zM2 22h2v2h-2zM4 22h2v2h-2zM6 22h2v2h-2zM8 22h2v2h-2zM10 22h2v2h-2zM12 22h2v2h-2zM2 24h2v2h-2zM4 24h2v2h-2zM6 24h2v2h-2zM10 24h2v2h-2zM12 24h2v2h-2zM14 24h2v2h-2zM2 26h2v2h-2zM4 26h2v2h-2zM10 26h2v2h-2zM12 26h2v2h-2zM14 26h2v2h-2zM2 28h2v2h-2zM12 28h2v2h-2zM14 28h2v2h-2zM16 28h2v2h-2zM12 30h2v2h-2zM14 30h2v2h-2zM16 30h2v2h-2zM14 32h2v2h-2zM16 32h2v2h-2z'/%3E%3C/svg%3E");
+}
+html {
+  cursor: var(--px-arrow) 2 2, auto;
+}
+a,
+button,
+summary,
+[role="button"],
+label[for],
+.cursor-pointer {
+  cursor: var(--px-hand) 2 2, pointer;
+}
+
+
+/* Article text for case studies and posts. MDX output is styled from here, so
+   content files stay plain markdown. */
+.px-prose {
+  color: rgb(var(--fg-muted));
+  font-size: 1.8rem;
+  line-height: 1.42;
+  max-width: 780px;
+}
+.px-prose > * + * {
+  margin-top: 1.1em;
+}
+.px-prose p {
+  margin: 0;
+  color: rgb(var(--fg-muted));
+}
+.px-prose strong {
+  color: rgb(var(--fg));
+  font-weight: 400;
+}
+.px-prose a {
+  color: rgb(var(--accent));
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+.px-prose h3 {
+  margin: 1.6em 0 0;
+  color: rgb(var(--fg));
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.px-prose ul,
+.px-prose ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.px-prose li {
+  position: relative;
+  padding-left: 28px;
+}
+.px-prose li + li {
+  margin-top: 0.5em;
+}
+.px-prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.55em;
+  width: 12px;
+  height: 12px;
+  background: rgb(var(--green));
+}
+.px-prose ol {
+  counter-reset: px;
+}
+.px-prose ol > li {
+  counter-increment: px;
+}
+.px-prose ol > li::before {
+  content: counter(px) ".";
+  position: absolute;
+  left: 0;
+  color: rgb(var(--green));
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.px-prose code {
+  padding: 0 0.3em;
+  color: #6bf59a;
+  background: rgb(var(--raised));
+  font-size: 0.92em;
+}
+.px-prose pre {
+  margin: 1.2em 0;
+  overflow-x: auto;
+  padding: 18px 24px;
+  background: rgb(var(--slot));
+  border-left: 8px solid rgb(var(--green));
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+.px-prose pre code {
+  padding: 0;
+  background: none;
+  color: #c4ffdd;
+  font-size: inherit;
+}
+.px-prose pre.px-bare {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.px-prose hr {
+  height: 4px;
+  margin: 2em 0;
+  border: 0;
+  background: rgb(var(--border));
+}
+
+/* Speech bubble: how a markdown quote renders (see pixel/prose.tsx). */
+.px-talk {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  margin: 34px 0;
+}
+.px-talk-box {
+  position: relative;
+  flex: 1;
+  max-width: 700px;
+  padding: 18px 26px;
+  color: #131418;
+  background: #ecece0;
+  font-size: 1.75rem;
+  line-height: 1.3;
+  box-shadow: 6px 6px 0 rgb(var(--shade));
+}
+.px-talk-box code {
+  color: #14161c;
+  background: #d6d4c2;
+}
+.px-talk-box p {
+  margin: 0;
+  color: #131418;
+}
+.px-talk-box::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  bottom: 18px;
+  border: 12px solid transparent;
+  border-left: 0;
+  border-right-color: #ecece0;
+}
+@media (min-width: 1100px) {
+  .px-talk {
+    margin-left: -150px;
+  }
+}
+
+/* Chapters (case studies): outline numeral, then the chapter. */
+.px-chapter {
+  display: flex;
+  gap: 40px;
+  margin-top: 70px;
+}
+.px-chapter-num {
+  flex: none;
+  width: 150px;
+  font-family: var(--font-display);
+  font-size: 110px;
+  font-weight: 700;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 3px rgb(var(--edge));
+}
+@media (max-width: 900px) {
+  .px-chapter {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .px-chapter-num {
+    width: auto;
+    font-size: 72px;
+  }
+}
+
+/* Cartridges (blog index) */
+.px-cart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 430px;
+  margin: 4px;
+  padding-bottom: 22px;
+  background: #2a2c36;
+  box-shadow:
+    -4px 0 0 rgb(var(--edge)),
+    4px 0 0 rgb(var(--edge)),
+    0 4px 0 rgb(var(--edge)),
+    10px 14px 0 rgb(var(--shade));
+  transition: transform 0.18s steps(3);
+}
+.px-cart::before {
+  content: "";
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: -22px;
+  height: 22px;
+  background: #2a2c36;
+  box-shadow:
+    -4px 0 0 rgb(var(--edge)),
+    4px 0 0 rgb(var(--edge)),
+    0 -4px 0 rgb(var(--edge));
+}
+.px-cart:hover {
+  transform: translateY(-8px);
+}
+.px-cart-grip {
+  height: 34px;
+  margin: 0 18px;
+  background: repeating-linear-gradient(90deg, #1b1c22 0 10px, #2a2c36 10px 20px);
+}
+.px-cart-pins {
+  height: 14px;
+  margin: 16px 18px 0;
+  background: repeating-linear-gradient(90deg, #ffc933 0 10px, transparent 10px 16px);
+}
+
+/* The résumé's paper sheet */
+.px-sheet {
+  position: relative;
+  width: 794px;
+  max-width: 100%;
+  padding: 56px 60px 60px;
+  color: #14161c;
+  background: #fbf9f3;
+  font-size: 1.3rem;
+  line-height: 1.28;
+  box-shadow:
+    0 0 0 4px #14161c,
+    14px 18px 0 4px #07080b;
+}
+.px-sheet h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 30px 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.px-sheet h2::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #14161c;
+}
+.px-sheet h2::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: #14161c;
+}
+.px-sheet h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.px-sheet .m {
+  color: #454c5c;
+}
+.px-sheet .r {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.px-sheet .d {
+  color: #454c5c;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }

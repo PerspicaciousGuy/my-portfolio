@@ -1,0 +1,353 @@
+/* The pixel backdrop: sky, sun or moon, clouds, four skylines, planes, birds,
+   a UFO and rain. Parallax and window lighting run on CSS variables that the
+   component sets from a requestAnimationFrame loop, so React never re-renders
+   for a mouse move or a scroll.
+
+     --mx --my   pointer position, -1 to 1 (eased)
+     --sy        scroll distance in px, capped at 1800
+     --p         scroll progress, 0 to 1                                        */
+
+:root {
+  --bd-far: #b9c9d9;
+  --bd-mid: #aec0d1;
+  --bd-near: #9fb3c6;
+  --bd-fg: #6f8398;
+  --bd-off-far: #a7b9ca;
+  --bd-off-mid: #9cafc1;
+  --bd-off-near: #8ca1b5;
+  --bd-cloud: #f7f9fc;
+  --bd-plane: #ffffff;
+  --bd-plane-light: #e5484d;
+  --bd-trail: #ffffff;
+  --bd-rain: rgba(60, 100, 160, 0.6);
+}
+.dark {
+  --bd-far: #1e2028;
+  --bd-mid: #23262f;
+  --bd-near: #282b35;
+  --bd-fg: #14151a;
+  --bd-off-far: #17181d;
+  --bd-off-mid: #1b1d24;
+  --bd-off-near: #1f2128;
+  --bd-cloud: #2e313b;
+  --bd-plane: #8a8f9c;
+  --bd-plane-light: #ff5a5a;
+  --bd-trail: #a9aec2;
+  --bd-rain: rgba(150, 175, 215, 0.55);
+}
+
+.px-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  --mx: 0;
+  --my: 0;
+  --sy: 0;
+  --p: 0;
+}
+
+.px-ly {
+  position: absolute;
+  left: -80px;
+  right: -80px;
+  top: -40px;
+  bottom: -40px;
+  will-change: transform;
+  transform: translate3d(
+    round(calc(var(--mx) * var(--fx) * -1px), 4px),
+    round(calc(var(--my) * var(--fx) * -0.6px + var(--sy) * var(--fs) * 1px), 4px),
+    0
+  );
+}
+.px-ly-stars { --fx: 6; --fs: 0.02; }
+.px-ly-cloud { --fx: 12; --fs: 0.04; }
+.px-ly-far { --fx: 20; --fs: 0.03; --off: var(--bd-off-far); --on: #ff9f43; --body: var(--bd-far); }
+.px-ly-mid { --fx: 27; --fs: 0.04; --off: var(--bd-off-mid); --on: #ffc933; --body: var(--bd-mid); }
+.px-ly-near { --fx: 34; --fs: 0.05; --off: var(--bd-off-near); --on: #ffc933; --body: var(--bd-near); }
+.px-ly-fg { --fx: 56; --fs: 0.12; }
+
+.px-sky {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+}
+.px-bld {
+  position: relative;
+  flex: none;
+  background: var(--body);
+}
+
+/* Windows. The lit colour is a pseudo-element whose opacity is a clamp of
+   scroll progress minus the window's own threshold, so they come on one by
+   one without any per-window state. Day windows never light. */
+.px-win {
+  position: absolute;
+  background: var(--off);
+}
+.px-win::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--on);
+  opacity: 0;
+}
+.dark .px-win::after {
+  opacity: clamp(0, calc((var(--p) - var(--t)) * 60), 1);
+}
+.dark .px-backdrop[data-lights="on"] .px-win::after,
+.px-win[data-on]::after {
+  opacity: 1;
+}
+.px-win[data-on] {
+  box-shadow: 0 0 0 2px rgb(var(--fg) / 0.5);
+}
+:root:not(.dark) .px-win[data-on] {
+  background: #fff;
+}
+.px-win[data-hover] {
+  box-shadow: 0 0 0 3px #ecece0;
+}
+.px-backdrop[data-disco] .px-win::after {
+  opacity: 1;
+  animation: px-disco 1.5s steps(1) infinite;
+  animation-delay: calc(var(--t) * -1.5s);
+}
+@keyframes px-disco {
+  0% { background: #ff5a5a; }
+  20% { background: #ffc933; }
+  40% { background: #6bf59a; }
+  60% { background: #62b6ff; }
+  80% { background: #9b7bff; }
+}
+
+/* Stars, sun, moon, clouds */
+.px-stars {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  box-shadow: 120px 60px 0 #fff, 260px 150px 0 #a9aec2, 410px 40px 0 #fff, 520px 210px 0 #a9aec2, 640px 90px 0 #fff, 700px 330px 0 #a9aec2, 820px 30px 0 #fff, 930px 170px 0 #fff, 1010px 80px 0 #a9aec2, 1130px 260px 0 #fff, 1250px 60px 0 #a9aec2, 1330px 190px 0 #fff, 70px 380px 0 #a9aec2, 330px 470px 0 #fff, 560px 540px 0 #a9aec2, 40px 220px 0 #fff, 880px 420px 0 #a9aec2, 1190px 470px 0 #fff, 1390px 360px 0 #a9aec2;
+  animation: px-twinkle-a 1.2s steps(1) infinite;
+}
+.px-stars-b {
+  background: #a9aec2;
+  box-shadow: 90px 130px 0 #a9aec2, 230px 60px 0 #fff, 380px 180px 0 #a9aec2, 480px 70px 0 #a9aec2, 600px 250px 0 #fff, 760px 140px 0 #a9aec2, 900px 90px 0 #a9aec2, 1050px 210px 0 #fff, 1180px 120px 0 #a9aec2, 1300px 300px 0 #a9aec2, 1420px 90px 0 #fff, 200px 330px 0 #fff, 640px 400px 0 #a9aec2;
+  animation-name: px-twinkle-b;
+}
+@keyframes px-twinkle-a { 0% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes px-twinkle-b { 0% { opacity: 0.35; } 50% { opacity: 1; } }
+:root:not(.dark) .px-night,
+.dark .px-day {
+  display: none;
+}
+
+.px-octagon {
+  clip-path: polygon(25% 0, 75% 0, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0 75%, 0 25%);
+}
+.px-moon {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  background: #ffe27a;
+}
+.px-moon i {
+  position: absolute;
+  left: -18px;
+  top: -10px;
+  width: 56px;
+  height: 56px;
+  background: rgb(var(--bg));
+}
+.px-moon[data-face] {
+  background: #fff0a8;
+}
+.px-moon[data-face] i {
+  display: none;
+}
+.px-moon b {
+  display: none;
+  position: absolute;
+  left: 14px;
+  top: 20px;
+  width: 8px;
+  height: 8px;
+  background: #3a3a46;
+  box-shadow: 20px 0 0 #3a3a46, 6px 18px 0 #3a3a46, 10px 22px 0 #3a3a46, 14px 22px 0 #3a3a46, 18px 18px 0 #3a3a46;
+}
+.px-moon[data-face] b {
+  display: block;
+}
+.px-sun {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  background: #ffd54a;
+}
+.px-ray {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #ffd54a;
+  box-shadow: 0 -52px 0 #ffd54a, 0 52px 0 #ffd54a, -52px 0 0 #ffd54a, 52px 0 0 #ffd54a;
+}
+.px-shoot {
+  position: absolute;
+  left: 18%;
+  top: 90px;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  box-shadow: -6px -6px 0 #a9aec2, -12px -12px 0 #5a5f70;
+  opacity: 0;
+  animation: px-shoot 11s steps(14) 2s infinite;
+}
+@keyframes px-shoot {
+  0% { opacity: 0; transform: translate(0, 0); }
+  2% { opacity: 1; }
+  14% { opacity: 1; transform: translate(360px, 360px); }
+  15%, 100% { opacity: 0; transform: translate(360px, 360px); }
+}
+.px-cloud {
+  position: absolute;
+  width: 48px;
+  height: 12px;
+  background: var(--bd-cloud);
+  box-shadow: 12px -12px 0 var(--bd-cloud), 24px -12px 0 var(--bd-cloud), 36px -12px 0 var(--bd-cloud), 24px -24px 0 var(--bd-cloud);
+  animation: px-drift 60s linear infinite alternate;
+}
+@keyframes px-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(240px); }
+}
+
+/* Planes: pure CSS, one pass every 47 s and 71 s. The component listens for
+   animationstart / animationiteration and tells the critters to wave. */
+.px-plane {
+  position: absolute;
+  left: 0;
+  transform: translateX(-20vw);
+  animation: px-fly 47s linear 6s infinite;
+}
+.px-plane-b {
+  top: 250px;
+  animation-duration: 71s;
+  animation-delay: 28s;
+  animation-name: px-fly-back;
+}
+@keyframes px-fly {
+  0% { transform: translateX(-12vw); }
+  46.8%, 100% { transform: translateX(112vw); }
+}
+@keyframes px-fly-back {
+  0% { transform: translateX(112vw) scaleX(-1); }
+  36.6%, 100% { transform: translateX(-12vw) scaleX(-1); }
+}
+.px-plane svg path:first-child { fill: var(--bd-plane); }
+.px-plane svg path:last-child { fill: var(--bd-plane-light); animation: px-blink 1.2s steps(1) infinite; }
+@keyframes px-blink { 50% { fill: var(--bd-plane); } }
+
+/* UFO: flies in, hovers with its beam on, leaves. */
+.px-ufo {
+  position: absolute;
+  left: 0;
+  top: 110px;
+  width: 96px;
+  height: 48px;
+  animation: px-ufo 12s linear forwards;
+}
+@keyframes px-ufo {
+  0% { transform: translate(-12vw, 0); }
+  28% { transform: translate(52vw, 0); }
+  32% { transform: translate(52vw, 6px); }
+  36% { transform: translate(52vw, -6px); }
+  40% { transform: translate(52vw, 6px); }
+  44% { transform: translate(52vw, -6px); }
+  48% { transform: translate(52vw, 6px); }
+  52% { transform: translate(52vw, -6px); }
+  56% { transform: translate(52vw, 6px); }
+  60% { transform: translate(52vw, -6px); }
+  64% { transform: translate(52vw, 6px); }
+  68% { transform: translate(52vw, -6px); }
+  72% { transform: translate(52vw, 0); }
+  100% { transform: translate(112vw, 0); }
+}
+.px-beam {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  width: 200px;
+  height: 420px;
+  margin-left: -100px;
+  background: linear-gradient(rgba(190, 255, 215, 0.34), rgba(190, 255, 215, 0));
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  opacity: 0;
+  animation: px-beam 12s linear forwards;
+}
+@keyframes px-beam {
+  0%, 30% { opacity: 0; }
+  32%, 68% { opacity: 1; }
+  70%, 100% { opacity: 0; }
+}
+
+/* Foreground poles and the birds on the wire */
+.px-bird {
+  position: absolute;
+  animation: none;
+}
+.px-bird[data-flee] {
+  animation: px-flee 14s ease-in forwards;
+}
+@keyframes px-flee {
+  0% { transform: translate(0, 0); opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: translate(60vw, -50vh); opacity: 0; }
+}
+
+/* Rain */
+.px-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  overflow: hidden;
+}
+.px-drop {
+  position: absolute;
+  top: -50px;
+  width: 2px;
+  background: var(--bd-rain);
+  animation: px-fall var(--d) linear infinite;
+  animation-delay: var(--dl);
+}
+@keyframes px-fall {
+  to { transform: translateY(calc(100vh + 80px)); }
+}
+
+/* Tip bubble for the clickable things in the sky */
+.px-tip {
+  position: fixed;
+  z-index: 7;
+  max-width: 270px;
+  padding: 8px 12px;
+  color: #131418;
+  background: #ecece0;
+  font-size: 1.25rem;
+  line-height: 1.15;
+  box-shadow: 3px 3px 0 #07080b;
+  pointer-events: none;
+}
+
+@media print {
+  .px-backdrop,
+  .px-rain,
+  .px-tip {
+    display: none !important;
+  }
+}

@@ -1,106 +1,105 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft } from "lucide-react";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import { getPost, getPosts, formatDate } from "@/lib/posts";
-import { slugifyHeading } from "@/lib/headings";
-import { Toc } from "@/components/toc";
+import { getPost, getPosts } from "@/lib/posts";
+import { splitChapters } from "@/lib/chapters";
+import { formatDate } from "@/lib/format-date";
+import { portrait, site } from "@/data/site";
 import { Footer } from "@/components/footer";
-
-/** Give every section a stable anchor the table of contents can link to. */
-function H2({ children }: { children?: React.ReactNode }) {
-  const text = typeof children === "string" ? children : String(children ?? "");
-  return <h2 id={slugifyHeading(text)}>{children}</h2>;
-}
+import { Critter } from "@/components/pixel/critter";
+import { Icon } from "@/components/pixel/icon";
+import { Prose } from "@/components/pixel/prose";
+import { ReadingBar } from "@/components/pixel/reading-bar";
+import { ChapterDots } from "@/components/pixel/chapter-dots";
 
 export async function generateStaticParams() {
-  const posts = await getPosts();
-  return posts.map((p) => ({ slug: p.slug }));
+  return (await getPosts()).map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return {};
-
   return {
     title: post.title,
     description: post.summary,
-    openGraph: {
-      title: post.title,
-      description: post.summary,
-      type: "article",
-      publishedTime: post.date,
-    },
+    openGraph: { title: post.title, description: post.summary, type: "article", publishedTime: post.date },
   };
 }
 
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+/** A post in reader mode: wide type on the bare sky, a progress bar with the critter on it, chapters as dots. */
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) notFound();
 
+  const { intro, chapters } = splitChapters(post.content);
+  const all = await getPosts();
+  const at = all.findIndex((p) => p.slug === slug);
+  const next = all.length > 1 ? all[(at + 1) % all.length] : null;
+
   return (
     <>
-    {/* The article stays a fixed, readable column. On xl the grid adds a left
-        gutter for the TOC — space that was dead margin anyway. */}
-    <div className="mx-auto grid min-h-svh w-full max-w-2xl grid-cols-1 gap-12 px-6 py-24 xl:max-w-6xl xl:grid-cols-[15rem_minmax(0,42rem)] xl:justify-center">
-      <aside className="hidden xl:block">
-        <Toc headings={post.headings} />
-      </aside>
+      <ReadingBar />
+      <ChapterDots ids={chapters.map((c) => c.id)} titles={chapters.map((c) => c.title)} />
+      <main className="px-wrap relative z-[1] flex-1 pt-14">
+        <div className="mx-auto max-w-[780px]">
+          <Link href="/blog" className="px-label inline-flex min-h-11 items-center gap-2 hover:text-accent">
+            <Icon name="left" />
+            Writing
+          </Link>
+          <p className="px-label mb-0 mt-8 text-green">
+            <time dateTime={post.date}>{formatDate(post.date)}</time> · {post.readingTime} min read
+          </p>
+          <h1 className="m-0 mt-3.5 font-display text-[clamp(44px,6vw,76px)] font-bold uppercase leading-[0.98]">{post.title}</h1>
+          <p className="mb-0 mt-6 text-[30px] text-fg-muted">{post.summary}</p>
+          <div className="mt-6 flex items-center gap-4">
+            {portrait ? (
+              <Image src={portrait} alt="" width={56} height={56} className="size-14 flex-none" />
+            ) : (
+              <div aria-hidden="true" className="size-14 flex-none border-4 border-dashed border-edge bg-slot" />
+            )}
+            <div>
+              <div className="font-display text-lg font-semibold uppercase">{site.name}</div>
+              <div className="px-label">{post.tags.join(" · ")}</div>
+            </div>
+          </div>
+          <div aria-hidden="true" className="mb-12 mt-9 h-1 bg-border" />
 
-      <main className="relative w-full min-w-0">
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
-      >
-        <ArrowLeft className="size-3.5" />
-        writing
-      </Link>
-
-      <header className="mt-10">
-        <div className="flex items-center gap-3 font-mono text-xs text-fg-subtle">
-          <time dateTime={post.date}>{formatDate(post.date)}</time>
-          <span>·</span>
-          <span>{post.readingTime} min read</span>
-        </div>
-
-        <h1 className="mt-4 text-balance text-4xl font-semibold leading-tight tracking-tight">
-          {post.title}
-        </h1>
-
-        {post.tags.length > 0 && (
-          <ul className="mt-5 flex flex-wrap gap-1.5">
-            {post.tags.map((t) => (
-              <li
-                key={t}
-                className="rounded border border-border px-2 py-0.5 font-mono text-[11px] text-fg-subtle"
-              >
-                {t}
-              </li>
+          <div id="post-body">
+            <Prose source={intro} />
+            {chapters.map((c) => (
+              <section key={c.id} id={c.id}>
+                <h2 className="mb-[18px] mt-14 font-display text-4xl font-bold uppercase leading-[1.05]">
+                  <span className="px-label mb-2 block text-[15px] font-medium tracking-[0.1em] text-green">Chapter {c.n}</span>
+                  {c.title}
+                </h2>
+                <Prose source={c.body} />
+              </section>
             ))}
-          </ul>
-        )}
-      </header>
+          </div>
 
-      <article
-        className="prose-portfolio mt-12"
-        // Styles live in globals.css — no typography plugin needed.
-      >
-        <MDXRemote source={post.content} components={{ h2: H2 }} />
-      </article>
+          {next && next.slug !== slug && (
+            <Link href={`/blog/${next.slug}`} className="px-panel mt-[50px] flex flex-wrap items-center gap-6 px-[30px] py-[26px]">
+              <div className="relative h-[51px] w-[78px] flex-none">
+                <div className="absolute bottom-0 left-0">
+                  <Critter u={3} face="heart" />
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-[22px] font-bold uppercase">Enjoyed it?</div>
+                <div className="text-fg-muted">Next up: {next.title}.</div>
+              </div>
+              <span className="px-btn px-btn-primary">
+                Next post
+                <Icon name="right" />
+              </span>
+            </Link>
+          )}
+        </div>
       </main>
-    </div>
-    <Footer />
+      <Footer />
     </>
   );
 }
