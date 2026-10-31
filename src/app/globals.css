@@ -2,70 +2,115 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Pixel design system ─────────────────────────────────────────────────
+   Two palettes, as space-separated RGB channels so Tailwind's opacity
+   modifiers work. :root is the day theme; .dark is the night theme (the
+   default). The old token names (bg, fg, border, accent) still exist so
+   pages that haven't been redrawn keep working. */
 :root {
-  --bg: 250 250 249;
-  --bg-elevated: 255 255 255;
-  --fg: 12 12 14;
-  --fg-muted: 92 92 102;
-  --fg-subtle: 112 112 124;
-  --border: 226 226 224;
-  --accent: 220 38 38;
+  --bg: 228 236 244;
+  --bg-elevated: 251 249 243;
+  --raised: 236 231 216;
+  --slot: 213 223 234;
+  --fg: 20 22 28;
+  --fg-muted: 69 76 92;
+  --fg-subtle: 69 76 92;
+  --border: 27 29 36;
+  --edge: 124 138 160;
+  --shade: 154 169 188;
+  --accent: 154 90 0;
   --accent-fg: 255 255 255;
-  --glow: 220 38 38;
+  --green: 10 122 61;
+  --green-edge: 10 122 61;
+  --violet: 91 51 214;
 }
 
 .dark {
-  --bg: 8 8 10;
-  --bg-elevated: 18 18 22;
-  --fg: 245 245 244;
-  --fg-muted: 160 160 170;
-  --fg-subtle: 128 128 140;
-  --border: 38 38 44;
-  --accent: 248 88 88;
-  --accent-fg: 12 12 14;
-  --glow: 248 88 88;
+  --bg: 19 20 24;
+  --bg-elevated: 26 27 33;
+  --raised: 35 37 45;
+  --slot: 22 23 28;
+  --fg: 236 236 240;
+  --fg-muted: 169 172 184;
+  --fg-subtle: 169 172 184;
+  --border: 53 56 68;
+  --edge: 90 95 112;
+  --shade: 7 8 11;
+  --accent: 255 201 51;
+  --accent-fg: 19 20 24;
+  --green: 107 245 154;
+  --green-edge: 47 143 87;
+  --violet: 155 123 255;
 }
 
 @theme inline {
   --color-bg: rgb(var(--bg));
   --color-bg-elevated: rgb(var(--bg-elevated));
+  --color-panel: rgb(var(--bg-elevated));
+  --color-raised: rgb(var(--raised));
+  --color-slot: rgb(var(--slot));
   --color-fg: rgb(var(--fg));
   --color-fg-muted: rgb(var(--fg-muted));
   --color-fg-subtle: rgb(var(--fg-subtle));
   --color-border: rgb(var(--border));
+  --color-edge: rgb(var(--edge));
+  --color-shade: rgb(var(--shade));
   --color-accent: rgb(var(--accent));
   --color-accent-fg: rgb(var(--accent-fg));
+  --color-green: rgb(var(--green));
+  --color-green-edge: rgb(var(--green-edge));
+  --color-violet: rgb(var(--violet));
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-vt323), ui-monospace, monospace;
+  --font-mono: var(--font-vt323), ui-monospace, monospace;
+  --font-display: var(--font-pixelify), var(--font-vt323), ui-monospace, monospace;
+}
+
+/* VT323 is a small-looking face, so the text scale is one step larger than
+   Tailwind's default. Headings (text-3xl and up) keep the default sizes. */
+@theme {
+  --text-xs: 1rem;
+  --text-xs--line-height: 1.2;
+  --text-sm: 1.125rem;
+  --text-sm--line-height: 1.25;
+  --text-base: 1.3125rem;
+  --text-base--line-height: 1.3;
+  --text-lg: 1.5rem;
+  --text-lg--line-height: 1.3;
+  --text-xl: 1.75rem;
+  --text-xl--line-height: 1.2;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 1.15;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
   }
 
-  /* Clears the fixed header when the browser jumps to an anchor directly
+  /* Clears the sticky header when the browser jumps to an anchor directly
      (e.g. someone lands on /#work from an external link). */
   section[id] {
-    scroll-margin-top: 72px;
+    scroll-margin-top: 84px;
   }
 
   body {
     background-color: rgb(var(--bg));
     color: rgb(var(--fg));
     font-family: var(--font-sans);
-    transition: background-color 0.4s ease, color 0.4s ease;
+    font-size: 1.3125rem;
+    line-height: 1.25;
   }
 
   ::selection {
-    background-color: rgb(var(--accent) / 0.25);
+    background-color: rgb(var(--accent) / 0.35);
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
-    outline-offset: 3px;
+    outline: 4px solid rgb(var(--accent));
+    outline-offset: 4px;
   }
 }
 
@@ -82,37 +127,150 @@
   }
 }
 
-/* ── Hero texture ─────────────────────────────────────────────────────────
-   A faint static dot grid behind the hero, masked so it fades out before the
-   content sections. Just enough texture to feel intentional, never busy. The
-   dot colour tracks the foreground token, so it adapts to light and dark. */
-.hero-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  z-index: -10;
-  pointer-events: none;
-  background-image: radial-gradient(
-    circle,
-    rgb(var(--fg)) 1px,
-    transparent 1.6px
-  );
-  background-size: 24px 24px;
-  opacity: 0.14;
-  /* Fade the grid out toward the edges and bottom so it's a soft halo behind
-     the hero, not a hard sheet across the whole viewport. */
-  -webkit-mask-image: radial-gradient(
-    ellipse 80% 68% at 42% 34%,
-    #000 0%,
-    transparent 72%
-  );
-  mask-image: radial-gradient(
-    ellipse 80% 68% at 42% 34%,
-    #000 0%,
-    transparent 72%
-  );
+/* ── Pixel components ─────────────────────────────────────────────────────
+   Hard edges, no blur, no rounded corners. A "border" is a stack of box
+   shadows so the corners stay square, and every raised surface casts an
+   offset block shadow instead of a soft one. */
+@layer components {
+  .px-panel {
+    background: rgb(var(--bg-elevated));
+    margin: 4px;
+    box-shadow:
+      -4px 0 0 rgb(var(--border)),
+      4px 0 0 rgb(var(--border)),
+      0 -4px 0 rgb(var(--border)),
+      0 4px 0 rgb(var(--border)),
+      8px 12px 0 rgb(var(--shade));
+  }
+
+  .px-panel-hi {
+    background: rgb(var(--bg-elevated));
+    margin: 4px;
+    box-shadow:
+      -4px 0 0 rgb(var(--accent)),
+      4px 0 0 rgb(var(--accent)),
+      0 -4px 0 rgb(var(--accent)),
+      0 4px 0 rgb(var(--accent)),
+      8px 12px 0 rgb(var(--shade));
+  }
+
+  .px-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    margin: 4px;
+    padding: 14px 24px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: transform 0.12s steps(2);
+  }
+  .px-btn:hover {
+    transform: translate(-2px, -2px);
+  }
+  .px-btn:active {
+    transform: translate(3px, 3px);
+  }
+  .px-btn-sm {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+  .px-btn-primary {
+    color: #fff;
+    background: #5b33d6;
+    box-shadow:
+      -4px 0 0 #7c4dff,
+      4px 0 0 #7c4dff,
+      0 -4px 0 #7c4dff,
+      0 4px 0 #7c4dff,
+      4px 8px 0 rgb(var(--shade));
+  }
+  .px-btn-primary:hover {
+    background: #6b43ea;
+  }
+  .px-btn-ghost {
+    color: rgb(var(--green));
+    background: transparent;
+    box-shadow:
+      -4px 0 0 rgb(var(--green-edge)),
+      4px 0 0 rgb(var(--green-edge)),
+      0 -4px 0 rgb(var(--green-edge)),
+      0 4px 0 rgb(var(--green-edge));
+  }
+  .px-btn-ghost:hover {
+    color: rgb(var(--bg));
+    background: rgb(var(--green));
+  }
+
+  .px-chip {
+    display: inline-block;
+    margin: 2px;
+    padding: 5px 10px 4px;
+    font-size: 1.25rem;
+    line-height: 1;
+    background: rgb(var(--raised));
+    box-shadow: 0 0 0 2px rgb(var(--border));
+    transition: transform 0.1s steps(2);
+  }
+  .px-chip:hover {
+    transform: translateY(-3px);
+  }
+
+  .px-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    color: rgb(var(--fg-muted));
+    background: rgb(var(--slot));
+    border: 4px dashed rgb(var(--edge));
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .px-label {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgb(var(--fg-muted));
+  }
+
+  /* Section heading: yellow square, index, title. */
+  .px-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin: 0 0 44px;
+  }
+  .px-heading > i {
+    font-style: normal;
+    font-size: 1.625rem;
+    color: rgb(var(--green));
+  }
+  .px-heading > h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .px-heading > span {
+    display: block;
+    align-self: center;
+    width: 16px;
+    height: 16px;
+    background: rgb(var(--accent));
+  }
 }
 
 /* Article body. Kept hand-rolled so it stays on the same tokens as the site.
@@ -224,17 +382,8 @@
      a blanket header{display:none} silently strips them from the PDF. Page
      chrome is hidden with print:hidden at the call site instead. */
   canvas,
-  .grain-overlay {
+  .px-backdrop {
     display: none !important;
   }
 }
 
-.grain-overlay {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-}
