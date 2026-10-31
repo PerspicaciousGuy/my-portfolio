@@ -32,6 +32,9 @@
   z-index: 2;
   height: 390px;
   overflow-x: clip;
+  /* Below the fold and full of box-shadows: skip its layout and paint until it is near the viewport. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 390px;
 }
 .rd-city {
   position: absolute;

@@ -6,9 +6,7 @@ import { site } from "@/data/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { StructuredData } from "@/components/structured-data";
 import { THEME_SCRIPT } from "@/lib/theme-script";
-import { Backdrop } from "@/components/pixel/backdrop";
-import { Sparks } from "@/components/pixel/sparks";
-import { Palette } from "@/components/pixel/palette";
+import { PixelWorld } from "@/components/pixel/pixel-world";
 import { Nav } from "@/components/nav";
 import "./globals.css";
 
@@ -83,11 +81,9 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
-          <Backdrop />
+          <PixelWorld />
           <Nav />
           {children}
-          <Sparks />
-          <Palette />
         </ThemeProvider>
         <StructuredData />
         <Analytics />
