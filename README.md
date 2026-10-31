@@ -10,8 +10,9 @@ printable résumé.
 - **Next.js 16** (App Router, Turbopack) and **React 19**
 - **TypeScript**
 - **Tailwind CSS v4** (CSS-first tokens in `src/app/globals.css`)
-- **Framer Motion** for animation
-- **next-themes** for dark and light
+- **Pixel design system**: Pixelify Sans and VT323 through `next/font`, hard
+  edges and block shadows, no rounded corners
+- **Framer Motion** on the blog only (table of contents, post filters)
 - **MDX** content via `next-mdx-remote` and `gray-matter`
 - **Vercel Analytics** and **Speed Insights**
 
@@ -19,7 +20,7 @@ printable résumé.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Homepage: hero, stats, about, skills, journey, work, writing, contact |
+| `/` | Homepage: hero, live strip, stats, about, skills, work, journey, writing, activity, contact |
 | `/work/[slug]` | Case studies, from `src/content/work/*.mdx` |
 | `/blog`, `/blog/[slug]` | Writing, from `src/content/posts/*.mdx` |
 | `/resume` | Printable résumé |
@@ -45,23 +46,40 @@ rather than failing.
 | Variable | Used for | Without it |
 | --- | --- | --- |
 | `LASTFM_API_KEY`, `LASTFM_USERNAME` | Now-playing card | Card is not shown |
-| `GITHUB_TOKEN` | Contribution heatmap and GitHub stats | Heatmap is not rendered |
+| `GITHUB_TOKEN` | Contribution calendar (the Activity skyline) and higher API rate limits | The Activity section is not rendered |
 | `RESEND_API_KEY` | Contact form delivery | Form cannot send |
 | `CONTACT_FROM` | Sender address for contact mail | Falls back to `Portfolio <onboarding@resend.dev>` |
 | `EXERCISEDB_DEMO_KEY` | API playground (kept server-side) | Playground requests fail |
 
 Put them in `.env.local` for local development.
 
-## Navigation and motion
+## The pixel world
 
-- The header has a keyboard-accessible Menu disclosure below the `lg`
-  breakpoint, with section links, Writing and Résumé. Escape, an outside click,
-  or moving focus outside closes it.
-- The About grid constrains long Last.fm track titles so they truncate inside
-  the card on narrow screens.
-- The custom cursor and the loading screen are skipped for touch devices and
-  for `prefers-reduced-motion`. In-page anchor scrolling is animated by
-  `src/lib/scroll-to.ts`, with a shorter duration for reduced motion.
+The page is a night city that reacts to the visitor. Everything is original
+pixel art drawn in code (no image files), and every moving part owns its own
+timers and listeners.
+
+- **Theme:** night (default), auto (follows the visitor's clock) and day, from
+  `src/lib/theme.ts` and `use-theme.ts`. An inline script sets the `dark`
+  class before first paint.
+- **Backdrop** (`components/pixel/backdrop.tsx`, `styles/backdrop.css`): sky,
+  sun or moon, clouds, four parallax skylines, planes, birds, a rare UFO and
+  rain. Parallax and window lighting run on CSS variables written from a
+  requestAnimationFrame loop that only runs while something moves. Windows,
+  the moon, planes, birds and the UFO are clickable.
+- **Critter:** the sprite is pixel rows in `src/lib/critter-sprite.ts`; the
+  hero critter's behaviour is a plain state machine in
+  `src/lib/critter-brain.ts`. Card critters sit on project cards and have a
+  job (laptop, coffee, catching rain).
+- **Road:** the footer ends on a street (`components/pixel/road.tsx`): two rows
+  of buildings, lamps and cars that honk when clicked.
+- **Cheats:** the Konami code, the words `party`, `ufo`, `rain`, `lights`, or
+  the command palette (`/` or Ctrl+K). They fire `px-cheat` window events; see
+  `src/lib/pixel-events.ts`.
+- **404** is a playable runner game.
+- **Reduced motion:** timers do not start, the sky stays still, and the first
+  typed role is rendered in full. Timers also pause off screen and in
+  background tabs.
 - Remote images: Last.fm album art is allowed in `next.config.ts`.
 
 ## Local development
@@ -80,11 +98,16 @@ npm run build   # production build
 src/
   app/                 routes, API handlers, global styles
   components/
-    sections/          hero, stats, about, skills, journey, work, writing, contact
+    sections/          hero, now-strip, stats, about, skills, work, journey,
+                       writing, activity, contact
+    pixel/             backdrop, critter, walker, card critter, road, palette,
+                       sparks, git city, 404 game
     ui/                reveal, section primitives
   content/
     posts/             blog posts (MDX)
     work/              case studies (MDX)
   data/                site.ts (all copy), playground.ts
-  lib/                 posts, case studies, GitHub, Last.fm, scroll and hooks
+  lib/                 posts, case studies, GitHub, Last.fm, theme, weather,
+                       pixel events, critter sprite and brain
+  styles/              backdrop.css, road.css
 ```

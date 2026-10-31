@@ -1,28 +1,26 @@
 ## Project Overview
-Personal Next.js portfolio with project case studies, writing, and Last.fm activity.
+Personal Next.js portfolio, redesigned as a pixel-art night city with an interactive mascot. Designed first on a Claude Design canvas, then built here.
 
 ## Current State
-Hero introduction shortened to: Full-stack developer building production APIs and the apps around them. Location remains in the shared site data for other uses.
-LinkedIn profile is included in the shared social links used by the hero, contact section, footer, résumé, and profile metadata.
-Existing portfolio implementation. Last.fm image optimization now allows both the existing and lastfm-img.freetls.fastly.net HTTPS hosts.
-Homepage navigation includes a native mobile disclosure below lg. About grid columns shrink to the viewport even with long Last.fm track titles.
+Homepage is rebuilt in the pixel design (hero with typed roles and the critter's ground line, live strip, stats, about, skills, work, journey, writing, GitHub activity skyline, contact, and a footer that ends on a street). Shared pieces live in the root layout: backdrop, nav, sparks, command palette and cheats. The 404 is a playable game. Inner pages (work, blog, résumé) inherit the new tokens, fonts and square corners but have not been redrawn.
 
 ## Last Action
-Fixed all ESLint errors and warnings (lint, typecheck and build pass), synced package-lock.json, rewrote README.md to match the actual stack (no Three.js), and wrote a local AGENTS.md (gitignored, imported by CLAUDE.md).
+Built the redesign in phases: tokens/fonts/theme, backdrop and sprite libs, critter brain and walker, homepage sections, extras (sparks, palette, cheats, 404), docs.
 
 ## In Progress
 None.
 
 ## Pending
-Deploy changes through the normal release workflow; no deployment performed in this session.
+- Mobile layout (desktop-first by decision): the pixel design on narrow screens is not designed yet.
+- Case study, blog and résumé pages are not redrawn.
+- Art the user will generate: portrait (`portrait` in src/data/site.ts), project thumbnails (`preview` per project), favicon, Open Graph image.
+- Performance pass against the earlier Lighthouse audit (mobile LCP).
+- Remove framer-motion if the blog's table of contents and filters are rebuilt without it.
 
 ## Known Issues
-Other prior audit findings remain outside this task. The earlier attribution of homepage overflow to the heatmap was incorrect: its own scroll container works; the About grid's automatic minimum track size allowed long track text to expand the page. Existing nav.tsx raw home anchor lint finding is unchanged.
+Activity section needs `GITHUB_TOKEN`; without it the section and its number are skipped. The live strip's latest commit comes from the public events API and is omitted when it is unavailable.
 
 ## Files Status
-- Created: HANDOFF.md (session handoff); src/components/mobile-nav.tsx (native mobile navigation disclosure). Earlier project creation history is not reconstructed.
-- Modified: next.config.ts (prior artwork hostname fix); src/components/nav.tsx (mobile navigation integration); src/components/sections/about.tsx (constrained grid columns); README.md (navigation documentation); HANDOFF.md (verification results).
-- Currently Being Edited: None.
-- Modified this task: src/data/site.ts (short hero introduction), src/components/sections/hero.tsx (render introduction), HANDOFF.md (session record).
-- Planned to Edit: None.
-- Untouched: Other src/ files, package.json, package-lock.json, environment files.
+- Created: src/components/pixel/*, src/lib/{theme,use-theme,theme-script,weather,pixel-events,critter-sprite,critter-brain,car-sprite,hash}.ts, src/data/skyline.ts, src/styles/{backdrop,road}.css, src/app/not-found.tsx, new homepage sections.
+- Removed: Geist and next-themes, terminal, cursor, loader, scroll progress, old command palette, heatmap.
+- Untouched: content (MDX), API routes, data in src/data/site.ts apart from the portrait field and nav order.
