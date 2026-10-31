@@ -6,63 +6,39 @@ import { Reveal } from "@/components/ui/reveal";
 import { arrowNudge } from "@/components/ui/styles";
 
 /**
- * Skills, tied to evidence.
- *
- * A flat tag cloud lists HTML next to Node.js and lets the reader conclude
- * nothing. Each group here says what it means in practice and links to the
- * place on the site where you can watch it working.
+ * Skills, tied to evidence. Each group says what it means in practice and
+ * links to the place on the site where you can watch it working.
  */
 export function Skills() {
   return (
     <Section id="skills" index="02" title="Skills">
-      <div className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
-        {skills.map((group, i) => (
-          <Reveal
-            key={group.title}
-            delay={i * 0.06}
-            className="h-full bg-bg-elevated/70 backdrop-blur"
-          >
-            <div className="flex h-full flex-col p-6">
-              <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
-                {group.title}
-              </h3>
-
-              <p className="mt-3 text-pretty text-sm leading-relaxed text-fg-muted">
-                {group.note}
-              </p>
-
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {group.items.map((s) => (
-                  <li
-                    key={s}
-                    className="rounded-md border border-border px-2.5 py-1 text-sm text-fg-muted"
-                  >
-                    {s}
-                  </li>
-                ))}
-              </ul>
-
-              {group.proof && (
-                <Link
-                  href={group.proof.href}
-                  className="group mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-accent transition hover:opacity-80"
-                >
-                  {group.proof.label}
-                  <ArrowUpRight className={arrowNudge} />
-                </Link>
-              )}
-            </div>
+      <div className="grid gap-10 sm:grid-cols-2">
+        {skills.map((group) => (
+          <Reveal key={group.title} className="px-panel flex flex-col p-7">
+            <h3 className="m-0 font-display text-[22px] font-semibold uppercase text-green">{group.title}</h3>
+            <p className="mb-5 mt-3 text-[22px] text-fg-muted">{group.note}</p>
+            <ul className="m-0 flex list-none flex-wrap p-0">
+              {group.items.map((s) => (
+                <li key={s} className="px-chip">
+                  {s}
+                </li>
+              ))}
+            </ul>
+            {group.proof && (
+              <Link
+                href={group.proof.href}
+                className="group mt-auto inline-flex min-h-11 items-center gap-1.5 pt-5 font-display text-[16px] font-semibold uppercase text-accent hover:underline"
+              >
+                {group.proof.label}
+                <ArrowUpRight className={arrowNudge} />
+              </Link>
+            )}
           </Reveal>
         ))}
       </div>
-
-      <Reveal>
-        <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-          <span className="font-mono text-[11px] uppercase tracking-widest text-fg-subtle">
-            Also used
-          </span>
-          <span className="text-sm text-fg-subtle">{alsoUsed.join(" · ")}</span>
-        </div>
+      <Reveal className="mt-10 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className="px-label">Also used</span>
+        <span className="text-fg-muted">{alsoUsed.join(" · ")}</span>
       </Reveal>
     </Section>
   );

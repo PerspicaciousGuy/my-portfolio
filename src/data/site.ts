@@ -18,6 +18,12 @@ export const site = {
   available: true,
 } as const;
 
+/**
+ * Portrait shown in the About section, as a path under /public. Leave it null
+ * until the art exists: the page then shows a labelled placeholder slot.
+ */
+export const portrait: string | null = null;
+
 export const socials = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/harshitbishnoi", handle: "Harshit Bishnoi" },
   { label: "GitHub", href: "https://github.com/PerspicaciousGuy", handle: "@PerspicaciousGuy" },
@@ -312,8 +318,8 @@ export const resumeProjects = projects.filter((p) => p.featured);
 export const navLinks = [
   { label: "About", href: "/#about" },
   { label: "Skills", href: "/#skills" },
-  { label: "Journey", href: "/#journey" },
   { label: "Work", href: "/#work" },
+  { label: "Journey", href: "/#journey" },
   { label: "Writing", href: "/blog" },
   { label: "Contact", href: "/#contact" },
 ] as const;

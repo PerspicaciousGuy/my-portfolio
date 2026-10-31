@@ -1,96 +1,41 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { navLinks, site } from "@/data/site";
-import { onAnchorClick } from "@/lib/scroll-to";
-import { useActiveSection } from "@/lib/use-active-section";
-import { ThemeToggle } from "./theme-toggle";
-import { CommandPalette } from "./command-palette";
+import { navLinks } from "@/data/site";
 import { MobileNav } from "./mobile-nav";
+import { ThemeToggle } from "./theme-toggle";
+import { RainToggle } from "./pixel/rain-toggle";
 
+/** Sticky header: logo, section links, résumé, and the theme and weather toggles. */
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-
-  // Only the in-page links can be "active" — /blog is a separate route.
-  const sectionIds = useMemo(
-    () =>
-      navLinks
-        .filter((l) => l.href.startsWith("/#"))
-        .map((l) => l.href.slice(2)),
-    [],
-  );
-  const active = useActiveSection(sectionIds);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? "border-b border-border bg-bg/70 backdrop-blur-xl"
-          : "border-b border-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
+    <div className="sticky top-0 z-40 border-b-4 border-border bg-bg">
+      <div className="px-wrap flex min-h-[76px] flex-wrap items-center justify-between gap-6">
         <Link
           href="/"
-          onClick={onAnchorClick}
-          className="font-mono text-sm font-medium tracking-tight transition-colors hover:text-accent"
+          aria-label="Harshit Bishnoi, home"
+          className="font-display text-[38px] font-bold leading-none text-accent"
         >
-          {site.shortName.toLowerCase()}
-          <span className="text-accent">.</span>
+          HB
         </Link>
-
-        <div className="flex items-center gap-4">
-          <ul className="hidden items-center gap-6 lg:flex">
-            {navLinks.map((l) => {
-              const isActive = l.href === `/#${active}`;
-              return (
-                <li key={l.href} className="relative">
-                  <a
-                    href={l.href}
-                    onClick={onAnchorClick}
-                    aria-current={isActive ? "true" : undefined}
-                    className={`text-sm transition-colors ${
-                      isActive ? "text-fg" : "text-fg-muted hover:text-fg"
-                    }`}
-                  >
-                    {l.label}
-                  </a>
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute -bottom-1.5 left-0 h-px w-full bg-accent"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-
-          <a
-            href="/resume"
-            className="hidden rounded-full border border-border bg-bg-elevated/60 px-3.5 py-1.5 text-xs font-medium backdrop-blur transition hover:border-accent/50 hover:text-accent sm:inline-flex"
-          >
+        <nav aria-label="Primary" className="hidden flex-wrap items-center gap-[26px] lg:flex">
+          {navLinks.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="px-label inline-flex min-h-11 items-center px-1 text-[17px] font-medium text-fg hover:text-accent hover:shadow-[0_4px_0_rgb(var(--accent))]"
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <div className="flex items-center gap-3">
+          <Link href="/resume" className="px-btn px-btn-ghost px-btn-sm" style={{ margin: "4px 8px 4px 4px" }}>
             Résumé
-          </a>
-
-          <CommandPalette />
+          </Link>
           <ThemeToggle />
-          <MobileNav active={active} />
+          <RainToggle />
+          <MobileNav active={null} />
         </div>
-      </nav>
-    </motion.header>
+      </div>
+    </div>
   );
 }

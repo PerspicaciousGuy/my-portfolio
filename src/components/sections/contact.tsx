@@ -1,68 +1,46 @@
-import { ArrowUpRight } from "lucide-react";
 import { site, socials } from "@/data/site";
+import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { ContactForm } from "@/components/contact-form";
-import { arrowNudge } from "@/components/ui/styles";
 
-export function Contact() {
+export function Contact({ index = "07" }: { index?: string }) {
+  const links = socials.filter((s) => s.label !== "Email");
   return (
-    <section
-      id="contact"
-      className="relative mx-auto w-full max-w-5xl px-6 py-32 sm:py-44"
-    >
-      <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
-        <div>
-          <Reveal>
-            <p className="font-mono text-sm text-accent">06 — Contact</p>
-            <h2 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-              Let&apos;s build something.
-            </h2>
-            <p className="mt-6 max-w-md text-pretty text-lg text-fg-muted">
-              I&apos;m open to work and always up for talking about a good
-              project.
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.1}>
-            <a
-              href={`mailto:${site.email}`}
-              className="group mt-8 inline-flex items-center gap-2 font-medium transition-colors hover:text-accent"
-            >
-              {site.email}
-              <ArrowUpRight className={arrowNudge} />
-            </a>
-          </Reveal>
-
-          <Reveal delay={0.16}>
-            <ul className="mt-10 space-y-2">
-              {socials
-                .filter((s) => s.label !== "Email")
-                .map((s) => (
-                  <li key={s.label}>
-                    <a
-                      href={s.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group inline-flex items-center gap-2 text-sm text-fg-muted transition hover:text-accent"
-                    >
-                      <span className="font-mono text-xs uppercase tracking-widest text-fg-subtle">
-                        {s.label}
-                      </span>
-                      {s.handle}
-                      <ArrowUpRight className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
-                    </a>
-                  </li>
-                ))}
-            </ul>
-          </Reveal>
+    <Section id="contact" index={index} title="Contact">
+      <Reveal className="px-panel-hi flex flex-wrap items-start gap-12 px-12 py-14">
+        <div className="min-w-0 flex-[1_1_440px]">
+          <h3 className="m-0 font-display text-[clamp(40px,5vw,64px)] font-bold uppercase leading-none">
+            Let&apos;s build
+            <br />
+            <span className="text-accent">something.</span>
+          </h3>
+          <p className="mb-0 mt-5 max-w-[520px] text-[28px] text-fg-muted">
+            I&apos;m open to work. Email is the fastest way to reach me.
+          </p>
+          <a href={`mailto:${site.email}`} className="px-btn px-btn-primary mt-7">
+            {site.email}
+          </a>
+          <ul className="m-0 mt-8 grid list-none gap-1 p-0">
+            {links.map((s, i) => (
+              <li key={s.label}>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`flex min-h-12 items-center justify-between gap-4 py-3 hover:text-accent ${i < links.length - 1 ? "border-b-4 border-raised" : ""}`}
+                >
+                  <span className="px-label">{s.label}</span>
+                  <span className="text-[24px]">{s.handle}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
-
-        <Reveal delay={0.12}>
-          <div className="rounded-2xl border border-border bg-bg-elevated/60 p-6 backdrop-blur sm:p-7">
-            <ContactForm />
-          </div>
-        </Reveal>
-      </div>
-    </section>
+        <div className="min-w-0 flex-[1_1_380px]">
+          <h3 className="px-label mb-4 mt-0">Or send a message</h3>
+          <ContactForm />
+        </div>
+      </Reveal>
+    </Section>
   );
 }
