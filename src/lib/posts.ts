@@ -1,7 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
-import { extractHeadings, type Heading } from "@/lib/headings";
 
 const DIR = path.join(process.cwd(), "src", "content", "posts");
 
@@ -16,8 +15,6 @@ export type PostMeta = {
 
 export type Post = PostMeta & {
   content: string;
-  /** The `##` sections, in order — drives the table of contents. */
-  headings: Heading[];
 };
 
 function readingTime(text: string) {
@@ -35,7 +32,6 @@ async function readPost(file: string): Promise<Post> {
     date: data.date ?? "1970-01-01",
     tags: data.tags ?? [],
     readingTime: readingTime(content),
-    headings: extractHeadings(content),
     content,
   };
 }
@@ -56,7 +52,3 @@ export async function getPost(slug: string): Promise<Post | null> {
   const posts = await getPosts();
   return posts.find((p) => p.slug === slug) ?? null;
 }
-
-// Lives in its own module so client components can import it without dragging
-// node:fs along. Re-exported here so existing callers don't have to change.
-export { formatDate } from "@/lib/format-date";

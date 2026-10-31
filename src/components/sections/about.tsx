@@ -2,7 +2,6 @@ import Image from "next/image";
 import { about, now, portrait, site } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
-import { NowPlaying } from "@/components/now-playing";
 
 export function About() {
   return (
@@ -36,8 +35,6 @@ export function About() {
               </div>
             ))}
           </dl>
-          {/* Renders nothing unless Last.fm is configured. */}
-          <NowPlaying />
         </Reveal>
       </div>
     </Section>

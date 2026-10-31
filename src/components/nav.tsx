@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { navLinks } from "@/data/site";
-import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { RainToggle } from "./pixel/rain-toggle";
 
@@ -8,7 +7,7 @@ import { RainToggle } from "./pixel/rain-toggle";
 export function Nav() {
   return (
     <div className="sticky top-0 z-40 border-b-4 border-border bg-bg print:hidden">
-      <div className="px-wrap flex min-h-[76px] flex-wrap items-center justify-between gap-6">
+      <div className="px-wrap flex min-h-[76px] flex-wrap items-center justify-between gap-x-6 gap-y-1 py-1">
         <Link
           href="/"
           aria-label="Harshit Bishnoi, home"
@@ -16,15 +15,15 @@ export function Nav() {
         >
           HB
         </Link>
-        <nav aria-label="Primary" className="hidden flex-wrap items-center gap-[26px] lg:flex">
+        <nav aria-label="Primary" className="order-last flex w-full flex-wrap items-center gap-x-5 lg:order-none lg:w-auto lg:gap-x-[26px]">
           {navLinks.map((l) => (
-            <a
+            <Link
               key={l.href}
               href={l.href}
               className="px-label inline-flex min-h-11 items-center px-1 text-[17px] font-medium text-fg hover:text-accent hover:shadow-[0_4px_0_rgb(var(--accent))]"
             >
               {l.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <div className="flex items-center gap-3">
@@ -33,7 +32,6 @@ export function Nav() {
           </Link>
           <ThemeToggle />
           <RainToggle />
-          <MobileNav active={null} />
         </div>
       </div>
     </div>

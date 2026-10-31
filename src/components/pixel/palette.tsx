@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { emit, type CheatName } from "@/lib/pixel-events";
-import { scrollToSection } from "@/lib/scroll-to";
 import { site } from "@/data/site";
 
 /**
@@ -72,7 +71,7 @@ export function Palette() {
   );
   const go = useCallback(
     (href: string) => {
-      if (!scrollToSection(href)) router.push(href);
+      router.push(href);
     },
     [router],
   );

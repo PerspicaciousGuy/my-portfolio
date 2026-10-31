@@ -1,56 +1,22 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import type { PostMeta } from "@/lib/posts";
 import { formatDate } from "@/lib/format-date";
+import { Icon } from "@/components/pixel/icon";
 
-const VARIANTS = {
-  /** The /blog index: roomier, with an h2 under the page's h1. */
-  index: {
-    Heading: "h2",
-    link: "gap-2 py-7 transition-colors",
-    title: "text-2xl",
-    summary: "",
-  },
-  /** The homepage preview: tighter, an h3 under the section's h2. */
-  preview: {
-    Heading: "h3",
-    link: "gap-1.5 py-6",
-    title: "text-2xl",
-    summary: "max-w-2xl",
-  },
-} as const;
-
-type Props = {
-  post: PostMeta;
-  variant: keyof typeof VARIANTS;
-};
-
-/** One row in a list of posts: date, reading time, title and summary. */
-export function PostEntry({ post: p, variant }: Props) {
-  const v = VARIANTS[variant];
+/** One row in the homepage's list of posts: date, reading time, title, summary. */
+export function PostEntry({ post: p }: { post: PostMeta }) {
   return (
-    <Link
-      href={`/blog/${p.slug}`}
-      className={`group flex flex-col ${v.link}`}
-    >
+    <Link href={`/blog/${p.slug}`} className="group flex flex-col gap-1.5 py-6">
       <div className="px-label flex items-center gap-3">
         <time dateTime={p.date}>{formatDate(p.date)}</time>
         <span>·</span>
         <span>{p.readingTime} min read</span>
       </div>
-
-      <v.Heading
-        className={`flex items-start gap-2 ${v.title} font-display font-bold uppercase transition-colors group-hover:text-accent`}
-      >
+      <h3 className="m-0 flex items-start gap-2 font-display text-2xl font-bold uppercase group-hover:text-accent">
         {p.title}
-        <ArrowUpRight className="mt-1 size-4 shrink-0 opacity-0 transition-all group-hover:opacity-100" />
-      </v.Heading>
-
-      <p
-        className={`${v.summary} text-pretty text-fg-muted`.trim()}
-      >
-        {p.summary}
-      </p>
+        <Icon name="upright" className="mt-1.5 shrink-0 opacity-0 group-hover:opacity-100" />
+      </h3>
+      <p className="m-0 max-w-2xl text-pretty text-fg-muted">{p.summary}</p>
     </Link>
   );
 }

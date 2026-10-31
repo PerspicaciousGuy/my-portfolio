@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import { projects, type Project } from "@/data/site";
-import { extractHeadings, type Heading } from "@/lib/headings";
 
 const DIR = path.join(process.cwd(), "src", "content", "work");
 
@@ -14,8 +13,6 @@ export type CaseStudy = {
   summary: string;
   /** Headline facts rendered as a stat strip. */
   facts: { label: string; value: string }[];
-  /** The `##` sections, in order — drives the table of contents. */
-  headings: Heading[];
   content: string;
 };
 
@@ -38,7 +35,6 @@ export async function getCaseStudy(slug: string): Promise<CaseStudy | null> {
     project,
     summary: data.summary ?? project.blurb,
     facts: data.facts ?? [],
-    headings: extractHeadings(content),
     content,
   };
 }

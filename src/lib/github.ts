@@ -11,7 +11,7 @@ function yearsSince(from: Date) {
   return Math.max(1, Math.floor(years));
 }
 
-export type LanguageSlice = { name: string; bytes: number; pct: number };
+type LanguageSlice = { name: string; bytes: number; pct: number };
 
 export type GitHubStats = {
   repos: number;

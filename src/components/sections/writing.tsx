@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { Icon } from "@/components/pixel/icon";
 import { getPosts } from "@/lib/posts";
 import { PostEntry } from "@/components/post-entry";
 import { Section } from "@/components/ui/section";
@@ -15,7 +15,7 @@ export async function Writing() {
         <ul className="px-panel m-0 list-none divide-y-4 divide-raised p-0">
           {posts.map((p) => (
             <li key={p.slug} className="px-7">
-              <PostEntry post={p} variant="preview" />
+              <PostEntry post={p} />
             </li>
           ))}
         </ul>
@@ -23,7 +23,7 @@ export async function Writing() {
       <Reveal>
         <Link href="/blog" className="px-btn px-btn-ghost px-btn-sm mt-8">
           All writing
-          <ArrowRight className="size-4" />
+          <Icon name="right" />
         </Link>
       </Reveal>
     </Section>

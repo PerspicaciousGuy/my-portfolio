@@ -10,7 +10,7 @@ export type ThemeMode = "night" | "auto" | "day";
 export const THEME_KEY = "hb-theme";
 
 /** Night runs from 18:30 to 06:30. The same cut-off drives the sky. */
-export function isNightHour(hour: number) {
+function isNightHour(hour: number) {
   return hour < 6.5 || hour >= 18.5;
 }
 

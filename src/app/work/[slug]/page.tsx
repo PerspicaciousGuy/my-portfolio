@@ -1,154 +1,161 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowUpRight, Code2 } from "lucide-react";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { getCaseStudy, getCaseStudySlugs } from "@/lib/case-studies";
-import { H2 } from "@/components/mdx";
-import { ApiPlayground } from "@/components/api-playground";
-import { Figure } from "@/components/figure";
-import { Toc } from "@/components/toc";
+import { splitChapters } from "@/lib/chapters";
 import { Footer } from "@/components/footer";
-import { backLink, eyebrow, iconLink, tagPill } from "@/components/ui/styles";
+import { Icon } from "@/components/pixel/icon";
+import { ChapterBar } from "@/components/pixel/chapter-bar";
+import { Prose } from "@/components/pixel/prose";
 
 export async function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const study = await getCaseStudy(slug);
   if (!study) return {};
-
   return {
     title: study.project.name,
     description: study.summary,
-    openGraph: {
-      title: study.project.name,
-      description: study.summary,
-      type: "article",
-    },
+    openGraph: { title: study.project.name, description: study.summary, type: "article" },
   };
 }
 
-export default async function CaseStudyPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/** A case study as a quest log: a title screen with a project sheet, then numbered chapters. */
+export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const study = await getCaseStudy(slug);
   if (!study) notFound();
 
   const { project } = study;
+  const { intro, chapters } = splitChapters(study.content);
+  const slugs = getCaseStudySlugs();
+  const index = slugs.indexOf(slug);
+  const nextSlug = slugs[(index + 1) % slugs.length];
+  const next = nextSlug !== slug ? await getCaseStudy(nextSlug) : null;
+  const hasConsole = study.content.includes("<Playground");
 
   return (
     <>
-      {/* The article stays a fixed, readable column. On xl the grid adds a
-          left gutter for the TOC — space that was dead margin anyway. */}
-      <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-12 px-6 py-24 xl:max-w-6xl xl:grid-cols-[15rem_minmax(0,42rem)] xl:justify-center">
-        <aside className="hidden xl:block">
-          <Toc headings={study.headings} />
-        </aside>
-
-        <main className="relative w-full min-w-0">
-        <Link
-          href="/#work"
-          className={backLink}
-        >
-          <ArrowLeft className="size-3.5" />
-          work
-        </Link>
-
-        <header className="mt-10">
-          <p className="font-mono text-xs text-fg-subtle">{project.year}</p>
-          <h1 className="mt-3 text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-            {project.name}
-          </h1>
-          <p className="mt-5 text-pretty text-lg leading-relaxed text-fg-muted">
-            {study.summary}
-          </p>
-
-          <div className="mt-7 flex flex-wrap items-center gap-4">
-            <a
-              href={project.repo}
-              target="_blank"
-              rel="noreferrer"
-              className={iconLink}
-            >
-              <Code2 className="size-4" />
-              Source
-            </a>
-            {project.live && (
-              <a
-                href={project.live}
-                target="_blank"
-                rel="noreferrer"
-                className={iconLink}
-              >
-                <ArrowUpRight className="size-4" />
-                Live demo
+      <ChapterBar ids={chapters.map((c) => c.id)} />
+      <main className="relative z-[1] flex-1">
+        <div className="px-wrap flex flex-wrap items-stretch gap-14 pt-[60px]">
+          <div className="min-w-0 flex-[1.3_1_440px]">
+            <Link href="/#work" className="px-label inline-flex min-h-11 items-center gap-2 hover:text-accent">
+              <Icon name="left" />
+              Back to the map
+            </Link>
+            <p className="px-label mb-2 mt-8 text-accent">
+              Case file {pad(index + 1)} of {pad(slugs.length)} · {project.year}
+            </p>
+            <h1 className="m-0 font-display text-[clamp(52px,7vw,88px)] font-bold uppercase leading-[0.92]">{project.name}</h1>
+            <p className="mb-0 mt-6 max-w-[640px] text-[29px] text-fg-muted">{study.summary}</p>
+            <div className="mt-6 flex flex-wrap items-center">
+              {chapters.length > 0 && (
+                <a href="#ch-1" className="px-btn px-btn-primary">
+                  Start reading
+                  <Icon name="down" />
+                </a>
+              )}
+              {hasConsole && (
+                <a href="#console" className="px-btn px-btn-ghost">
+                  Try the live console
+                </a>
+              )}
+              <a href={project.repo} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
+                <Icon name="code" />
+                Source
               </a>
-            )}
+              {project.live && (
+                <a href={project.live} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
+                  <Icon name="upright" />
+                  Live
+                </a>
+              )}
+            </div>
           </div>
-        </header>
 
-        {project.preview && (
-          <div className="relative mt-12 aspect-[16/10] overflow-hidden rounded-xl border border-border">
-            <Image
-              src={project.preview}
-              alt={`${project.name} interface`}
-              fill
-              sizes="(max-width: 768px) 100vw, 672px"
-              className="object-cover object-top"
-            />
-          </div>
-        )}
-
-        {study.facts.length > 0 && (
-          <dl className="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
-            {study.facts.map((f) => (
-              <div key={f.label} className="bg-bg-elevated/70 p-5">
-                <dt className={eyebrow}>
-                  {f.label}
-                </dt>
-                <dd className="mt-1.5 text-sm font-medium">{f.value}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
-
-        <div className="mt-12">
-          <h2 className="font-mono text-xs uppercase tracking-widest text-accent">
-            Built with
-          </h2>
-          <ul className="mt-4 flex flex-wrap gap-1.5">
-            {project.stack.map((s) => (
-              <li
-                key={s}
-                className={tagPill}
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
+          <aside className="px-panel-hi min-w-0 flex-[1_1_380px] p-7" aria-label="Project sheet">
+            <div className="flex items-center justify-between">
+              <span className="font-display text-[22px] font-bold uppercase text-accent">Project sheet</span>
+              {project.live && <span className="px-label text-green">● live</span>}
+            </div>
+            <div className="my-[18px]">
+              {project.preview ? (
+                <Image src={project.preview} alt={`${project.name} interface`} width={800} height={500} className="block h-[150px] w-full object-cover object-top" />
+              ) : (
+                <div className="px-slot h-[150px] text-[13px]">
+                  <b className="text-accent">Art slot · Cover</b>
+                  <span>800 × 450 px</span>
+                </div>
+              )}
+            </div>
+            <dl className="m-0 grid gap-4">
+              {study.facts.map((f) => (
+                <div key={f.label}>
+                  <div className="flex justify-between gap-4">
+                    <dt className="px-label">{f.label}</dt>
+                    <dd className="m-0 text-right">{f.value}</dd>
+                  </div>
+                  <div aria-hidden="true" className="mt-1 flex h-[18px] gap-[3px] border-[3px] border-border bg-slot p-0.5">
+                    {Array.from({ length: 10 }, (_, i) => (
+                      <i key={i} className="block flex-1 bg-green" />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </dl>
+            <ul className="m-0 mt-5 flex list-none flex-wrap p-0">
+              {project.stack.map((s) => (
+                <li key={s} className="px-chip">
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </aside>
         </div>
 
-        <article className="prose-portfolio mt-14">
-          {/* Case studies opt into the live console by dropping <Playground />
-              into their MDX. Only the API study uses it. */}
-          <MDXRemote
-            source={study.content}
-            components={{ Playground: ApiPlayground, Figure, h2: H2 }}
-          />
-        </article>
-        </main>
-      </div>
+        <div className="px-wrap pb-5">
+          {intro && (
+            <div className="mt-[70px]">
+              <Prose source={intro} />
+            </div>
+          )}
+          {chapters.map((c) => (
+            <section key={c.id} id={c.id} className="px-chapter">
+              <div className="px-chapter-num" aria-hidden="true">
+                {pad(c.n)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="m-0 mb-4 font-display text-[38px] font-bold uppercase leading-none">{c.title}</h2>
+                <Prose source={c.body} />
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {next && (
+          <div className="px-wrap mt-[70px]">
+            <div className="px-label mb-3.5">Next case file</div>
+            <Link href={`/work/${next.slug}`} className="px-panel flex flex-wrap items-center gap-[26px] px-7 py-[22px]">
+              <span className="font-display text-[60px] font-bold leading-none text-edge">{pad(((index + 1) % slugs.length) + 1)}</span>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-[32px] font-bold uppercase">{next.project.name}</div>
+                <div className="text-fg-muted">{next.project.blurb}</div>
+              </div>
+              <span className="px-btn px-btn-primary">
+                Open file
+                <Icon name="right" />
+              </span>
+            </Link>
+          </div>
+        )}
+      </main>
       <Footer />
     </>
   );
