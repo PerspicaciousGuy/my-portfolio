@@ -7,6 +7,7 @@ import { getPost, getPosts, formatDate } from "@/lib/posts";
 import { H2 } from "@/components/mdx";
 import { Toc } from "@/components/toc";
 import { Footer } from "@/components/footer";
+import { backLink, tagPill } from "@/components/ui/styles";
 
 export async function generateStaticParams() {
   const posts = await getPosts();
@@ -55,7 +56,7 @@ export default async function PostPage({
       <main className="relative w-full min-w-0">
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
+        className={backLink}
       >
         <ArrowLeft className="size-3.5" />
         writing
@@ -77,7 +78,7 @@ export default async function PostPage({
             {post.tags.map((t) => (
               <li
                 key={t}
-                className="rounded border border-border px-2 py-0.5 font-mono text-[11px] text-fg-subtle"
+                className={tagPill}
               >
                 {t}
               </li>

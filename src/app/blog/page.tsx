@@ -5,6 +5,7 @@ import { getPosts } from "@/lib/posts";
 import { PostList } from "@/components/post-list";
 import { Reveal } from "@/components/ui/reveal";
 import { Footer } from "@/components/footer";
+import { backLink } from "@/components/ui/styles";
 
 export const metadata: Metadata = {
   title: "Writing",
@@ -21,7 +22,7 @@ export default async function BlogIndex() {
           <div className="xl:mx-auto xl:max-w-[57rem]">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
+              className={backLink}
             >
               <ArrowLeft className="size-3.5" />
               back
