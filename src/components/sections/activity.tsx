@@ -1,11 +1,11 @@
-import { getGitHubStats } from "@/lib/github";
+import { getContributionWeeks } from "@/lib/github";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { GitCity } from "@/components/pixel/git-city";
 
 /** Last 52 weeks of GitHub contributions as a city skyline. */
 export async function Activity() {
-  const { weeks } = await getGitHubStats();
+  const weeks = await getContributionWeeks();
   // Without a GITHUB_TOKEN the calendar is unavailable: skip the section rather than show invented numbers.
   if (!weeks) return null;
 

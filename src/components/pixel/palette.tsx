@@ -26,7 +26,7 @@ const COMMANDS: Command[] = [
     (id): Command => ({
       label: `Go to ${id[0].toUpperCase()}${id.slice(1)}`,
       hint: "section",
-      run: ({ go }) => go(id === "writing" ? "/blog" : `/#${id}`),
+      run: ({ go }) => go(`/#${id}`),
     }),
   ),
   { label: "Open the résumé", hint: "page", run: ({ go }) => go("/resume") },

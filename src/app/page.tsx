@@ -9,11 +9,11 @@ import { Work } from "@/components/sections/work";
 import { Writing } from "@/components/sections/writing";
 import { Activity } from "@/components/sections/activity";
 import { Contact } from "@/components/sections/contact";
-import { getGitHubStats } from "@/lib/github";
+import { getContributionWeeks } from "@/lib/github";
 
 export default async function Home() {
   // The Activity section needs a GitHub token; Contact's number follows from whether it renders.
-  const { weeks } = await getGitHubStats();
+  const weeks = await getContributionWeeks();
 
   return (
     <>

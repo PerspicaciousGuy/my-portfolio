@@ -7,7 +7,7 @@ export const site = {
   name: "Harshit Bishnoi",
   shortName: "Harshit",
   role: "Full-Stack Developer",
-  heroIntro: "Full-stack developer building production APIs and the apps around them.",
+  heroIntro: "Building production APIs and the apps around them.",
   tagline:
     "I build production APIs — and the billing, docs and dashboards that turn them into products.",
   location: "Ganganagar, Rajasthan, India",
@@ -23,6 +23,18 @@ export const site = {
  * until the art exists: the page then shows a labelled placeholder slot.
  */
 export const portrait: string | null = null;
+
+/** Homepage hero copy. */
+export const hero = {
+  greeting: "Hello, world!",
+  status: "Open to work · Graduating Aug 2026",
+} as const;
+
+/** When the first public repository went up; "years shipping" counts from here. */
+export const shippingSince = "2023-08-10";
+
+/** Tests on the ExerciseDB API, shown in the stats row. */
+export const apiTestCount = 116;
 
 export const socials = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/harshitbishnoi", handle: "Harshit Bishnoi" },
@@ -320,6 +332,6 @@ export const navLinks = [
   { label: "Skills", href: "/#skills" },
   { label: "Work", href: "/#work" },
   { label: "Journey", href: "/#journey" },
-  { label: "Writing", href: "/blog" },
+  { label: "Writing", href: "/#writing" },
   { label: "Contact", href: "/#contact" },
 ] as const;
