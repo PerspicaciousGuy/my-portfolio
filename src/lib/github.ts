@@ -161,3 +161,36 @@ export async function getGitHubStats(): Promise<GitHubStats> {
     return fallback;
   }
 }
+
+export type LatestCommit = { repo: string; message: string; date: string };
+
+/**
+ * The most recent public push, for the "Live" strip on the homepage. Cached
+ * for an hour; returns null when GitHub is unreachable or rate-limited so the
+ * strip simply leaves the cell out.
+ */
+export async function getLatestCommit(): Promise<LatestCommit | null> {
+  try {
+    const res = await fetch(`https://api.github.com/users/${USER}/events/public?per_page=30`, {
+      headers: HEADERS,
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return null;
+    const events = (await res.json()) as {
+      type: string;
+      created_at: string;
+      repo: { name: string };
+      payload: { commits?: { message: string }[] };
+    }[];
+    for (const ev of events) {
+      const commits = ev.type === "PushEvent" ? ev.payload.commits : undefined;
+      if (commits?.length) {
+        const message = commits[commits.length - 1].message.split("\n")[0];
+        return { repo: ev.repo.name.split("/").pop() ?? ev.repo.name, message, date: ev.created_at };
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}

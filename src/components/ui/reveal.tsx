@@ -1,29 +1,14 @@
-"use client";
-
-import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
-  delay?: number;
   className?: string;
-  /** Render as an <li> when the Reveal is a direct child of a list, so the
-   *  animation wrapper doesn't break <ul>/<ol> → <li> semantics. */
+  /** Render as an <li> when the Reveal is a direct child of a list. */
   as?: "div" | "li";
 };
 
-/** Fades and lifts content into view once, when it first scrolls on screen. */
-export function Reveal({ children, delay = 0, className, as = "div" }: Props) {
-  const Tag = as === "li" ? motion.li : motion.div;
-  return (
-    <Tag
-      className={className}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {children}
-    </Tag>
-  );
+/** Steps content into view once as it scrolls on screen. Pure CSS (see .px-reveal). */
+export function Reveal({ children, className, as = "div" }: Props) {
+  const Tag = as;
+  return <Tag className={`px-reveal ${className ?? ""}`.trim()}>{children}</Tag>;
 }

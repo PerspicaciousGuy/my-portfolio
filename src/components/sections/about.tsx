@@ -1,4 +1,5 @@
-import { about, now } from "@/data/site";
+import Image from "next/image";
+import { about, now, portrait, site } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { NowPlaying } from "@/components/now-playing";
@@ -6,45 +7,37 @@ import { NowPlaying } from "@/components/now-playing";
 export function About() {
   return (
     <Section id="about" index="01" title="About">
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-16">
-        <div className="space-y-6">
-          {about.paragraphs.map((p, i) => (
-            <Reveal key={i} delay={i * 0.08}>
-              <p className="text-pretty text-lg leading-relaxed text-fg-muted">
+      <div className="flex flex-wrap items-stretch gap-10">
+        <Reveal className="px-panel flex min-w-0 flex-[3_1_560px] flex-wrap gap-8 p-8">
+          {portrait ? (
+            <Image src={portrait} alt={`Portrait of ${site.name}`} width={200} height={200} className="size-[200px] flex-none" />
+          ) : (
+            <div className="px-slot size-[200px] flex-none p-2 text-[13px]">
+              <b className="text-accent">Art slot · Portrait</b>
+              <span>400 × 400 px</span>
+            </div>
+          )}
+          <div className="min-w-0 flex-[1_1_320px]">
+            {about.paragraphs.map((p, i) => (
+              <p key={i} className={`mt-0 text-[26px] ${i === 0 ? "mb-[18px]" : "mb-0 text-fg-muted"}`}>
                 {p}
               </p>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal delay={0.12}>
-          <div className="rounded-2xl border border-border bg-bg-elevated/60 p-6 backdrop-blur">
-            <div className="flex items-center gap-2">
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-70" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
-              </span>
-              <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
-                Right now
-              </h3>
-            </div>
-
-            <dl className="mt-5 space-y-4">
-              {now.map((item) => (
-                <div key={item.label}>
-                  <dt className="font-mono text-[11px] uppercase tracking-wider text-fg-subtle">
-                    {item.label}
-                  </dt>
-                  <dd className="mt-0.5 text-pretty text-sm leading-relaxed text-fg-muted">
-                    {item.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-
-            {/* Renders nothing unless Spotify is configured. */}
-            <NowPlaying />
+            ))}
           </div>
+        </Reveal>
+
+        <Reveal className="px-panel min-w-0 flex-[2_1_380px] p-8">
+          <h3 className="m-0 mb-[22px] font-display text-[24px] font-semibold uppercase text-green">&gt; Now</h3>
+          <dl className="m-0 grid gap-[18px]">
+            {now.map((item) => (
+              <div key={item.label}>
+                <dt className="px-label">{item.label}</dt>
+                <dd className="m-0 mt-1 text-[24px]">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {/* Renders nothing unless Last.fm is configured. */}
+          <NowPlaying />
         </Reveal>
       </div>
     </Section>

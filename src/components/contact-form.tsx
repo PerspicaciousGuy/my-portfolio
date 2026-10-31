@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Check, Loader2, Send } from "lucide-react";
 import { site } from "@/data/site";
 
@@ -12,7 +11,7 @@ type State =
   | { status: "error"; message: string };
 
 const field =
-  "w-full rounded-lg border border-border bg-bg/50 px-3.5 py-2.5 text-sm outline-none transition placeholder:text-fg-subtle focus:border-accent/60";
+  "w-full border-4 border-border bg-slot px-3.5 py-2.5 text-lg outline-none placeholder:text-fg-muted focus:border-accent";
 
 export function ContactForm() {
   const [state, setState] = useState<State>({ status: "idle" });
@@ -69,27 +68,23 @@ export function ContactForm() {
   // hole where the form was and makes the whole section look broken.
   if (state.status === "sent") {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex min-h-[17rem] flex-col items-center justify-center gap-3 text-center"
-      >
-        <span className="grid size-11 place-items-center rounded-full border border-accent/40 bg-accent/10">
+      <div className="flex min-h-[17rem] flex-col items-center justify-center gap-3 text-center">
+        <span className="grid size-11 place-items-center border-4 border-accent">
           <Check className="size-5 text-accent" />
         </span>
-        <p className="font-medium">Sent. I&apos;ll get back to you.</p>
-        <p className="max-w-xs text-sm text-fg-muted">
+        <p className="font-display text-xl font-bold uppercase">Sent. I&apos;ll get back to you.</p>
+        <p className="max-w-xs text-fg-muted">
           Usually within a day or two. If it&apos;s urgent, {site.email} reaches
           me faster.
         </p>
         <button
           type="button"
           onClick={() => setState({ status: "idle" })}
-          className="mt-2 text-sm text-fg-subtle underline underline-offset-4 transition hover:text-accent"
+          className="mt-2 min-h-11 text-fg-muted underline underline-offset-4 hover:text-accent"
         >
           Send another
         </button>
-      </motion.div>
+      </div>
     );
   }
 
@@ -137,7 +132,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={state.status === "sending"}
-          className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-60"
+          className="px-btn px-btn-primary cursor-pointer disabled:opacity-60"
         >
           {state.status === "sending" ? (
             <>
@@ -153,7 +148,7 @@ export function ContactForm() {
         </button>
 
         {state.status === "error" && (
-          <p className="text-sm text-accent">{state.message}</p>
+          <p className="text-accent">{state.message}</p>
         )}
       </div>
     </form>

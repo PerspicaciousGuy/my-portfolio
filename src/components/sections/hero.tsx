@@ -1,117 +1,56 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowDown, ArrowUpRight, FileText } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { site, socials } from "@/data/site";
-import { onAnchorClick } from "@/lib/scroll-to";
+import { Typewriter } from "@/components/pixel/typewriter";
+import { CritterWalker } from "@/components/pixel/critter-walker";
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
-};
+const ROLES = [
+  "Full-stack developer",
+  "Backend & API engineer",
+  "Local-first app builder",
+  "Open to work",
+] as const;
 
-const item = {
-  hidden: { opacity: 0, y: 22 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const },
-  },
-};
-
+/** The first screen: name, a typed role line, the actions, and the critter's ground line. */
 export function Hero() {
   return (
-    <section className="relative flex min-h-svh flex-col justify-center px-6">
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="mx-auto w-full max-w-5xl"
-      >
+    <header id="top" className="relative z-[1] border-b-8 border-border">
+      <div className="px-wrap pb-[190px] pt-20 sm:pt-28">
         {site.available && (
-          <motion.div variants={item} className="mb-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-elevated/50 px-3 py-1.5 font-mono text-xs text-fg-muted backdrop-blur">
-              <span className="relative flex size-1.5">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-70" />
-                <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
-              </span>
-              Available for work
-            </span>
-          </motion.div>
+          <p className="px-label mb-8 inline-flex items-center gap-3 text-[15px] text-green">
+            <i className="px-dot" />
+            Available for work
+          </p>
         )}
-
-        <motion.h1
-          variants={item}
-          className="text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-7xl lg:text-8xl"
-        >
+        <h1 className="m-0 font-display text-[clamp(56px,9vw,120px)] font-bold uppercase leading-[0.95]">
           {site.name}
-        </motion.h1>
-
-        <motion.p
-          variants={item}
-          className="mt-6 max-w-xl text-pretty text-lg text-fg-muted sm:text-xl"
-        >
-          {site.heroIntro}
-        </motion.p>
-
-        <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-3">
-          <a
-            href="#work"
-            onClick={onAnchorClick}
-            className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition hover:opacity-90"
-          >
+        </h1>
+        <p className="mt-6 min-h-[42px] font-display text-[26px] font-semibold uppercase tracking-wide text-accent">
+          <Typewriter roles={ROLES} />
+        </p>
+        <p className="mt-6 max-w-[620px] text-[28px] leading-tight text-fg-muted">{site.heroIntro}</p>
+        <div className="mt-10 flex flex-wrap items-center">
+          <a href="#work" className="px-btn px-btn-primary">
             See my work
-            <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
+            <ArrowDown className="size-4" />
           </a>
-          <a
-            href="#contact"
-            onClick={onAnchorClick}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-elevated/50 px-5 py-2.5 text-sm font-medium backdrop-blur transition hover:border-accent/50 hover:text-accent"
-          >
+          <a href="#contact" className="px-btn px-btn-ghost">
             Get in touch
             <ArrowUpRight className="size-4" />
           </a>
-          <a
-            href="/resume"
-            className="inline-flex items-center gap-2 rounded-full px-3 py-2.5 text-sm font-medium text-fg-muted transition hover:text-accent"
-          >
-            <FileText className="size-4" />
-            Résumé
-          </a>
-        </motion.div>
-
-        <motion.ul variants={item} className="mt-14 flex flex-wrap gap-x-6 gap-y-2">
+        </div>
+        <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-1">
           {socials
             .filter((s) => s.label !== "Email")
             .map((s) => (
               <li key={s.label}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-mono text-xs text-fg-subtle transition hover:text-accent"
-                >
-                  {s.label.toLowerCase()} ↗
+                <a href={s.href} target="_blank" rel="noreferrer" className="px-label inline-flex min-h-11 items-center hover:text-accent">
+                  {s.label} ↗
                 </a>
               </li>
             ))}
-        </motion.ul>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 1 }}
-        className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center"
-      >
-        <motion.span
-          animate={{ y: [0, 7, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="font-mono text-[10px] uppercase tracking-[0.25em] text-fg-subtle"
-        >
-          scroll
-        </motion.span>
-      </motion.div>
-    </section>
+        </ul>
+      </div>
+      <CritterWalker />
+    </header>
   );
 }

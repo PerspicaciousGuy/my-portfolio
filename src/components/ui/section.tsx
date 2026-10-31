@@ -8,19 +8,20 @@ type Props = {
   children: ReactNode;
 };
 
+/** A homepage section: pixel heading (square, index, title) and its content. */
 export function Section({ id, index, title, children }: Props) {
   return (
-    <section id={id} className="relative mx-auto w-full max-w-5xl px-6 py-28 sm:py-36">
-      <Reveal>
-        <div className="mb-14 flex items-baseline gap-4">
-          <span className="font-mono text-sm text-accent">{index}</span>
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {title}
-          </h2>
-          <span className="h-px flex-1 bg-border" />
-        </div>
-      </Reveal>
-      {children}
+    <section id={id} className="relative z-[1] pt-[120px]">
+      <div className="px-wrap">
+        <Reveal>
+          <div className="px-heading">
+            <span />
+            <i>{index}</i>
+            <h2>{title}</h2>
+          </div>
+        </Reveal>
+        {children}
+      </div>
     </section>
   );
 }

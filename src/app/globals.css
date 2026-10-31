@@ -387,3 +387,58 @@
   }
 }
 
+
+/* Scroll reveal: elements step in as they enter the viewport. Pure CSS, and
+   everything stays visible where scroll-driven animation is unsupported. */
+@keyframes px-rv {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@supports (animation-timeline: view()) {
+  .px-reveal {
+    animation: px-rv steps(6) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+.px-wrap {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1240px;
+  padding-inline: 40px;
+}
+@media (max-width: 900px) {
+  .px-wrap {
+    padding-inline: 20px;
+  }
+}
+
+/* Interaction */
+.px-card {
+  transition: transform 0.18s steps(3);
+}
+.px-card:hover {
+  transform: translate(-4px, -8px);
+}
+.px-link:hover {
+  color: rgb(var(--accent));
+}
+@keyframes px-blink-dot {
+  50% {
+    opacity: 0.25;
+  }
+}
+.px-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: rgb(var(--green));
+  animation: px-blink-dot 1.2s steps(2) infinite;
+}

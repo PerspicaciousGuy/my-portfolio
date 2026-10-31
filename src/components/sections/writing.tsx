@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getPosts } from "@/lib/posts";
 import { PostEntry } from "@/components/post-entry";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
-import { arrowNudge } from "@/components/ui/styles";
 
 export async function Writing() {
   const posts = (await getPosts()).slice(0, 3);
@@ -12,21 +11,19 @@ export async function Writing() {
 
   return (
     <Section id="writing" index="05" title="Writing">
-      <ul className="divide-y divide-border border-y border-border">
-        {posts.map((p, i) => (
-          <Reveal as="li" key={p.slug} delay={i * 0.06}>
-            <PostEntry post={p} variant="preview" />
-          </Reveal>
-        ))}
-      </ul>
-
       <Reveal>
-        <Link
-          href="/blog"
-          className="group mt-8 inline-flex items-center gap-2 text-sm text-fg-muted transition hover:text-accent"
-        >
+        <ul className="px-panel m-0 list-none divide-y-4 divide-raised p-0">
+          {posts.map((p) => (
+            <li key={p.slug} className="px-7">
+              <PostEntry post={p} variant="preview" />
+            </li>
+          ))}
+        </ul>
+      </Reveal>
+      <Reveal>
+        <Link href="/blog" className="px-btn px-btn-ghost px-btn-sm mt-8">
           All writing
-          <ArrowUpRight className={arrowNudge} />
+          <ArrowRight className="size-4" />
         </Link>
       </Reveal>
     </Section>
