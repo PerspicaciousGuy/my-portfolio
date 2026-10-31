@@ -1,5 +1,3 @@
-import { Backdrop } from "@/components/pixel/backdrop";
-import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/sections/hero";
 import { NowStrip } from "@/components/sections/now-strip";
@@ -19,8 +17,6 @@ export default async function Home() {
 
   return (
     <>
-      <Backdrop />
-      <Nav />
       <main className="flex-1">
         <Hero />
         <NowStrip />
