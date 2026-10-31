@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, BookOpen, Code2 } from "lucide-react";
+import { Icon } from "@/components/pixel/icon";
 import { featuredProjects, highlightProject, otherProjects, type Project } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
@@ -35,17 +35,17 @@ function Links({ project, doc }: { project: Project; doc?: boolean }) {
           href={`/work/${project.slug}`}
           className="inline-flex min-h-11 items-center gap-1.5 font-display text-[16px] font-semibold uppercase text-accent hover:underline"
         >
-          <BookOpen className="size-4" />
+          <Icon name="book" />
           Case study
         </Link>
       )}
       <a href={project.repo} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1.5 text-fg-muted hover:text-accent">
-        <Code2 className="size-4" />
+        <Icon name="code" />
         Source
       </a>
       {project.live && (
         <a href={project.live} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1.5 text-fg-muted hover:text-accent">
-          <ArrowUpRight className="size-4" />
+          <Icon name="upright" />
           {doc ? "Docs" : "Live demo"}
         </a>
       )}
@@ -176,7 +176,7 @@ export function Work() {
                     <span className="font-display text-[20px] font-semibold uppercase">{p.name}</span>
                     <span className="ml-3 text-fg-muted">{p.blurb}</span>
                   </span>
-                  <ArrowUpRight className="size-4 shrink-0" />
+                  <Icon name="upright" className="shrink-0" />
                 </a>
               </li>
             ))}

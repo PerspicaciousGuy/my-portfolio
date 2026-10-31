@@ -12,7 +12,6 @@ printable résumé.
 - **Tailwind CSS v4** (CSS-first tokens in `src/app/globals.css`)
 - **Pixel design system**: Pixelify Sans and VT323 through `next/font`, hard
   edges and block shadows, no rounded corners
-- **Framer Motion** on the blog only (table of contents, post filters)
 - **MDX** content via `next-mdx-remote` and `gray-matter`
 - **Vercel Analytics** and **Speed Insights**
 
@@ -21,10 +20,9 @@ printable résumé.
 | Route | What it is |
 | --- | --- |
 | `/` | Homepage: hero, live strip, stats, about, skills, work, journey, writing, activity, contact |
-| `/work/[slug]` | Case studies, from `src/content/work/*.mdx` |
-| `/blog`, `/blog/[slug]` | Writing, from `src/content/posts/*.mdx` |
-| `/resume` | Printable résumé |
-| `/api/contact` | Contact form, sends mail through Resend |
+| `/work/[slug]` | Case studies as a quest log, from `src/content/work/*.mdx` |
+| `/blog`, `/blog/[slug]` | Writing as a shelf of cartridges and a reader mode, from `src/content/posts/*.mdx` |
+| `/resume` | Résumé as a paper sheet; only the sheet prints |
 | `/api/playground` | Proxy for the live ExerciseDB API console |
 
 Sitemap, robots and the Open Graph image are generated in `src/app`.
@@ -45,10 +43,7 @@ rather than failing.
 
 | Variable | Used for | Without it |
 | --- | --- | --- |
-| `LASTFM_API_KEY`, `LASTFM_USERNAME` | Now-playing card | Card is not shown |
 | `GITHUB_TOKEN` | Contribution calendar (the Activity skyline) and higher API rate limits | The Activity section is not rendered |
-| `RESEND_API_KEY` | Contact form delivery | Form cannot send |
-| `CONTACT_FROM` | Sender address for contact mail | Falls back to `Portfolio <onboarding@resend.dev>` |
 | `EXERCISEDB_DEMO_KEY` | API playground (kept server-side) | Playground requests fail |
 
 Put them in `.env.local` for local development.
@@ -77,10 +72,12 @@ timers and listeners.
   the command palette (`/` or Ctrl+K). They fire `px-cheat` window events; see
   `src/lib/pixel-events.ts`.
 - **404** is a playable runner game.
+- **Inner pages:** case studies split the MDX at each `##` into numbered
+  chapters (`lib/chapters.ts`); a markdown quote (`>`) renders as the critter's
+  speech bubble; `<Playground />` is the handheld API console.
 - **Reduced motion:** timers do not start, the sky stays still, and the first
   typed role is rendered in full. Timers also pause off screen and in
   background tabs.
-- Remote images: Last.fm album art is allowed in `next.config.ts`.
 
 ## Local development
 
@@ -107,7 +104,7 @@ src/
     posts/             blog posts (MDX)
     work/              case studies (MDX)
   data/                site.ts (all copy), playground.ts
-  lib/                 posts, case studies, GitHub, Last.fm, theme, weather,
+  lib/                 posts, case studies, GitHub, theme, weather,
                        pixel events, critter sprite and brain
   styles/              backdrop.css, road.css
 ```

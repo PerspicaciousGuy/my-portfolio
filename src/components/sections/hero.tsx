@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { Icon } from "@/components/pixel/icon";
 import { site, socials } from "@/data/site";
 import { Typewriter } from "@/components/pixel/typewriter";
 import { CritterWalker } from "@/components/pixel/critter-walker";
@@ -31,11 +31,11 @@ export function Hero() {
         <div className="mt-10 flex flex-wrap items-center">
           <a href="#work" className="px-btn px-btn-primary">
             See my work
-            <ArrowDown className="size-4" />
+            <Icon name="down" />
           </a>
           <a href="#contact" className="px-btn px-btn-ghost">
             Get in touch
-            <ArrowUpRight className="size-4" />
+            <Icon name="upright" />
           </a>
         </div>
         <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-1">

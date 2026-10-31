@@ -65,15 +65,6 @@
   --font-mono: var(--font-vt323), ui-monospace, monospace;
   --font-display: var(--font-pixelify), var(--font-vt323), ui-monospace, monospace;
 
-  /* Pixel design: no rounded corners anywhere. */
-  --radius-xs: 0;
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
-  --radius-2xl: 0;
-  --radius-3xl: 0;
-  --radius-4xl: 0;
 }
 
 /* VT323 is a small-looking face, so the text scale is one step larger than
@@ -283,132 +274,23 @@
   }
 }
 
-/* Article body. Kept hand-rolled so it stays on the same tokens as the site.
-   Must sit in the utilities layer: Tailwind's base reset flattens heading and
-   list styles, and an unlayered rule loses to it. */
-@layer utilities {
-.prose-portfolio {
-  color: rgb(var(--fg-muted));
-  font-size: 1.4rem;
-  line-height: 1.4;
-  /* A solid panel, so long text never sits on the moving backdrop. */
-  background: rgb(var(--bg-elevated));
-  margin-inline: 4px;
-  padding: 28px 32px;
-  box-shadow:
-    -4px 0 0 rgb(var(--border)),
-    4px 0 0 rgb(var(--border)),
-    0 -4px 0 rgb(var(--border)),
-    0 4px 0 rgb(var(--border)),
-    8px 12px 0 rgb(var(--shade));
-}
-
-.prose-portfolio > * + * {
-  margin-top: 1.25em;
-}
-
-.prose-portfolio h2 {
-  margin-top: 2.5em;
-  margin-bottom: 0.75em;
-  color: rgb(var(--fg));
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-  /* Clears the fixed header when the TOC jumps to a section. */
-  scroll-margin-top: 96px;
-}
-
-.prose-portfolio h3 {
-  margin-top: 2em;
-  color: rgb(var(--fg));
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.prose-portfolio strong {
-  color: rgb(var(--fg));
-  font-weight: 600;
-}
-
-.prose-portfolio a {
-  color: rgb(var(--accent));
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.prose-portfolio ul {
-  padding-left: 1.25rem;
-  list-style: disc;
-}
-
-.prose-portfolio li + li {
-  margin-top: 0.5em;
-}
-
-.prose-portfolio li::marker {
-  color: rgb(var(--accent));
-}
-
-.prose-portfolio code {
-  background: rgb(var(--raised));
-  padding: 0.05em 0.35em;
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  color: rgb(var(--fg));
-}
-
-.prose-portfolio pre {
-  overflow-x: auto;
-  border: 4px solid rgb(var(--border));
-  background: rgb(var(--slot));
-  padding: 1.15rem;
-}
-
-.prose-portfolio pre code {
-  border: 0;
-  padding: 0;
-}
-}
-
-/* The résumé prints to PDF via the browser's print dialog. Force a light,
-   ink-friendly rendering regardless of the theme the visitor is using. */
+/* The résumé prints to PDF through the browser's print dialog: only the paper
+   sheet prints, black on white, with no sky, shadows or page chrome. */
 @media print {
   @page {
-    margin: 14mm;
+    margin: 12mm;
     size: A4;
   }
-
   html,
   body {
     background: #fff !important;
-    color: #000 !important;
   }
-
-  .resume,
-  .resume * {
-    color: #111 !important;
-    border-color: #ccc !important;
-    background: transparent !important;
-  }
-
-  .resume a {
-    text-decoration: none;
-  }
-
-  /* Backdrop, cursor and grain don't belong on paper. Note: no `header` rule
-     here — the résumé's own <header> carries the name and contact details, and
-     a blanket header{display:none} silently strips them from the PDF. Page
-     chrome is hidden with print:hidden at the call site instead. */
-  canvas,
-  .px-backdrop {
-    display: none !important;
+  .px-sheet {
+    width: auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
   }
 }
-
 
 /* Scroll reveal: elements step in as they enter the viewport. Pure CSS, and
    everything stays visible where scroll-driven animation is unsupported. */
@@ -482,7 +364,278 @@ label[for],
   cursor: var(--px-hand) 2 2, pointer;
 }
 
-/* rounded-full is not a theme token, so it is flattened here. */
-.rounded-full {
-  border-radius: 0 !important;
+
+/* Article text for case studies and posts. MDX output is styled from here, so
+   content files stay plain markdown. */
+.px-prose {
+  color: rgb(var(--fg-muted));
+  font-size: 1.8rem;
+  line-height: 1.42;
+  max-width: 780px;
+}
+.px-prose > * + * {
+  margin-top: 1.1em;
+}
+.px-prose p {
+  margin: 0;
+  color: rgb(var(--fg-muted));
+}
+.px-prose strong {
+  color: rgb(var(--fg));
+  font-weight: 400;
+}
+.px-prose a {
+  color: rgb(var(--accent));
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+.px-prose h3 {
+  margin: 1.6em 0 0;
+  color: rgb(var(--fg));
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.px-prose ul,
+.px-prose ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.px-prose li {
+  position: relative;
+  padding-left: 28px;
+}
+.px-prose li + li {
+  margin-top: 0.5em;
+}
+.px-prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.55em;
+  width: 12px;
+  height: 12px;
+  background: rgb(var(--green));
+}
+.px-prose ol {
+  counter-reset: px;
+}
+.px-prose ol > li {
+  counter-increment: px;
+}
+.px-prose ol > li::before {
+  content: counter(px) ".";
+  position: absolute;
+  left: 0;
+  color: rgb(var(--green));
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.px-prose code {
+  padding: 0 0.3em;
+  color: #6bf59a;
+  background: rgb(var(--raised));
+  font-size: 0.92em;
+}
+.px-prose pre {
+  margin: 1.2em 0;
+  overflow-x: auto;
+  padding: 18px 24px;
+  background: rgb(var(--slot));
+  border-left: 8px solid rgb(var(--green));
+  font-size: 1.45rem;
+  line-height: 1.25;
+}
+.px-prose pre code {
+  padding: 0;
+  background: none;
+  color: #c4ffdd;
+  font-size: inherit;
+}
+.px-prose pre.px-bare {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.px-prose hr {
+  height: 4px;
+  margin: 2em 0;
+  border: 0;
+  background: rgb(var(--border));
+}
+
+/* Speech bubble: how a markdown quote renders (see pixel/prose.tsx). */
+.px-talk {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  margin: 34px 0;
+}
+.px-talk-box {
+  position: relative;
+  flex: 1;
+  max-width: 700px;
+  padding: 18px 26px;
+  color: #131418;
+  background: #ecece0;
+  font-size: 1.75rem;
+  line-height: 1.3;
+  box-shadow: 6px 6px 0 rgb(var(--shade));
+}
+.px-talk-box code {
+  color: #14161c;
+  background: #d6d4c2;
+}
+.px-talk-box p {
+  margin: 0;
+  color: #131418;
+}
+.px-talk-box::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  bottom: 18px;
+  border: 12px solid transparent;
+  border-left: 0;
+  border-right-color: #ecece0;
+}
+@media (min-width: 1100px) {
+  .px-talk {
+    margin-left: -150px;
+  }
+}
+
+/* Chapters (case studies): outline numeral, then the chapter. */
+.px-chapter {
+  display: flex;
+  gap: 40px;
+  margin-top: 70px;
+}
+.px-chapter-num {
+  flex: none;
+  width: 150px;
+  font-family: var(--font-display);
+  font-size: 110px;
+  font-weight: 700;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 3px rgb(var(--edge));
+}
+@media (max-width: 900px) {
+  .px-chapter {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .px-chapter-num {
+    width: auto;
+    font-size: 72px;
+  }
+}
+
+/* Cartridges (blog index) */
+.px-cart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 430px;
+  margin: 4px;
+  padding-bottom: 22px;
+  background: #2a2c36;
+  box-shadow:
+    -4px 0 0 rgb(var(--edge)),
+    4px 0 0 rgb(var(--edge)),
+    0 4px 0 rgb(var(--edge)),
+    10px 14px 0 rgb(var(--shade));
+  transition: transform 0.18s steps(3);
+}
+.px-cart::before {
+  content: "";
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: -22px;
+  height: 22px;
+  background: #2a2c36;
+  box-shadow:
+    -4px 0 0 rgb(var(--edge)),
+    4px 0 0 rgb(var(--edge)),
+    0 -4px 0 rgb(var(--edge));
+}
+.px-cart:hover {
+  transform: translateY(-8px);
+}
+.px-cart-grip {
+  height: 34px;
+  margin: 0 18px;
+  background: repeating-linear-gradient(90deg, #1b1c22 0 10px, #2a2c36 10px 20px);
+}
+.px-cart-pins {
+  height: 14px;
+  margin: 16px 18px 0;
+  background: repeating-linear-gradient(90deg, #ffc933 0 10px, transparent 10px 16px);
+}
+
+/* The résumé's paper sheet */
+.px-sheet {
+  position: relative;
+  width: 794px;
+  max-width: 100%;
+  padding: 56px 60px 60px;
+  color: #14161c;
+  background: #fbf9f3;
+  font-size: 1.3rem;
+  line-height: 1.28;
+  box-shadow:
+    0 0 0 4px #14161c,
+    14px 18px 0 4px #07080b;
+}
+.px-sheet h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 30px 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.px-sheet h2::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #14161c;
+}
+.px-sheet h2::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: #14161c;
+}
+.px-sheet h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.px-sheet .m {
+  color: #454c5c;
+}
+.px-sheet .r {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.px-sheet .d {
+  color: #454c5c;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { Icon } from "@/components/pixel/icon";
 import { alsoUsed, skills } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
-import { arrowNudge } from "@/components/ui/styles";
 
 /**
  * Skills, tied to evidence. Each group says what it means in practice and
@@ -30,7 +29,7 @@ export function Skills() {
                 className="group mt-auto inline-flex min-h-11 items-center gap-1.5 pt-5 font-display text-[16px] font-semibold uppercase text-accent hover:underline"
               >
                 {group.proof.label}
-                <ArrowUpRight className={arrowNudge} />
+                <Icon name="upright" />
               </Link>
             )}
           </Reveal>
