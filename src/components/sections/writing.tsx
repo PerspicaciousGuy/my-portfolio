@@ -4,6 +4,7 @@ import { getPosts } from "@/lib/posts";
 import { PostEntry } from "@/components/post-entry";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
+import { arrowNudge } from "@/components/ui/styles";
 
 export async function Writing() {
   const posts = (await getPosts()).slice(0, 3);
@@ -25,7 +26,7 @@ export async function Writing() {
           className="group mt-8 inline-flex items-center gap-2 text-sm text-fg-muted transition hover:text-accent"
         >
           All writing
-          <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          <ArrowUpRight className={arrowNudge} />
         </Link>
       </Reveal>
     </Section>

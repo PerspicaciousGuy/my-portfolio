@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { site, socials } from "@/data/site";
 import { Reveal } from "@/components/ui/reveal";
 import { ContactForm } from "@/components/contact-form";
+import { arrowNudge } from "@/components/ui/styles";
 
 export function Contact() {
   return (
@@ -28,7 +29,7 @@ export function Contact() {
               className="group mt-8 inline-flex items-center gap-2 font-medium transition-colors hover:text-accent"
             >
               {site.email}
-              <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              <ArrowUpRight className={arrowNudge} />
             </a>
           </Reveal>
 

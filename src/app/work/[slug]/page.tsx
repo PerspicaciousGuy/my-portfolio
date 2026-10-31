@@ -10,6 +10,7 @@ import { ApiPlayground } from "@/components/api-playground";
 import { Figure } from "@/components/figure";
 import { Toc } from "@/components/toc";
 import { Footer } from "@/components/footer";
+import { backLink, eyebrow, iconLink, tagPill } from "@/components/ui/styles";
 
 export async function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
@@ -58,7 +59,7 @@ export default async function CaseStudyPage({
         <main className="relative w-full min-w-0">
         <Link
           href="/#work"
-          className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
+          className={backLink}
         >
           <ArrowLeft className="size-3.5" />
           work
@@ -78,7 +79,7 @@ export default async function CaseStudyPage({
               href={project.repo}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition hover:text-accent"
+              className={iconLink}
             >
               <Code2 className="size-4" />
               Source
@@ -88,7 +89,7 @@ export default async function CaseStudyPage({
                 href={project.live}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition hover:text-accent"
+                className={iconLink}
               >
                 <ArrowUpRight className="size-4" />
                 Live demo
@@ -113,7 +114,7 @@ export default async function CaseStudyPage({
           <dl className="mt-12 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
             {study.facts.map((f) => (
               <div key={f.label} className="bg-bg-elevated/70 p-5">
-                <dt className="font-mono text-[10px] uppercase tracking-widest text-fg-subtle">
+                <dt className={eyebrow}>
                   {f.label}
                 </dt>
                 <dd className="mt-1.5 text-sm font-medium">{f.value}</dd>
@@ -130,7 +131,7 @@ export default async function CaseStudyPage({
             {project.stack.map((s) => (
               <li
                 key={s}
-                className="rounded border border-border px-2 py-0.5 font-mono text-[11px] text-fg-subtle"
+                className={tagPill}
               >
                 {s}
               </li>

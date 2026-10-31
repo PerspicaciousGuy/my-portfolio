@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { Heading } from "@/lib/headings";
 import { NAV_OFFSET, onAnchorClick } from "@/lib/scroll-to";
+import { eyebrow } from "@/components/ui/styles";
 
 /**
  * Case-study table of contents. Lives in the left gutter on wide screens,
@@ -65,7 +66,7 @@ export function Toc({ headings }: { headings: Heading[] }) {
       aria-label="On this page"
       className="sticky top-28 hidden max-h-[calc(100svh-9rem)] overflow-y-auto xl:block"
     >
-      <p className="font-mono text-[10px] uppercase tracking-widest text-fg-subtle">
+      <p className={eyebrow}>
         On this page
       </p>
 

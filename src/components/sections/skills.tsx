@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { alsoUsed, skills } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
+import { arrowNudge } from "@/components/ui/styles";
 
 /**
  * Skills, tied to evidence.
@@ -47,7 +48,7 @@ export function Skills() {
                   className="group mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium text-accent transition hover:opacity-80"
                 >
                   {group.proof.label}
-                  <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  <ArrowUpRight className={arrowNudge} />
                 </Link>
               )}
             </div>

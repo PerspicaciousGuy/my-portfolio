@@ -11,6 +11,7 @@ import {
   resumeProjects,
 } from "@/data/site";
 import { PrintButton } from "@/components/print-button";
+import { backLink } from "@/components/ui/styles";
 
 export const metadata: Metadata = {
   title: "Résumé",
@@ -26,7 +27,7 @@ export default function ResumePage() {
       <div className="mb-12 flex items-center justify-between print:hidden">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 font-mono text-xs text-fg-subtle transition hover:text-accent"
+          className={backLink}
         >
           <ArrowLeft className="size-3.5" />
           back

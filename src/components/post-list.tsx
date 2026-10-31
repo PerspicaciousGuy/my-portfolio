@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import type { PostMeta } from "@/lib/posts";
 import { PostEntry } from "@/components/post-entry";
+import { eyebrow } from "@/components/ui/styles";
 
 /**
  * The writing index: a tag sidebar that filters the list.
@@ -34,7 +35,7 @@ export function PostList({ posts }: { posts: PostMeta[] }) {
     <div className="grid grid-cols-1 gap-12 xl:grid-cols-[15rem_minmax(0,42rem)] xl:justify-center">
       <aside className="hidden xl:block">
         <nav aria-label="Filter posts by topic" className="sticky top-28">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-fg-subtle">
+          <p className={eyebrow}>
             Topics
           </p>
 

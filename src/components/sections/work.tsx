@@ -13,6 +13,7 @@ import {
 } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
+import { eyebrow, iconLink, tagPill } from "@/components/ui/styles";
 
 function ProjectCard({ project }: { project: Project }) {
   const ref = useRef<HTMLElement>(null);
@@ -102,7 +103,7 @@ function ProjectCard({ project }: { project: Project }) {
           {project.stack.map((s) => (
             <li
               key={s}
-              className="rounded border border-border px-2 py-0.5 font-mono text-[11px] text-fg-subtle"
+              className={tagPill}
             >
               {s}
             </li>
@@ -124,7 +125,7 @@ function ProjectCard({ project }: { project: Project }) {
             href={project.repo}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition hover:text-accent"
+            className={iconLink}
           >
             <Code2 className="size-4" />
             Source
@@ -134,7 +135,7 @@ function ProjectCard({ project }: { project: Project }) {
               href={project.live}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition hover:text-accent"
+              className={iconLink}
             >
               <ArrowUpRight className="size-4" />
               Live demo
@@ -189,7 +190,7 @@ function HighlightCard({ project }: { project: Project }) {
           <dl className="mt-7 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
             {project.metrics.map((m) => (
               <div key={m.label} className="bg-bg-elevated p-4">
-                <dt className="font-mono text-[10px] uppercase tracking-widest text-fg-subtle">
+                <dt className={eyebrow}>
                   {m.label}
                 </dt>
                 <dd className="mt-1 text-sm font-medium">{m.value}</dd>
@@ -202,7 +203,7 @@ function HighlightCard({ project }: { project: Project }) {
           {project.stack.map((s) => (
             <li
               key={s}
-              className="rounded border border-border px-2 py-0.5 font-mono text-[11px] text-fg-subtle"
+              className={tagPill}
             >
               {s}
             </li>
