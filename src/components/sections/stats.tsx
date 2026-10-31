@@ -1,55 +1,29 @@
-import { getGitHubStats, LANG_COLORS } from "@/lib/github";
+import { apiTestCount, projects, shippingSince } from "@/data/site";
+import { getPosts } from "@/lib/posts";
 
-/** At-a-glance numbers from GitHub, and the language mix. */
+const yearsSince = (iso: string) => Math.max(1, Math.floor((Date.now() - new Date(iso).getTime()) / (365.25 * 24 * 3600 * 1000)));
+
+/** Four numbers at a glance. Each is computed from the site's own data, so none can drift. */
 export async function Stats() {
-  const { repos, yearsShipping, languages, totalContributions } = await getGitHubStats();
-
+  const posts = await getPosts();
   const figures = [
-    { value: String(repos), label: "public repos" },
-    { value: `${yearsShipping}+`, label: "years shipping" },
-    { value: String(languages.length || 6), label: "languages" },
-    ...(totalContributions ? [{ value: String(totalContributions), label: "contributions this year" }] : []),
+    { value: String(apiTestCount), label: "Tests on the API" },
+    { value: String(projects.filter((p) => p.live).length), label: "Projects live in production" },
+    { value: String(yearsSince(shippingSince)), label: "Years shipping" },
+    { value: String(posts.length), label: "Posts written" },
   ];
 
   return (
     <section aria-label="At a glance" className="relative z-[1] pt-[72px]">
       <div className="px-wrap">
-        <div className="px-panel px-reveal">
-          <dl className="m-0 flex flex-wrap">
-            {figures.map((f, i) => (
-              <div
-                key={f.label}
-                className={`flex-[1_1_220px] px-[30px] py-[26px] ${i < figures.length - 1 ? "border-r-4 border-raised" : ""}`}
-              >
-                <dd className="m-0 font-display text-[52px] font-bold leading-none text-accent">{f.value}</dd>
-                <dt className="px-label mt-2">{f.label}</dt>
-              </div>
-            ))}
-          </dl>
-          {languages.length > 0 && (
-            <div className="border-t-4 border-raised px-[30px] py-6">
-              <p className="px-label m-0">What I actually write</p>
-              <div className="mt-4 flex h-3 overflow-hidden">
-                {languages.map((l) => (
-                  <span
-                    key={l.name}
-                    title={`${l.name} — ${l.pct.toFixed(1)}%`}
-                    style={{ width: `${l.pct}%`, backgroundColor: LANG_COLORS[l.name] ?? LANG_COLORS.Other }}
-                  />
-                ))}
-              </div>
-              <ul className="m-0 mt-4 flex list-none flex-wrap gap-x-5 gap-y-1 p-0">
-                {languages.map((l) => (
-                  <li key={l.name} className="flex items-center gap-2 text-fg-muted">
-                    <span className="size-3" style={{ backgroundColor: LANG_COLORS[l.name] ?? LANG_COLORS.Other }} />
-                    {l.name}
-                    <span className="px-label text-[13px]">{l.pct.toFixed(1)}%</span>
-                  </li>
-                ))}
-              </ul>
+        <dl className="px-panel px-reveal m-0 flex flex-wrap">
+          {figures.map((f, i) => (
+            <div key={f.label} className={`flex-[1_1_220px] px-[30px] py-[26px] ${i < figures.length - 1 ? "border-r-4 border-raised" : ""}`}>
+              <dd className="m-0 font-display text-[52px] font-bold leading-none text-accent">{f.value}</dd>
+              <dt className="px-label mt-2">{f.label}</dt>
             </div>
-          )}
-        </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

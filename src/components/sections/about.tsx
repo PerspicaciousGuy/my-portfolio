@@ -17,7 +17,7 @@ export function About() {
             </div>
           )}
           <div className="min-w-0 flex-[1_1_320px]">
-            {about.paragraphs.map((p, i) => (
+            {about.paragraphs.slice(0, 2).map((p, i) => (
               <p key={i} className={`mt-0 text-[26px] ${i === 0 ? "mb-[18px]" : "mb-0 text-fg-muted"}`}>
                 {p}
               </p>
