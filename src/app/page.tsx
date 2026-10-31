@@ -19,7 +19,6 @@ export default function Home() {
     <>
       <Loader />
       <Backdrop />
-      <div className="grain-overlay" aria-hidden="true" />
       <ScrollProgress />
       <Cursor />
       <Terminal />

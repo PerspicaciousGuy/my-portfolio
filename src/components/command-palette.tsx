@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTheme } from "next-themes";
+import { useTheme as useNextTheme } from "@/lib/use-theme";
 import {
   ArrowRight,
   Check,
@@ -33,7 +33,7 @@ export function CommandPalette() {
   const [copied, setCopied] = useState(false);
 
   const router = useRouter();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { isNight, setMode } = useNextTheme();
   const listRef = useRef<HTMLUListElement>(null);
 
   const close = useCallback(() => {
@@ -53,7 +53,7 @@ export function CommandPalette() {
   );
 
   const actions = useMemo<Action[]>(() => {
-    const isDark = resolvedTheme === "dark";
+    const isDark = isNight;
 
     return [
       ...navLinks.map((l) => ({
@@ -105,7 +105,7 @@ export function CommandPalette() {
         group: "Actions",
         icon: isDark ? Sun : Moon,
         run: () => {
-          setTheme(isDark ? "light" : "dark");
+          setMode(isDark ? "day" : "night");
           close();
         },
       },
@@ -137,7 +137,7 @@ export function CommandPalette() {
           },
         })),
     ];
-  }, [go, close, resolvedTheme, setTheme, copied]);
+  }, [go, close, isNight, setMode, copied]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
