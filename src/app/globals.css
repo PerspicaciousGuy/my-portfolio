@@ -64,6 +64,16 @@
   --font-sans: var(--font-vt323), ui-monospace, monospace;
   --font-mono: var(--font-vt323), ui-monospace, monospace;
   --font-display: var(--font-pixelify), var(--font-vt323), ui-monospace, monospace;
+
+  /* Pixel design: no rounded corners anywhere. */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
 }
 
 /* VT323 is a small-looking face, so the text scale is one step larger than
@@ -279,8 +289,18 @@
 @layer utilities {
 .prose-portfolio {
   color: rgb(var(--fg-muted));
-  font-size: 1.0625rem;
-  line-height: 1.75;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  /* A solid panel, so long text never sits on the moving backdrop. */
+  background: rgb(var(--bg-elevated));
+  margin-inline: 4px;
+  padding: 28px 32px;
+  box-shadow:
+    -4px 0 0 rgb(var(--border)),
+    4px 0 0 rgb(var(--border)),
+    0 -4px 0 rgb(var(--border)),
+    0 4px 0 rgb(var(--border)),
+    8px 12px 0 rgb(var(--shade));
 }
 
 .prose-portfolio > * + * {
@@ -291,9 +311,11 @@
   margin-top: 2.5em;
   margin-bottom: 0.75em;
   color: rgb(var(--fg));
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
   /* Clears the fixed header when the TOC jumps to a section. */
   scroll-margin-top: 96px;
 }
@@ -301,8 +323,10 @@
 .prose-portfolio h3 {
   margin-top: 2em;
   color: rgb(var(--fg));
-  font-size: 1.2rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
 .prose-portfolio strong {
@@ -330,9 +354,8 @@
 }
 
 .prose-portfolio code {
-  border: 1px solid rgb(var(--border));
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
+  background: rgb(var(--raised));
+  padding: 0.05em 0.35em;
   font-family: var(--font-mono);
   font-size: 0.875em;
   color: rgb(var(--fg));
@@ -340,9 +363,8 @@
 
 .prose-portfolio pre {
   overflow-x: auto;
-  border: 1px solid rgb(var(--border));
-  border-radius: 12px;
-  background: rgb(var(--bg-elevated));
+  border: 4px solid rgb(var(--border));
+  background: rgb(var(--slot));
   padding: 1.15rem;
 }
 
@@ -458,4 +480,9 @@ summary,
 label[for],
 .cursor-pointer {
   cursor: var(--px-hand) 2 2, pointer;
+}
+
+/* rounded-full is not a theme token, so it is flattened here. */
+.rounded-full {
+  border-radius: 0 !important;
 }
