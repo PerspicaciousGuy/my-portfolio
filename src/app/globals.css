@@ -639,3 +639,22 @@ label[for],
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+/* Commit skyline: windows fill whatever width the building has, so narrow screens never spill them out. */
+.px-bldg { container-type: inline-size; }
+.px-wins {
+  position: absolute;
+  inset: 6px 3px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 4px);
+  grid-auto-rows: 4px;
+  gap: 8px 4px;
+  justify-content: center;
+  overflow: hidden;
+}
+.px-wins > i { background: rgb(var(--accent)); }
+@container (max-width: 12px) {
+  .px-wins { inset-inline: 2px; grid-template-columns: 1fr; gap: 9px 0; }
+  .px-wins > i { height: 3px; }
+  .px-wins > i:nth-child(even) { display: none; }
+}
