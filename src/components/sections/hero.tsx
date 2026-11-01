@@ -6,7 +6,7 @@ import { CritterWalker } from "@/components/pixel/critter-walker";
 const ROLES = [
   "Full-stack developer",
   "Backend & API engineer",
-  "User interface builder",
+  "I build user interfaces",
   "Local-first app builder",
   "Open to work",
 ] as const;
