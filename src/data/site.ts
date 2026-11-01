@@ -28,7 +28,7 @@ export const portrait: string | null = null;
 /** Homepage hero copy. */
 export const hero = {
   greeting: "Hello, world!",
-  status: "Open to work · Graduating Aug 2026",
+  status: "Open to work",
 } as const;
 
 /** When the first public repository went up; "years shipping" counts from here. */
@@ -48,7 +48,7 @@ export const socials = [
 export const about = {
   heading: "About",
   paragraphs: [
-    "I'm a self-taught full-stack developer finishing my BCA in August 2026. I've spent the last three years shipping things — production-grade REST APIs, full-stack web apps, and automation bots that run in the wild.",
+    "I'm a self-taught full-stack developer (BCA). I've spent the last three years shipping things — production-grade REST APIs, full-stack web apps, and automation bots that run in the wild.",
     "Most of what I build comes from wanting it to exist. A gym planner because I needed one. An exercise API because app developers had nothing decent to sync against. An open-source muscle map because I was building it anyway, so I made it public.",
     "When I'm not coding, I'm playing video games or working my way through a playlist. I'm currently open to work.",
   ],
@@ -65,10 +65,6 @@ export const now = [
   {
     label: "Learning",
     value: "Testing at scale, and getting properly good at Postgres",
-  },
-  {
-    label: "Wrapping up",
-    value: "My BCA — final semester, graduating August 2026",
   },
   {
     label: "Away from the keyboard",
@@ -155,9 +151,8 @@ export type TimelineEntry = {
  */
 export const timeline: TimelineEntry[] = [
   {
-    period: "Aug 2023 — Aug 2026",
+    period: "From Aug 2023",
     title: "BCA, Bachelor of Computer Applications",
-    org: "Graduating August 2026",
     description:
       "Three-year degree in computer applications, taken alongside a self-directed track of shipping real projects.",
     kind: "education",
@@ -220,7 +215,7 @@ export const projects: Project[] = [
     art: "api",
     blurb: "A metered, production API product — catalog, incremental sync, API keys, billing, dashboard and docs.",
     description:
-      "A public exercise catalog client apps can sync and cache offline. Beyond the endpoints: API-key auth with usage tiers and rate limiting, an incremental sync protocol with tombstones, RFC 9457 errors, Lemon Squeezy billing, a developer dashboard and a docs site. 116 tests. You can run real requests against it from the case study.",
+      "A public exercise catalog client apps can sync and cache offline. Beyond the endpoints: API-key auth with usage tiers and rate limiting, an incremental sync protocol with tombstones, RFC 9457 errors, Lemon Squeezy billing, a developer dashboard and a docs site. The catalog holds 221 exercises across eight movement patterns, with a graph layer for variations, progressions and equipment-aware substitutes, plus a typed SDK and client examples in five languages. 116 tests. You can run real requests against it from the case study.",
     stack: ["Node.js", "Express", "PostgreSQL", "Supabase", "Zod", "Vitest", "OpenAPI", "Vue"],
     repo: "https://github.com/PerspicaciousGuy/exercises-api",
     live: "https://docs.harshitbishnoi.dev",
@@ -274,12 +269,23 @@ export const projects: Project[] = [
   {
     name: "Open Muscle Map",
     art: "muscle",
-    blurb: "An open-source, anatomically detailed human muscle map.",
+    blurb: "An open-source, tappable front and rear muscle map: SVG art, JSON data and a small JavaScript controller.",
     description:
-      "I was building a complete muscle map for my own project, so I made it open source. Detailed, correctly-mapped anatomy that anyone building fitness software can use however they want.",
-    stack: ["Open Source", "Dataset", "Anatomy"],
+      "I was building a muscle map for my own project, so I made it open source. Front and rear views for male and female bodies, 112 named panels covering 32 muscles or muscle groups, heatmap colouring and keyboard-accessible selection. Schematic rather than a dissection-grade atlas. MIT licensed.",
+    stack: ["SVG", "JSON", "JavaScript"],
     repo: "https://github.com/PerspicaciousGuy/Open-Muscle-Map",
+    live: "https://perspicaciousguy.github.io/Open-Muscle-Map/",
     featured: true,
+    year: "2026",
+  },
+  {
+    name: "Gleam",
+    blurb: "A fast, local file and app launcher for Windows: press Alt+Space, type, press Enter.",
+    description:
+      "Searches file, folder, app and Start Menu names, including Microsoft Store apps, from a local SQLite index. Rust and Tauri 2 with a React front end, slash commands and recent searches. Its own code makes no network requests. Early 0.x release with a Windows installer, tested on Windows 11.",
+    stack: ["Rust", "Tauri 2", "React", "TypeScript", "SQLite"],
+    repo: "https://github.com/PerspicaciousGuy/SpotlightSearch",
+    featured: false,
     year: "2026",
   },
   {
