@@ -3,7 +3,13 @@ import { Icon } from "@/components/pixel/icon";
 import { Typewriter } from "@/components/pixel/typewriter";
 import { CritterWalker } from "@/components/pixel/critter-walker";
 
-const ROLES = ["Full-stack developer", "Backend & API engineer", "Local-first app builder", "Open to work"] as const;
+const ROLES = [
+  "Full-stack developer",
+  "Backend & API engineer",
+  "I build user interfaces",
+  "Local-first app builder",
+  "Open to work",
+] as const;
 
 /** The first screen: greeting, name, a typed role line, two actions and the critter's ground line. */
 export function Hero() {

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type AnimationEvent, type CSSProperties } from "react";
 import "@/styles/backdrop.css";
-import { FAR, MID, NEAR, WINDOW_FACTS, hash3, type Building } from "@/data/skyline";
+import { FAR, MID, MOON_LINES, NEAR, PLANE_LINES, SUN_LINES, WINDOW_FACTS, hash3, type Building } from "@/data/skyline";
 import { emit, listen, prefersReducedMotion } from "@/lib/pixel-events";
 import { triggerRain, useWeather } from "@/lib/weather";
 import { useTheme } from "@/lib/use-theme";
@@ -14,7 +14,8 @@ const BIRDS = [
   { left: "27%", top: "75%" },
 ];
 
-type Tip = { text: string; x: number; y: number };
+// `follow` makes the bubble ride an element (a plane) instead of staying where it was clicked.
+type Tip = { text: string; x: number; y: number; follow?: HTMLElement };
 type Hit = { kind: string; el: HTMLElement };
 
 const HIT_ORDER = ["sign", "ufo", "plane", "bird", "moon", "sun", "win"];
@@ -70,14 +71,35 @@ export function Backdrop() {
   const [moonFace, setMoonFace] = useState(false);
   const [fled, setFled] = useState(false);
   const moonClicks = useRef(0);
+  const sunClicks = useRef(0);
+  const planeClicks = useRef(0);
+  const tipRef = useRef<HTMLDivElement>(null);
   const tipTimer = useRef(0);
   const lit = useRef(new Set<string>());
 
-  const say = useCallback((text: string, x: number, y: number) => {
+  const say = useCallback((text: string, x: number, y: number, follow?: HTMLElement) => {
     window.clearTimeout(tipTimer.current);
-    setTip({ text, x: Math.max(8, Math.min(window.innerWidth - 290, x + 14)), y: Math.max(8, y - 54) });
+    setTip({ text, x: Math.max(8, Math.min(window.innerWidth - 290, x + 14)), y: Math.max(8, y - 54), follow });
     tipTimer.current = window.setTimeout(() => setTip(null), 3600);
   }, []);
+
+  // A bubble tied to a moving element is repositioned every frame, straight on the DOM node, so the
+  // page does not re-render 60 times a second.
+  useEffect(() => {
+    const target = tip?.follow;
+    const box = tipRef.current;
+    if (!target || !box) return;
+    let raf = 0;
+    const track = () => {
+      const r = target.getBoundingClientRect();
+      const mid = r.left + r.width / 2;
+      box.style.left = `${Math.max(143, Math.min(window.innerWidth - 143, mid))}px`;
+      box.style.top = `${Math.max(60, r.top - 8)}px`;
+      raf = requestAnimationFrame(track);
+    };
+    track();
+    return () => cancelAnimationFrame(raf);
+  }, [tip]);
 
   const startUfo = useCallback(() => {
     setUfo((n) => (n && n % 2 === 1 ? n : n + 1));
@@ -158,15 +180,19 @@ export function Backdrop() {
         el.setAttribute("data-on", "");
         say(WINDOW_FACTS[Number(el.dataset.f) % WINDOW_FACTS.length], e.clientX, e.clientY);
       } else if (kind === "moon") {
+        // Every third click the moon grows a face; the others walk through its lines.
         moonClicks.current += 1;
-        if (moonClicks.current % 3 === 0) {
+        const n = moonClicks.current;
+        if (n % 3 === 0) {
           setMoonFace(true);
           window.setTimeout(() => setMoonFace(false), 4000);
           say("Hi. Night shift?", e.clientX, e.clientY);
-        } else say(moonClicks.current % 3 === 1 ? "Hey." : "Stop poking the moon.", e.clientX, e.clientY);
-      } else if (kind === "sun") say("Sunscreen: SPF 50. Wear it.", e.clientX, e.clientY);
-      else if (kind === "plane") say("Flight HB-404: on time, page not found.", e.clientX, e.clientY);
-      else if (kind === "bird") {
+        } else say(MOON_LINES[(n - Math.floor(n / 3) - 1) % MOON_LINES.length], e.clientX, e.clientY);
+      } else if (kind === "sun") {
+        say(SUN_LINES[sunClicks.current++ % SUN_LINES.length], e.clientX, e.clientY);
+      } else if (kind === "plane") {
+        say(PLANE_LINES[planeClicks.current++ % PLANE_LINES.length], e.clientX, e.clientY, el);
+      } else if (kind === "bird") {
         setFled(true);
         window.setTimeout(() => setFled(false), 15000);
         say("tweet", e.clientX, e.clientY);
@@ -230,7 +256,9 @@ export function Backdrop() {
     const nightX = hour >= 18.5 ? (hour - 18.5) / 11 : (hour + 5.5) / 11;
     const x = isNight ? Math.min(1, Math.max(0, nightX)) : dayX;
     const arc = Math.pow(2 * Math.abs(x - 0.5), 2);
-    return { left: `${Math.round(8 + x * 80)}%`, top: Math.round(70 + 240 * arc) };
+    // Sky layers sit 40 px above the viewport and the nav bar covers the top 85 px, so on screen the
+    // arc runs from 130 px at noon down to 320 px at the horizon.
+    return { left: `${Math.round(8 + x * 80)}%`, top: Math.round(170 + 190 * arc) };
   }, [hour, isNight]);
 
   const drops = useMemo(
@@ -367,7 +395,7 @@ export function Backdrop() {
         </div>
       )}
       {tip && (
-        <div className="px-tip" role="status" style={{ left: tip.x, top: tip.y }}>
+        <div ref={tipRef} className="px-tip" data-follow={tip.follow ? "" : undefined} role="status" style={{ left: tip.x, top: tip.y }}>
           {tip.text}
         </div>
       )}
