@@ -48,6 +48,37 @@ export function hash3(a: number, b: number, c: number) {
   return x - Math.floor(x);
 }
 
+/** Lines for the sun, moon and planes. Each click shows the next one, so a run of clicks never repeats. */
+export const SUN_LINES = [
+  "Sunscreen: SPF 50. Wear it.",
+  "Eyes up here, not at the sun.",
+  "Day shift. Zero overtime, somehow.",
+  "Surface temperature: about 5,500 °C. Please don't touch.",
+  "Solar-powered portfolio. Mostly.",
+  "You're seeing light that left me 8 minutes and 20 seconds ago.",
+  "Yes, I'm a giant ball of gas. Rude.",
+  "Don't stare. Also, don't click so hard.",
+] as const;
+
+export const MOON_LINES = [
+  "Hey.",
+  "Stop poking the moon.",
+  "Not made of cheese. Checked.",
+  "I'm drifting away at about 3.8 cm a year. Slowly.",
+  "I only reflect. Like a code review.",
+  "Go to sleep. The deploy can wait.",
+  "You only ever see my one side. Same as most portfolios.",
+] as const;
+
+export const PLANE_LINES = [
+  "Flight HB-404: on time, page not found.",
+  "Now boarding: the homepage.",
+  "Turbulence ahead: a merge conflict.",
+  "Please stow your tray tables and your tabs.",
+  "Cruising at roughly 150 px.",
+  "No snacks on this flight. Only pixels.",
+] as const;
+
 /** Facts a clicked window shows. Only things the site already states. */
 export const WINDOW_FACTS = [
   "BCA: a three-year degree in computer applications.",
