@@ -290,6 +290,15 @@ export function Backdrop() {
     [],
   );
 
+  // The road and the critter's ground line live outside the backdrop, so snow is announced on <html>
+  // for their stylesheets (the roofs inside the backdrop read the attribute on its own root).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (snow) root.setAttribute("data-snow", "");
+    else root.removeAttribute("data-snow");
+    return () => root.removeAttribute("data-snow");
+  }, [snow]);
+
   // Snowflakes are 3 px cells: a dot is 6 x 6, a plus is 9 x 9. The first cell is the element itself and
   // the rest are box-shadows. A blue-grey shadow cell behind each (only in the light theme, through
   // --flake-edge) keeps white flakes visible on a pale sky.

@@ -435,6 +435,28 @@
   box-shadow: 36px 2px 0 var(--snow-cap);
 }
 
+/* Snow on the critter's ground line: a solid snow line over the dashes, with a few drifts behind the critter. */
+:root[data-snow] #critterlane::after {
+  content: "";
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 48px;
+  height: 6px;
+  background: var(--snow-cap);
+  box-shadow: 0 2px 0 var(--snow-edge);
+}
+:root[data-snow] #critterlane::before {
+  content: "";
+  position: absolute;
+  left: 40px;
+  bottom: 54px;
+  width: 12px;
+  height: 4px;
+  background: var(--snow-cap);
+  box-shadow: 90px 0 0 var(--snow-cap), 214px 0 0 var(--snow-cap), 330px 2px 0 -2px var(--snow-cap), 470px 0 0 var(--snow-cap), 610px 0 0 var(--snow-cap), 760px 0 0 var(--snow-cap), 900px 0 0 var(--snow-cap), 1040px 0 0 var(--snow-cap);
+}
+
 /* Tip bubble for the clickable things in the sky */
 .px-tip {
   position: fixed;

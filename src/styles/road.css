@@ -60,6 +60,23 @@
   width: 8px;
   height: 10px;
 }
+/* Snow: a cap on every roof and a drift along the pavement. The road itself stays clear for the cars. */
+:root[data-snow] .rd-bld::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 8px;
+  background: var(--snow-cap, #fff);
+  box-shadow: inset 0 -2px 0 var(--snow-edge, #b9c8db);
+}
+:root[data-snow] .rd-walk::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 14px;
+  background: var(--snow-cap, #fff);
+  box-shadow: 0 2px 0 var(--snow-edge, #b9c8db);
+}
 .rd-ground {
   position: absolute;
   inset: 244px 0 auto 0;
