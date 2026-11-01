@@ -25,40 +25,30 @@ const vt323 = VT323({
   display: "swap",
 });
 
-const description = `${site.role} based in ${site.location}. ${site.tagline}`;
+const title = `${site.name} — ${site.role}, Next.js & Node.js`;
+const description = `${site.name} is a ${site.role.toLowerCase()} in ${site.location}. ${site.tagline} Next.js, Node.js, TypeScript, PostgreSQL.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — ${site.role}`,
+    default: title,
     template: `%s — ${site.name}`,
   },
   description,
-  keywords: [
-    site.name,
-    "full-stack developer",
-    "web developer",
-    "Node.js",
-    "React",
-    "Next.js",
-    "portfolio",
-    "Ganganagar",
-    "Rajasthan",
-    "India",
-  ],
+  alternates: { canonical: "/" },
   authors: [{ name: site.name, url: site.url }],
   creator: site.name,
   openGraph: {
     type: "website",
     locale: "en_US",
     url: site.url,
-    title: `${site.name} — ${site.role}`,
+    title,
     description,
     siteName: site.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — ${site.role}`,
+    title,
     description,
     creator: "@obrakar",
   },

@@ -24,7 +24,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: post.title,
     description: post.summary,
-    openGraph: { title: post.title, description: post.summary, type: "article", publishedTime: post.date },
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      title: post.title,
+      description: post.summary,
+      type: "article",
+      url: `/blog/${slug}`,
+      publishedTime: post.date,
+      authors: [site.name],
+      tags: post.tags,
+    },
+    twitter: { card: "summary_large_image", title: post.title, description: post.summary },
   };
 }
 
@@ -39,8 +49,24 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const at = all.findIndex((p) => p.slug === slug);
   const next = all.length > 1 ? all[(at + 1) % all.length] : null;
 
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.summary,
+    datePublished: post.date,
+    keywords: post.tags.join(", "),
+    inLanguage: "en",
+    mainEntityOfPage: `${site.url}/blog/${slug}`,
+    author: { "@type": "Person", "@id": `${site.url}/#person`, name: site.name, url: site.url },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(article).replace(/</g, "\\u003c") }}
+      />
       <ReadingBar />
       <ChapterDots ids={chapters.map((c) => c.id)} titles={chapters.map((c) => c.title)} />
       <main className="px-wrap relative z-[1] flex-1 pt-14">

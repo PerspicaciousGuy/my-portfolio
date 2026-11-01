@@ -20,7 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: study.project.name,
     description: study.summary,
-    openGraph: { title: study.project.name, description: study.summary, type: "article" },
+    alternates: { canonical: `/work/${slug}` },
+    openGraph: { title: study.project.name, description: study.summary, type: "article", url: `/work/${slug}` },
+    twitter: { card: "summary_large_image", title: study.project.name, description: study.summary },
   };
 }
 

@@ -8,7 +8,13 @@ import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
   title: "Résumé",
-  description: `Résumé of ${site.name}, ${site.role}.`,
+  description: `Résumé of ${site.name}, ${site.role}. Node.js, Next.js, TypeScript, PostgreSQL.`,
+  alternates: { canonical: "/resume" },
+  openGraph: {
+    title: "Résumé",
+    description: `Résumé of ${site.name}, ${site.role}. Node.js, Next.js, TypeScript, PostgreSQL.`,
+    url: "/resume",
+  },
 };
 
 const bare = (url: string) => url.replace(/^https?:\/\//, "");
