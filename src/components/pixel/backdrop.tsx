@@ -141,6 +141,9 @@ export function Backdrop() {
     };
 
     const onClick = (e: MouseEvent) => {
+      // Any click closes the open bubble; a click on another window opens its own below.
+      window.clearTimeout(tipTimer.current);
+      setTip(null);
       const target = e.target as HTMLElement | null;
       if (target?.closest?.(INTERACTIVE)) return;
       const hit = hitAt(e.clientX, e.clientY);
