@@ -18,7 +18,8 @@ Issues labelled `portfolio-update` are notes from other projects about content t
 `<type>: <subject>`, type is project | case-study | post | skill | timeline | now | about | stats). They are
 separate from the triage labels above. When asked to process them:
 
-1. List them: `gh issue list --label portfolio-update --state open --json number,title,body`.
+1. List them with the REST API, since `gh issue ...` needs GraphQL, which cloud sessions block:
+   `gh api "repos/PerspicaciousGuy/my-portfolio/issues?labels=portfolio-update&state=open" --jq '.[] | {number, title, body}'`.
 2. Apply each one where the content lives: projects, skills, timeline, `now`, hero status, about text and
    stats in `src/data/site.ts`; case studies in `src/content/work/<slug>.mdx`; posts in
    `src/content/posts/<slug>.mdx`; a project's card art is its `art` field (scenes in `src/lib/scene-art.ts`).
@@ -27,4 +28,6 @@ separate from the triage labels above. When asked to process them:
    writing it. Match the tone of the existing copy and keep the `now` card to current items only.
 4. Run `npx tsc --noEmit`, `npm run lint` and `npm run build`. Update `HANDOFF.md` if structure changed.
 5. Commit with a clear message, with no AI author, co-author or trailer lines. Comment on each issue with
-   the commit and close it. Do not open a pull request unless asked.
+   the commit and close it (`gh api -X POST repos/PerspicaciousGuy/my-portfolio/issues/<n>/comments -f body=...`,
+   then `gh api -X PATCH repos/PerspicaciousGuy/my-portfolio/issues/<n> -f state=closed`, or the GitHub issue tools).
+   Do not open a pull request unless asked.
