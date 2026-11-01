@@ -8,9 +8,9 @@ export const site = {
   name: "Harshit Bishnoi",
   shortName: "Harshit",
   role: "Full-Stack Developer",
-  heroIntro: "Building production APIs and the apps around them.",
+  heroIntro: "Building beautiful interfaces and scalable backends.",
   tagline:
-    "I build production APIs — and the billing, docs and dashboards that turn them into products.",
+    "I build beautiful interfaces and scalable backends — production APIs, and the apps, dashboards and billing around them.",
   location: "Ganganagar, Rajasthan, India",
   email: "joy.0839b@gmail.com",
   url: "https://harshitbishnoi.dev",
@@ -111,7 +111,7 @@ export const skills: SkillGroup[] = [
   {
     title: "Frontend",
     note: "Local-first apps that stay usable when the network isn't.",
-    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Vite"],
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Vite", "Swift"],
     proof: { label: "Local-first, then sync", href: "/blog/local-first-then-sync" },
   },
   {
@@ -195,8 +195,11 @@ export type Project = {
   blurb: string;
   description: string;
   stack: string[];
-  repo: string;
+  /** Omit for a private repository. */
+  repo?: string;
   live?: string;
+  /** Shown in place of the buttons when there is nothing public to open. */
+  note?: string;
   /** Pixel scene drawn on the card and the case study cover (src/lib/scene-art.ts). */
   art?: SceneKind;
   featured: boolean;
@@ -252,6 +255,26 @@ export const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Supabase", "Dexie", "PWA", "Web Audio", "Zod"],
     repo: "https://github.com/PerspicaciousGuy/audiobooks-player",
     live: "https://greasy-bethanne-ebooks-0926d76e.koyeb.app",
+    featured: true,
+    year: "2026",
+  },
+  {
+    name: "Sessionbook",
+    blurb: "A forex and prop-trading journal: trades, P&L calendar, reports, weekly review and backtesting.",
+    description:
+      "A trading journal for forex and prop traders. Statements import from CSV with every row checked and reconciled before anything is saved. Trades carry R multiples, chart snapshots and a strategy checklist; results break down by setup, symbol, session, weekday and mistake; a weekly review puts the week's results next to the trades behind them. Strategies are versioned with adherence per rule, and backtesting studies sit beside live results. Journal data stays in the browser. A NestJS and Prisma API exists but the interface does not use it yet.",
+    stack: ["Next.js", "React", "TypeScript", "Vitest", "Playwright", "NestJS", "Prisma"],
+    note: "In development · private repository",
+    featured: true,
+    year: "2026",
+  },
+  {
+    name: "FitTrack",
+    blurb: "A native iOS workout logger and plan coach, written in SwiftUI.",
+    description:
+      "A SwiftUI app for logging workouts set by set and following a training plan. Five tabs, row-based set logging, a home-screen widget and Live Activity, a shared design-system palette, unit tests in Swift Testing and UI tests that record screenshot tours. Builds against the newest iOS SDK with an iOS 18 deployment target. Working name: Strive.",
+    stack: ["Swift", "SwiftUI", "WidgetKit", "Swift Testing"],
+    note: "In development · private repository",
     featured: true,
     year: "2026",
   },
@@ -342,7 +365,6 @@ export const navLinks = [
   { label: "About", href: "/#about" },
   { label: "Skills", href: "/#skills" },
   { label: "Work", href: "/#work" },
-  { label: "Journey", href: "/#journey" },
   { label: "Writing", href: "/#writing" },
   { label: "Contact", href: "/#contact" },
 ] as const;

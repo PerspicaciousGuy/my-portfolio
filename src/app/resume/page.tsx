@@ -32,7 +32,7 @@ export default function ResumePage() {
     `Also used: ${alsoUsed.join(", ")}`,
     "",
     "PROJECTS",
-    ...resumeProjects.map((p) => `${p.name} (${p.year}): ${p.blurb} ${bare(p.repo)}`),
+    ...resumeProjects.map((p) => `${p.name} (${p.year}): ${p.blurb} ${p.repo ? bare(p.repo) : p.note}`),
     "",
     "EDUCATION & TIMELINE",
     ...timeline.map((t) => `${t.period}: ${t.title}${t.org ? ` (${t.org})` : ""}`),
@@ -83,7 +83,7 @@ export default function ResumePage() {
                 <span className="d">{p.year}</span>
               </div>
               <div className="m">{p.blurb}</div>
-              <div className="m text-[0.85em]">{bare(p.repo)}</div>
+              <div className="m text-[0.85em]">{p.repo ? bare(p.repo) : p.note}</div>
             </div>
           ))}
 

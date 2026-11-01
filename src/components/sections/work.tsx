@@ -27,11 +27,12 @@ function Buttons({ project, all }: { project: Project; all?: boolean }) {
           {all ? "Live docs" : "Live"}
         </a>
       )}
-      {source && (
+      {source && project.repo && (
         <a href={project.repo} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
           Source
         </a>
       )}
+      {!project.slug && !project.live && !project.repo && project.note && <span className="px-label">{project.note}</span>}
     </div>
   );
 }
@@ -84,9 +85,11 @@ function Card({ project, i }: { project: Project; i: number }) {
       <div className="pointer-events-none absolute bottom-full right-[27px] z-[3] mb-1.5">
         <CardCritter target={id} job={JOBS[i % JOBS.length]} phase={i + 1} />
       </div>
-      <div className="border-b-4 border-border">
-        <Media project={project} className="h-[260px] w-full" />
-      </div>
+      {project.art && (
+        <div className="border-b-4 border-border">
+          <Media project={project} className="h-[260px] w-full" />
+        </div>
+      )}
       <div className="flex flex-1 flex-col px-[30px] pb-[30px] pt-[26px]">
         <div className="flex items-baseline justify-between">
           <h3 className="m-0 font-display text-[30px] font-bold uppercase">{project.name}</h3>

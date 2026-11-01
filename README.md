@@ -19,7 +19,7 @@ printable résumé.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Homepage: hero, live strip, stats, about, skills, work, journey, writing, activity, contact |
+| `/` | Homepage: hero, live strip, stats, about, skills, work, writing, activity, contact |
 | `/work/[slug]` | Case studies as a quest log, from `src/content/work/*.mdx` |
 | `/blog`, `/blog/[slug]` | Writing as a shelf of cartridges and a reader mode, from `src/content/posts/*.mdx` |
 | `/resume` | Résumé as a paper sheet; only the sheet prints |
@@ -95,7 +95,7 @@ npm run build   # production build
 src/
   app/                 routes, API handlers, global styles
   components/
-    sections/          hero, now-strip, stats, about, skills, work, journey,
+    sections/          hero, now-strip, stats, about, skills, work,
                        writing, activity, contact
     pixel/             backdrop, critter, walker, card critter, road, palette,
                        sparks, git city, 404 game
