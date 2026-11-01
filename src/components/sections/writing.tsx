@@ -10,7 +10,7 @@ export async function Writing() {
   if (posts.length === 0) return null;
 
   return (
-    <Section id="writing" index="05" title="Writing">
+    <Section id="writing" index="04" title="Writing">
       <Reveal>
         <ul className="px-panel m-0 list-none px-9 py-2">
           {posts.map((p, i) => (

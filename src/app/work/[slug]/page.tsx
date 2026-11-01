@@ -67,10 +67,12 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                   Try the live console
                 </a>
               )}
-              <a href={project.repo} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
-                <Icon name="code" />
-                Source
-              </a>
+              {project.repo && (
+                <a href={project.repo} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
+                  <Icon name="code" />
+                  Source
+                </a>
+              )}
               {project.live && (
                 <a href={project.live} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
                   <Icon name="upright" />

@@ -4,7 +4,14 @@
  * (consecutive rects of one colour share a path), so any size keeps hard pixel edges. Pure and
  * deterministic: rendered on the server, no client code.
  */
-export type SceneKind = "api" | "gym" | "library" | "auth" | "muscle";
+export type SceneKind =
+  | "api"
+  | "gym"
+  | "library"
+  | "auth"
+  | "muscle"
+  | "journal"
+  | "ios";
 export type SceneLayer = { fill: string; d: string };
 export type Scene = {
   w: number;
@@ -584,6 +591,173 @@ function sceneMuscle() {
   return a;
 }
 
+function ring(
+  a: Canvas,
+  cx: number,
+  cy: number,
+  r0: number,
+  r1: number,
+  frac: number,
+  color: string,
+) {
+  for (let deg = 0; deg < 360 * frac; deg += 2) {
+    const t = ((deg - 90) * Math.PI) / 180;
+    for (let r = r0; r <= r1; r += 0.5)
+      a.p(
+        color,
+        Math.round(cx + Math.cos(t) * r),
+        Math.round(cy + Math.sin(t) * r),
+      );
+  }
+}
+
+// Sessionbook (lead, 160 x 105)
+function sceneJournal() {
+  const a = canvas(160, 105);
+  a.r(C.bg, 0, 0, 160, 105);
+  starfield(a, 31, 18, 1, 1, 159, 12);
+  a.r(C.bg2, 0, 90, 160, 15);
+  a.r(C.line, 0, 90, 160, 2);
+  for (let x = 4; x < 160; x += 16) a.r(C.line, x, 96, 8, 1);
+  // chart window
+  a.r(C.dark, 11, 17, 96, 70);
+  a.box(C.edge, C.bg2, 9, 15, 96, 70);
+  a.r(C.raised, 10, 16, 94, 8);
+  a.r(C.red, 13, 18, 3, 3);
+  a.r(C.yellow, 18, 18, 3, 3);
+  a.r(C.green, 23, 18, 3, 3);
+  a.r(C.violetD, 70, 18, 30, 4);
+  a.r(C.violet, 70, 18, 30, 2);
+  for (let y = 31; y < 80; y += 11)
+    for (let x = 12; x < 102; x += 4) a.p(C.line, x, y);
+  // candles: [open, close, wick top, wick bottom]
+  const cs: [number, number, number, number][] = [
+    [60, 56, 53, 63],
+    [56, 59, 52, 62],
+    [57, 52, 49, 60],
+    [52, 47, 44, 54],
+    [49, 52, 45, 55],
+    [51, 45, 42, 53],
+    [46, 40, 37, 48],
+    [43, 46, 39, 49],
+    [45, 38, 35, 47],
+    [38, 42, 33, 45],
+    [40, 34, 30, 42],
+    [35, 31, 27, 38],
+    [33, 36, 28, 39],
+    [34, 27, 24, 36],
+  ];
+  cs.forEach(([o, c, t, b], i) => {
+    const x = 15 + i * 6,
+      col = c <= o ? C.green : C.red;
+    a.r(col, x, t, 1, b - t);
+    a.r(col, x - 1, Math.min(o, c), 3, Math.max(2, Math.abs(o - c)));
+  });
+  // volume bars and an entry marker
+  const vol = [4, 6, 3, 7, 5, 4, 8, 5, 6, 4, 9, 6, 5, 8];
+  vol.forEach((h, i) => a.r(C.line, 14 + i * 6, 82 - h, 3, h));
+  a.spr(["..x..", ".xxx.", "xxxxx"], 31, 62, { x: C.yellow });
+  a.spr(["xxxxx", ".xxx.", "..x.."], 91, 17 + 6, { x: C.green });
+  // calendar of results
+  a.r(C.dark, 114, 17, 44, 44);
+  a.box(C.edge, C.bg2, 112, 15, 44, 44);
+  a.r(C.violetD, 113, 16, 42, 7);
+  a.r(C.violet, 113, 16, 42, 5);
+  a.r(C.ink, 116, 18, 12, 1);
+  for (let r = 0; r < 5; r++)
+    for (let c = 0; c < 7; c++) {
+      const v = (r * 7 + c * 3 + r) % 5;
+      const col =
+        c >= 5 ? C.line : v === 0 ? C.red : v === 3 ? C.line : C.green;
+      a.r(col, 115 + c * 6, 26 + r * 6, 4, 4);
+    }
+  // three stat tiles
+  (
+    [
+      [C.green, 20],
+      [C.violet, 14],
+      [C.yellow, 24],
+    ] as [string, number][]
+  ).forEach(([c, w], i) => {
+    const x = 112 + i * 15;
+    a.box(C.edge, C.bg2, x, 64, 14, 20);
+    a.r(c, x + 3, 67, 8, 3);
+    a.r(C.mute, x + 3, 73, 8, 1);
+    a.r(C.line, x + 3, 76, 6, 1);
+    a.r(c, x + 3, 79, Math.round(w / 3), 2);
+  });
+  [
+    [102, 6],
+    [152, 9],
+  ].forEach(([x, y]) => {
+    a.r(C.yellow, x, y, 1, 3);
+    a.r(C.yellow, x - 1, y + 1, 3, 1);
+  });
+  return a;
+}
+
+// FitTrack (150 x 65)
+function sceneIos() {
+  const a = canvas(150, 65);
+  a.r(C.bg, 0, 0, 150, 65);
+  starfield(a, 17, 14, 1, 1, 149, 40);
+  a.r(C.bg2, 0, 58, 150, 7);
+  a.r(C.line, 0, 58, 150, 1);
+  // rest timer and dumbbell
+  a.disc(C.edge, 25, 22, 12);
+  a.disc(C.bg2, 25, 22, 10);
+  ring(a, 25, 22, 8, 10, 0.72, C.yellow);
+  a.r(C.ink, 22, 20, 6, 1);
+  a.r(C.mute, 21, 24, 8, 1);
+  dumbbell(a, 8, 45, true);
+  a.r(C.dark, 9, 57, 32, 1);
+  // phone
+  a.r(C.dark, 58, 4, 38, 62);
+  a.box(C.edge, C.dark, 56, 2, 38, 62);
+  a.r(C.bg2, 58, 4, 34, 58);
+  a.r(C.dark, 69, 5, 12, 3);
+  a.r(C.violet, 59, 10, 32, 5);
+  a.r(C.ink, 61, 12, 12, 1);
+  const block = (y: number, rows: number) => {
+    a.r(C.raised, 59, y, 32, 5 + rows * 4);
+    a.r(C.ink, 61, y + 2, 14, 2);
+    for (let i = 0; i < rows; i++) {
+      const yy = y + 6 + i * 4;
+      a.r(C.line, 61, yy, 8, 3);
+      a.r(C.line, 71, yy, 6, 3);
+      a.r(i < rows - 1 ? C.green : C.line, 83, yy, 3, 3);
+    }
+  };
+  block(18, 3);
+  block(37, 2);
+  a.r(C.raised, 59, 52, 32, 9);
+  [62, 68, 74, 80, 86].forEach((x, i) =>
+    a.r(i === 1 ? C.green : C.line, x, 55, 3, 3),
+  );
+  // widget tile and live activity pill
+  a.r(C.dark, 106, 10, 32, 32);
+  a.box(C.edge, C.bg2, 104, 8, 32, 32);
+  a.disc(C.edge, 120, 22, 9);
+  a.disc(C.bg2, 120, 22, 7);
+  ring(a, 120, 22, 6, 8, 0.6, C.green);
+  a.r(C.mute, 110, 33, 20, 1);
+  a.r(C.line, 110, 35, 12, 1);
+  a.r(C.dark, 104, 46, 40, 10);
+  a.box(C.edge, C.dark, 102, 44, 40, 10);
+  a.r(C.green, 105, 47, 4, 4);
+  a.r(C.ink, 112, 47, 16, 2);
+  a.r(C.mute, 112, 51, 10, 1);
+  a.r(C.yellow, 131, 47, 8, 4);
+  [
+    [48, 8],
+    [142, 3],
+  ].forEach(([x, y]) => {
+    a.r(C.yellow, x, y, 1, 3);
+    a.r(C.yellow, x - 1, y + 1, 3, 1);
+  });
+  return a;
+}
+
 const BG = C.bg;
 const DEFS: Record<SceneKind, { make: () => Canvas; label: string }> = {
   api: {
@@ -609,6 +783,14 @@ const DEFS: Record<SceneKind, { make: () => Canvas; label: string }> = {
   muscle: {
     make: sceneMuscle,
     label: "Pixel scene: front and back muscle map with a colour legend",
+  },
+  journal: {
+    make: sceneJournal,
+    label: "Pixel scene: a candlestick chart with a rising trend, a profit and loss calendar and three stat tiles",
+  },
+  ios: {
+    make: sceneIos,
+    label: "Pixel scene: an iPhone workout log, a rest-timer ring, a home-screen widget and a live-activity pill",
   },
 };
 

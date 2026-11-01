@@ -4,7 +4,6 @@ import { NowStrip } from "@/components/sections/now-strip";
 import { Stats } from "@/components/sections/stats";
 import { About } from "@/components/sections/about";
 import { Skills } from "@/components/sections/skills";
-import { Journey } from "@/components/sections/journey";
 import { Work } from "@/components/sections/work";
 import { Writing } from "@/components/sections/writing";
 import { Activity } from "@/components/sections/activity";
@@ -24,10 +23,9 @@ export default async function Home() {
         <About />
         <Skills />
         <Work />
-        <Journey />
         <Writing />
         {weeks && <Activity />}
-        <Contact index={weeks ? "07" : "06"} />
+        <Contact index={weeks ? "06" : "05"} />
       </main>
       <Footer />
     </>

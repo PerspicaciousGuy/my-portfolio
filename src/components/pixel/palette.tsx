@@ -22,7 +22,7 @@ type Command = {
 };
 
 const COMMANDS: Command[] = [
-  ...(["about", "skills", "work", "journey", "writing", "contact"] as const).map(
+  ...(["about", "skills", "work", "writing", "contact"] as const).map(
     (id): Command => ({
       label: `Go to ${id[0].toUpperCase()}${id.slice(1)}`,
       hint: "section",

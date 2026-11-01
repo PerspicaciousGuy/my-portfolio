@@ -14,7 +14,7 @@ export async function Activity() {
   monday.setUTCDate(monday.getUTCDate() - 7 * (perWeek.length - 1) - ((monday.getUTCDay() + 6) % 7));
 
   return (
-    <Section id="activity" index="06" title="Activity">
+    <Section id="activity" index="05" title="Activity">
       <Reveal className="px-panel px-7 pb-5 pt-8">
         <GitCity weeks={perWeek} start={monday.toISOString().slice(0, 10)} />
       </Reveal>
