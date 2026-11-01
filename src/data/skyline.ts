@@ -79,6 +79,25 @@ export const PLANE_LINES = [
   "No snacks on this flight. Only pixels.",
 ] as const;
 
+export const BIRD_LINES = [
+  "tweet",
+  "Not a bug. A feature.",
+  "Please don't deploy on a Friday.",
+  "I fly south for the winter. And for the stand-ups.",
+  "Caught a worm. It was a bug.",
+  "My airspace. Your viewport.",
+  "Cheep hosting, great uptime.",
+] as const;
+
+export const UFO_LINES = [
+  "Take me to your hiring manager.",
+  "We come in peace. Also, we're hiring.",
+  "Abducting bugs only. Cows are out of scope.",
+  "Beam me up. I mean, to the contact section.",
+  "No, I can't fix your Wi-Fi from orbit.",
+  "Greetings, Earth. Nice portfolio.",
+] as const;
+
 /** Facts a clicked window shows. Only things the site already states. */
 export const WINDOW_FACTS = [
   "BCA: a three-year degree in computer applications.",
