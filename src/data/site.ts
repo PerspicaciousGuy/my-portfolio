@@ -2,6 +2,7 @@
  * Single source of truth for all site content.
  * Edit this file to update the portfolio — no component changes needed.
  */
+import type { SceneKind } from "@/lib/scene-art";
 
 export const site = {
   name: "Harshit Bishnoi",
@@ -201,8 +202,8 @@ export type Project = {
   stack: string[];
   repo: string;
   live?: string;
-  /** Path under /public — shown on hover. Capture from the live deploy. */
-  preview?: string;
+  /** Pixel scene drawn on the card and the case study cover (src/lib/scene-art.ts). */
+  art?: SceneKind;
   featured: boolean;
   /** The one project that leads the section, in a full-width card. Exactly one
    *  project should set this — if everything is emphasised, nothing is. */
@@ -216,6 +217,7 @@ export const projects: Project[] = [
   {
     name: "ExerciseDB API",
     slug: "exercisedb-api",
+    art: "api",
     blurb: "A metered, production API product — catalog, incremental sync, API keys, billing, dashboard and docs.",
     description:
       "A public exercise catalog client apps can sync and cache offline. Beyond the endpoints: API-key auth with usage tiers and rate limiting, an incremental sync protocol with tombstones, RFC 9457 errors, Lemon Squeezy billing, a developer dashboard and a docs site. 116 tests. You can run real requests against it from the case study.",
@@ -235,19 +237,20 @@ export const projects: Project[] = [
   {
     name: "GymPlanner",
     slug: "gymplanner",
+    art: "gym",
     blurb: "A full fitness planner with AM/PM scheduling, nutrition tracking, and cloud sync.",
     description:
       "Workout scheduling, exercise logging, nutrition and health tracking, with local-first persistence and optional Firebase sync. Wrapped in a 'Liquid Glass' interface I designed to feel like a premium mobile app.",
     stack: ["React", "Vite", "JavaScript", "Firebase", "Tailwind CSS"],
     repo: "https://github.com/PerspicaciousGuy/GymPlanner",
     live: "https://gym-planner-green.vercel.app",
-    preview: "/previews/gymplanner.png",
     featured: true,
     year: "2026",
   },
   {
     name: "Quiet Library",
     slug: "quiet-library",
+    art: "library",
     blurb: "A PWA audiobook player that streams from your own Google Drive — and keeps playing offline.",
     description:
       "Streams audiobook files straight from a user's Google Drive through an authenticated bounded-Range proxy, without ever copying them to app storage. Versioned progress sync with atomic stale-write rejection, an offline-first PWA (service worker, OPFS/Cache downloads via Dexie, airplane-mode playback), Media Session controls, RLS-backed Supabase, and RFC 9457 errors behind CSP/HSTS.",
@@ -259,6 +262,7 @@ export const projects: Project[] = [
   },
   {
     name: "Exercise Library API",
+    art: "auth",
     blurb: "A REST API with JWT auth, ownership checks, and user-authored content.",
     description:
       "Register/login/me endpoints, exercise CRUD with ownership enforcement, category and muscle-group management, plus search, filtering and pagination. Hardened with helmet, CORS, and rate-limited auth routes.",
@@ -269,6 +273,7 @@ export const projects: Project[] = [
   },
   {
     name: "Open Muscle Map",
+    art: "muscle",
     blurb: "An open-source, anatomically detailed human muscle map.",
     description:
       "I was building a complete muscle map for my own project, so I made it open source. Detailed, correctly-mapped anatomy that anyone building fitness software can use however they want.",

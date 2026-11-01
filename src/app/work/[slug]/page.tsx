@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -8,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { Icon } from "@/components/pixel/icon";
 import { ChapterBar } from "@/components/pixel/chapter-bar";
 import { Prose } from "@/components/pixel/prose";
+import { SceneArt } from "@/components/pixel/scene-art";
 
 export async function generateStaticParams() {
   return getCaseStudySlugs().map((slug) => ({ slug }));
@@ -85,16 +85,11 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
               <span className="font-display text-[22px] font-bold uppercase text-accent">Project sheet</span>
               {project.live && <span className="px-label text-green">● live</span>}
             </div>
-            <div className="my-[18px]">
-              {project.preview ? (
-                <Image src={project.preview} alt={`${project.name} interface`} width={800} height={500} className="block h-[150px] w-full object-cover object-top" />
-              ) : (
-                <div className="px-slot h-[150px] text-[13px]">
-                  <b className="text-accent">Art slot · Cover</b>
-                  <span>800 × 450 px</span>
-                </div>
-              )}
-            </div>
+            {project.art && (
+              <div className="my-[18px] border-4 border-border">
+                <SceneArt kind={project.art} className="h-[150px] w-full" />
+              </div>
+            )}
             <dl className="m-0 grid gap-4">
               {study.facts.map((f) => (
                 <div key={f.label}>
