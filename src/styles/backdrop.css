@@ -20,6 +20,9 @@
   --bd-plane-light: #e5484d;
   --bd-trail: #ffffff;
   --bd-rain: rgba(60, 100, 160, 0.6);
+  --snow-cap: #ffffff;
+  --snow-edge: #b9c8db;
+  --flake-edge: #8fa6c2;
 }
 .dark {
   --bd-far: #1e2028;
@@ -34,6 +37,9 @@
   --bd-plane-light: #ff5a5a;
   --bd-trail: #a9aec2;
   --bd-rain: rgba(150, 175, 215, 0.55);
+  --snow-cap: #e6edf7;
+  --snow-edge: #9fb0c8;
+  --flake-edge: transparent;
 }
 
 .px-backdrop {
@@ -375,6 +381,58 @@
 }
 @keyframes px-fall {
   to { transform: translateY(calc(100vh + 80px)); }
+}
+
+/* Snow: flakes fall on a slow sway, and every roof carries a cap while it snows. */
+.px-snow {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  overflow: hidden;
+}
+.px-flake {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  will-change: transform;
+  animation: px-flake var(--d) linear infinite;
+  animation-delay: var(--dl);
+}
+@keyframes px-flake {
+  0% { transform: translate(0, -24px); }
+  25% { transform: translate(var(--sw), 25vh); }
+  50% { transform: translate(0, 50vh); }
+  75% { transform: translate(calc(var(--sw) * -1), 75vh); }
+  100% { transform: translate(0, calc(100vh + 24px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .px-flake {
+    animation: none;
+    transform: translateY(var(--rest));
+  }
+}
+.px-backdrop[data-snow] .px-bld::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -6px;
+  width: calc(100% + 4px);
+  height: 8px;
+  background: var(--snow-cap);
+  box-shadow: 0 2px 0 var(--snow-edge);
+}
+.px-backdrop[data-snow] .px-bld::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: -12px;
+  width: 14px;
+  height: 6px;
+  background: var(--snow-cap);
+  box-shadow: 36px 2px 0 var(--snow-cap);
 }
 
 /* Tip bubble for the clickable things in the sky */

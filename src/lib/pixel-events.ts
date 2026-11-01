@@ -3,11 +3,11 @@
  * critters, the road and the cheats never import each other. Each component
  * owns its timers and listens for what it cares about.
  */
-export type CheatName = "party" | "ufo" | "rain" | "lights";
+export type CheatName = "party" | "ufo" | "rain" | "snow" | "lights";
 
 export type PixelEvents = {
-  /** Rain started or stopped. */
-  "px-weather": { rain: boolean };
+  /** The weather changed: rain, snow, or neither (both false). They never fall together. */
+  "px-weather": { rain: boolean; snow: boolean };
   /** A plane has just come into view. */
   "px-plane": undefined;
   /** The critter's light switch was flipped. */

@@ -40,6 +40,8 @@ export type CritterPose = {
   squash?: number;
   /** Raindrop height above the head (art pixels), 0 for none. */
   drop?: number;
+  /** Snowflake height above the head (art pixels), 0 for none. */
+  flake?: number;
   /** Heart height above the head, 0 for none. */
   heart?: number;
   /** Orbiting stars, 1 to 4 picks the frame, 0 for none. */
@@ -152,6 +154,9 @@ const LAPTOP = [
 ];
 const HEART = [".R.R.", "RRRRR", ".RRR.", "..R.."];
 const DROP = [".D.", ".D.", "DDD", "DDD"];
+// A snowflake: a white plus with a blue-grey shadow cell behind it, so it still shows on a pale sky.
+const FLAKE_SHADOW = ["....", "..E.", ".EEE", "..E."];
+const FLAKE = [".F..", "FFF.", ".F.."];
 const STAR_POS: [number, number][] = [[3, 3], [12, 0], [20, 3], [12, 6]];
 const WAVE1 = ["ooo.", "oGo.", "oGo.", "oGo.", "oGo.", "oGo."];
 const WAVE2 = [".ooo", ".oGo", "oGo.", "oGo.", "oGo.", "oGo."];
@@ -174,12 +179,14 @@ const PALETTE: Record<string, string> = {
   R: "#E5484D",
   C: "#F4F1EA",
   D: "#62B6FF",
+  E: "#8FA6C2",
+  F: "#FFFFFF",
   N: "#6B4226",
   T: "#D8DCE8",
   L: "#8A90A6",
 };
 // Painted in this order, so later colours sit on top of earlier ones.
-const ORDER = "oGSHwkPYRCDNTL";
+const ORDER = "oGSHwkPYRCDNTLEF";
 
 type Grid = string[][];
 const makeGrid = (): Grid => Array.from({ length: H }, () => new Array<string>(W).fill("."));
@@ -340,6 +347,10 @@ export function composeCritter(p: CritterPose): Layer[] {
 
   if (p.heart && pose !== "sleep") stamp(g, HEART, 11, OFF + 4 - 4 - p.heart - 3);
   if (p.drop && pose !== "sleep") stamp(g, DROP, 11, OFF + 4 - 4 - p.drop - 4);
+  if (p.flake && pose !== "sleep") {
+    stamp(g, FLAKE_SHADOW, 11, OFF + 4 - 4 - p.flake - 4);
+    stamp(g, FLAKE, 11, OFF + 4 - 4 - p.flake - 4);
+  }
   if (p.stars && pose !== "sleep") {
     for (let i = 0; i < 3; i++) {
       const s = STAR_POS[(p.stars + i) % 4];

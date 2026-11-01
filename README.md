@@ -58,17 +58,19 @@ timers and listeners.
   `src/lib/theme.ts` and `use-theme.ts`. An inline script sets the `dark`
   class before first paint.
 - **Backdrop** (`components/pixel/backdrop.tsx`, `styles/backdrop.css`): sky,
-  sun or moon, clouds, four parallax skylines, planes, birds, a rare UFO and
-  rain. Parallax and window lighting run on CSS variables written from a
+  sun or moon, clouds, four parallax skylines, planes, birds, a rare UFO,
+  rain and snow (the weather button cycles auto, rain, snow and off; auto alternates
+  a rain and a snow shower). Parallax and window lighting run on CSS variables written from a
   requestAnimationFrame loop that only runs while something moves. Windows,
   the moon, planes, birds and the UFO are clickable.
 - **Critter:** the sprite is pixel rows in `src/lib/critter-sprite.ts`; the
   hero critter's behaviour is a plain state machine in
   `src/lib/critter-brain.ts`. Card critters sit on project cards and have a
-  job (laptop, coffee, catching rain).
+  job (laptop, coffee, catching rain). In snow every critter looks up and
+  catches flakes.
 - **Road:** the footer ends on a street (`components/pixel/road.tsx`): two rows
   of buildings, lamps and cars that honk when clicked.
-- **Cheats:** the Konami code, the words `party`, `ufo`, `rain`, `lights`, or
+- **Cheats:** the Konami code, the words `party`, `ufo`, `rain`, `snow`, `lights`, or
   the command palette (`/` or Ctrl+K). They fire `px-cheat` window events; see
   `src/lib/pixel-events.ts`.
 - **404** is a playable runner game.

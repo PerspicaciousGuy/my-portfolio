@@ -16,7 +16,7 @@ import {
   type Building,
 } from "@/data/skyline";
 import { emit, listen, prefersReducedMotion } from "@/lib/pixel-events";
-import { triggerRain, useWeather } from "@/lib/weather";
+import { triggerRain, triggerSnow, useWeather } from "@/lib/weather";
 import { useTheme } from "@/lib/use-theme";
 import { site } from "@/data/site";
 
@@ -27,6 +27,9 @@ const BIRDS = [
 ];
 
 // `follow` makes the bubble ride an element (a plane) instead of staying where it was clicked.
+const DOT_CELLS: [number, number][] = [[0, 0], [1, 0], [0, 1], [1, 1]];
+const PLUS_CELLS: [number, number][] = [[0, 0], [-1, 1], [0, 1], [1, 1], [0, 2]];
+
 type Tip = { text: string; x: number; y: number; follow?: HTMLElement };
 type Hit = { kind: string; el: HTMLElement };
 
@@ -76,7 +79,7 @@ function Skyline({ list, seed, cls }: { list: readonly Building[]; seed: number;
  */
 export function Backdrop() {
   const { isNight, hour } = useTheme();
-  const { rain } = useWeather();
+  const { rain, snow } = useWeather();
   const rootRef = useRef<HTMLDivElement>(null);
   const [tip, setTip] = useState<Tip | null>(null);
   const [ufo, setUfo] = useState(0);
@@ -242,6 +245,7 @@ export function Backdrop() {
         discoTimer = window.setTimeout(() => root.removeAttribute("data-disco"), 8000);
       } else if (d?.name === "ufo") startUfo();
       else if (d?.name === "rain") triggerRain(25_000);
+      else if (d?.name === "snow") triggerSnow(25_000);
     });
 
     // A UFO visits on about one visit in four, 15 to 90 seconds after load.
@@ -286,6 +290,31 @@ export function Backdrop() {
     [],
   );
 
+  // Snowflakes are 3 px cells: a dot is 6 x 6, a plus is 9 x 9. The first cell is the element itself and
+  // the rest are box-shadows. A blue-grey shadow cell behind each (only in the light theme, through
+  // --flake-edge) keeps white flakes visible on a pale sky.
+  const flakes = useMemo(
+    () =>
+      Array.from({ length: 80 }, (_, i) => {
+        const plus = hash3(i, 3, 4) < 0.3;
+        const cells = plus ? PLUS_CELLS : DOT_CELLS;
+        const d = (plus ? 9 : 12) + hash3(i, 7, 8) * 6;
+        const shadow = [
+          ...cells.slice(1).map(([x, y]) => `${x * 3}px ${y * 3}px 0 #fff`),
+          ...cells.map(([x, y]) => `${(x + 1) * 3}px ${(y + 1) * 3}px 0 var(--flake-edge)`),
+        ].join(",");
+        return {
+          left: `${(hash3(i, 1, 2) * 100).toFixed(1)}%`,
+          shadow,
+          d: `${d.toFixed(1)}s`,
+          dl: `-${(hash3(i, 5, 6) * d).toFixed(1)}s`,
+          sw: `${6 + Math.round(hash3(i, 9, 10) * 16)}px`,
+          rest: `${Math.round(8 + hash3(i, 11, 12) * 80)}vh`,
+        };
+      }),
+    [],
+  );
+
   // The blinking wing light animates too, and animation events bubble: only the plane itself counts.
   const onPlane = (e: AnimationEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) emit("px-plane");
@@ -300,7 +329,7 @@ export function Backdrop() {
 
   return (
     <>
-      <div ref={rootRef} className="px-backdrop" aria-hidden="true">
+      <div ref={rootRef} className="px-backdrop" data-snow={snow ? "" : undefined} aria-hidden="true">
         <div className="px-ly px-ly-stars">
           <div className="px-stars px-night" />
           <div className="px-stars px-stars-b px-night" />
@@ -404,6 +433,17 @@ export function Backdrop() {
               key={i}
               className="px-drop"
               style={{ left: d.left, height: d.height, "--d": d.d, "--dl": d.dl } as CSSProperties}
+            />
+          ))}
+        </div>
+      )}
+      {snow && (
+        <div className="px-snow" aria-hidden="true">
+          {flakes.map((f, i) => (
+            <i
+              key={i}
+              className="px-flake"
+              style={{ left: f.left, boxShadow: f.shadow, "--d": f.d, "--dl": f.dl, "--sw": f.sw, "--rest": f.rest } as CSSProperties}
             />
           ))}
         </div>

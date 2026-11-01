@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { listen, prefersReducedMotion } from "@/lib/pixel-events";
+import { currentSky } from "@/lib/weather";
 import type { Arms, Face, Item } from "@/lib/critter-sprite";
 import { CritterFigure } from "./critter-figure";
 
@@ -20,7 +21,8 @@ const U = 3;
 /**
  * A small critter that sits on top of a project card and has a job:
  * laptop (types while you read), coffee (sips), drop (catches raindrops when
- * it rains; the others open an umbrella) or none. It looks toward the
+ * it rains; the others open an umbrella) or none. In snow every one of them
+ * looks up and catches flakes, with no umbrella. It looks toward the
  * pointer, hops and says "hi!" while the pointer is over the card, waves at
  * planes and cheers for the party cheat. The timer pauses off screen.
  */
@@ -30,6 +32,7 @@ export function CardCritter({ target, job = "none", phase = 0 }: Props) {
   const [flip, setFlip] = useState(1);
   const [hover, setHover] = useState(false);
   const [rain, setRain] = useState(false);
+  const [snow, setSnow] = useState(false);
   const [t, setT] = useState(0);
   const [w, setW] = useState({ from: 0, to: 0, party: 0 });
 
@@ -51,8 +54,15 @@ export function CardCritter({ target, job = "none", phase = 0 }: Props) {
       }
     };
     window.addEventListener("pointermove", onMove, { passive: true });
+    // The weather event only fires on a change, so start from what is falling now.
+    const sky = currentSky();
+    setRain(sky === "rain");
+    setSnow(sky === "snow");
     const offs = [
-      listen("px-weather", (d) => setRain(!!d?.rain)),
+      listen("px-weather", (d) => {
+        setRain(!!d?.rain);
+        setSnow(!!d?.snow);
+      }),
       // A plane passed: wave for 3 s, each critter starting a beat after the previous one.
       listen("px-plane", () => {
         const now = Math.floor(Date.now() / 250);
@@ -91,6 +101,7 @@ export function CardCritter({ target, job = "none", phase = 0 }: Props) {
   let item: Item = "none";
   let itemT = 0;
   let drop = 0;
+  let flake = 0;
   let lift = 0;
   let bubble = "";
   let umbrella = false;
@@ -106,6 +117,10 @@ export function CardCritter({ target, job = "none", phase = 0 }: Props) {
   } else if (t >= w.from && t < w.to) {
     face = "happy";
     arms = t % 2 ? "wave2" : "wave1";
+  } else if (snow) {
+    // The drop critter catches them on its tongue (the yawn face), the others open wide.
+    face = job === "drop" ? "yawn" : "surprised";
+    flake = 8 - ((t + phase) % 8);
   } else if (rain && job === "drop") {
     face = "surprised";
     drop = 8 - ((t + phase) % 8);
@@ -128,12 +143,13 @@ export function CardCritter({ target, job = "none", phase = 0 }: Props) {
         flip={flip}
         wag={Math.floor((t + phase) / 2) % 2 === 1}
         blink={(t + phase * 5) % 14 === 0}
-        look={hover ? "up" : "side"}
+        look={hover || snow ? "up" : "side"}
         face={face}
         arms={arms}
         item={item}
         itemT={itemT}
         drop={drop}
+        flake={flake}
         lift={lift}
         bubble={bubble}
         umbrella={umbrella}

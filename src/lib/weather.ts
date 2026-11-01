@@ -4,42 +4,47 @@ import { useCallback, useSyncExternalStore } from "react";
 import { emit } from "./pixel-events";
 
 /**
- * Rain. "auto" runs a 40 s shower every three minutes, "on" and "off" are the
- * visitor's override, and the rain cheat forces a shower for 25 s. A single
- * one-second timer is shared by every subscriber and announces changes with
- * the px-weather event so the critters can react.
+ * Rain and snow. "auto" runs a 40 s shower every three minutes and alternates rain and snow,
+ * "rain", "snow" and "off" are the visitor's override, and the rain and snow cheats force a
+ * shower for 25 s. A single one-second timer is shared by every subscriber and announces changes
+ * with the px-weather event so the critters can react. Rain and snow never fall together.
  */
-export type RainMode = "auto" | "on" | "off";
+export type WeatherMode = "auto" | "rain" | "snow" | "off";
+export type Sky = "rain" | "snow" | null;
 
 const KEY = "hb-rain";
-const NEXT: Record<RainMode, RainMode> = { auto: "on", on: "off", off: "auto" };
+const NEXT: Record<WeatherMode, WeatherMode> = { auto: "rain", rain: "snow", snow: "off", off: "auto" };
 const listeners = new Set<() => void>();
 let timer = 0;
 let forcedUntil = 0;
-let lastRain = false;
+let forcedSky: Sky = null;
+let lastSky: Sky = null;
 
-function readMode(): RainMode {
+function readMode(): WeatherMode {
   try {
     const v = window.localStorage.getItem(KEY);
-    return v === "on" || v === "off" ? v : "auto";
+    // "on" was the rain-only setting from before snow existed.
+    if (v === "on") return "rain";
+    return v === "rain" || v === "snow" || v === "off" ? v : "auto";
   } catch {
     return "auto";
   }
 }
 
-function rainAt(mode: RainMode, now: number) {
-  if (now < forcedUntil) return true;
-  if (mode === "on") return true;
-  if (mode === "off") return false;
+function skyAt(mode: WeatherMode, now: number): Sky {
+  if (now < forcedUntil) return forcedSky;
+  if (mode === "rain" || mode === "snow") return mode;
+  if (mode === "off") return null;
   const t = now % 180_000;
-  return t > 100_000 && t < 140_000;
+  if (t > 100_000 && t < 140_000) return Math.floor(now / 180_000) % 2 === 0 ? "rain" : "snow";
+  return null;
 }
 
 function check() {
-  const rain = rainAt(readMode(), Date.now());
-  if (rain !== lastRain) {
-    lastRain = rain;
-    emit("px-weather", { rain });
+  const sky = skyAt(readMode(), Date.now());
+  if (sky !== lastSky) {
+    lastSky = sky;
+    emit("px-weather", { rain: sky === "rain", snow: sky === "snow" });
   }
   listeners.forEach((l) => l());
 }
@@ -56,16 +61,23 @@ function subscribe(listener: () => void) {
   };
 }
 
-const getRain = () => rainAt(readMode(), Date.now());
+const getSky = () => skyAt(readMode(), Date.now());
 
-export function triggerRain(ms = 25_000) {
+/** The weather right now. Components that mount mid-shower read it, because the px-weather event only fires on a change. */
+export const currentSky = (): Sky => getSky();
+
+function force(sky: Sky, ms: number) {
+  forcedSky = sky;
   forcedUntil = Date.now() + ms;
   check();
 }
 
+export const triggerRain = (ms = 25_000) => force("rain", ms);
+export const triggerSnow = (ms = 25_000) => force("snow", ms);
+
 export function useWeather() {
-  const mode = useSyncExternalStore<RainMode>(subscribe, readMode, () => "auto");
-  const rain = useSyncExternalStore(subscribe, getRain, () => false);
+  const mode = useSyncExternalStore<WeatherMode>(subscribe, readMode, () => "auto");
+  const sky = useSyncExternalStore<Sky>(subscribe, getSky, () => null);
 
   const cycle = useCallback(() => {
     try {
@@ -73,8 +85,10 @@ export function useWeather() {
     } catch {
       // Private mode: the choice just won't persist.
     }
+    // A choice made by hand ends a cheat shower, so the button always does what it says.
+    forcedUntil = 0;
     check();
   }, []);
 
-  return { mode, rain, cycle };
+  return { mode, sky, rain: sky === "rain", snow: sky === "snow", cycle };
 }

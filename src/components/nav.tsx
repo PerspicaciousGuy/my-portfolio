@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { navLinks } from "@/data/site";
 import { ThemeToggle } from "./theme-toggle";
-import { RainToggle } from "./pixel/rain-toggle";
+import { WeatherToggle } from "./pixel/weather-toggle";
 
 /** Sticky header: logo, section links, résumé, and the theme and weather toggles. */
 export function Nav() {
@@ -31,7 +31,7 @@ export function Nav() {
             Résumé
           </Link>
           <ThemeToggle />
-          <RainToggle />
+          <WeatherToggle />
         </div>
       </div>
     </div>

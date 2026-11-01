@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CritterBrain, type CritterView } from "@/lib/critter-brain";
 import { emit, listen, prefersReducedMotion } from "@/lib/pixel-events";
+import { currentSky } from "@/lib/weather";
 import { CritterFigure } from "./critter-figure";
 
 const U = 5;
@@ -25,6 +26,10 @@ export function CritterWalker() {
     const reduce = prefersReducedMotion();
     const brain = new CritterBrain(U, { lights: (on) => emit("px-lights", { on }) }, reduce, Date.now());
     brainRef.current = brain;
+    // The weather event only fires on a change, so start from what is falling now.
+    const sky = currentSky();
+    brain.rain = sky === "rain";
+    brain.snow = sky === "snow";
 
     let last = "";
     const publish = () => {
@@ -91,7 +96,7 @@ export function CritterWalker() {
     window.addEventListener("click", onClick);
     window.addEventListener("scroll", onScroll, { passive: true });
     const offs = [
-      listen("px-weather", (d) => brain.weather(!!d?.rain, Date.now())),
+      listen("px-weather", (d) => brain.weather(!!d?.rain, !!d?.snow, Date.now())),
       listen("px-plane", () => brain.plane(Date.now())),
       listen("px-ufo", () => brain.ufo(Date.now())),
       listen("px-cheat", (d) => {
@@ -196,6 +201,7 @@ export function CritterWalker() {
               bubble={v.bubble}
               breathe={v.breathe}
               umbrella={v.umbrella}
+              flake={v.flake}
               zt={v.zt}
             />
           </button>
