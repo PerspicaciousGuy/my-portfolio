@@ -24,7 +24,7 @@ function Buttons({ project, all }: { project: Project; all?: boolean }) {
       )}
       {project.live && (
         <a href={project.live} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
-          {all ? "Live docs" : "Live"}
+          {project.liveLabel ?? "Live"}
         </a>
       )}
       {source && project.repo && (

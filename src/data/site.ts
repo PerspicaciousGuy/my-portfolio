@@ -200,6 +200,8 @@ export type Project = {
   live?: string;
   /** Shown in place of the buttons when there is nothing public to open. */
   note?: string;
+  /** Text of the live button when "Live" is not right, for example "Live docs". */
+  liveLabel?: string;
   /** Pixel scene drawn on the card and the case study cover (src/lib/scene-art.ts). */
   art?: SceneKind;
   featured: boolean;
@@ -213,6 +215,24 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    name: "Sessionbook",
+    blurb: "A trading journal for forex and prop traders: it records every trade, totals your mistakes and setups, and ends each week with one action.",
+    description:
+      "A trading journal for forex and prop traders. Statements import from CSV with every row checked and reconciled before anything is saved. Trades carry R multiples, chart snapshots and a strategy checklist; results break down by setup, symbol, session, weekday and mistake; a weekly review puts the week's results next to the trades behind them. Strategies are versioned with adherence per rule, and backtesting studies sit beside live results. Journal data stays in the browser. A NestJS and Prisma API exists but the interface does not use it yet.",
+    stack: ["Next.js", "React", "TypeScript", "Vitest", "Playwright", "NestJS", "Prisma"],
+    live: "https://openzilla.vercel.app",
+    art: "journal",
+    highlight: true,
+    metrics: [
+      { label: "Data", value: "Stays in your browser" },
+      { label: "Import", value: "CSV, every row reconciled" },
+      { label: "Checks", value: "Vitest + Playwright" },
+      { label: "Status", value: "Live" },
+    ],
+    featured: true,
+    year: "2026",
+  },
+  {
     name: "ExerciseDB API",
     slug: "exercisedb-api",
     art: "api",
@@ -222,14 +242,8 @@ export const projects: Project[] = [
     stack: ["Node.js", "Express", "PostgreSQL", "Supabase", "Zod", "Vitest", "OpenAPI", "Vue"],
     repo: "https://github.com/PerspicaciousGuy/exercises-api",
     live: "https://docs.harshitbishnoi.dev",
+    liveLabel: "Live docs",
     featured: true,
-    highlight: true,
-    metrics: [
-      { label: "Tests", value: "116" },
-      { label: "Errors", value: "RFC 9457" },
-      { label: "Auth", value: "API keys + tiers" },
-      { label: "Status", value: "Live in production" },
-    ],
     year: "2026",
   },
   {
@@ -246,25 +260,14 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
-    name: "Quiet Library",
-    slug: "quiet-library",
-    art: "library",
-    blurb: "A PWA audiobook player that streams from your own Google Drive — and keeps playing offline.",
+    name: "Open Muscle Map",
+    art: "muscle",
+    blurb: "An open-source, tappable front and rear muscle map: SVG art, JSON data and a small JavaScript controller.",
     description:
-      "Streams audiobook files straight from a user's Google Drive through an authenticated bounded-Range proxy, without ever copying them to app storage. Versioned progress sync with atomic stale-write rejection, an offline-first PWA (service worker, OPFS/Cache downloads via Dexie, airplane-mode playback), Media Session controls, RLS-backed Supabase, and RFC 9457 errors behind CSP/HSTS.",
-    stack: ["Next.js", "TypeScript", "Supabase", "Dexie", "PWA", "Web Audio", "Zod"],
-    repo: "https://github.com/PerspicaciousGuy/audiobooks-player",
-    live: "https://greasy-bethanne-ebooks-0926d76e.koyeb.app",
-    featured: true,
-    year: "2026",
-  },
-  {
-    name: "Sessionbook",
-    blurb: "A forex and prop-trading journal: trades, P&L calendar, reports, weekly review and backtesting.",
-    description:
-      "A trading journal for forex and prop traders. Statements import from CSV with every row checked and reconciled before anything is saved. Trades carry R multiples, chart snapshots and a strategy checklist; results break down by setup, symbol, session, weekday and mistake; a weekly review puts the week's results next to the trades behind them. Strategies are versioned with adherence per rule, and backtesting studies sit beside live results. Journal data stays in the browser. A NestJS and Prisma API exists but the interface does not use it yet.",
-    stack: ["Next.js", "React", "TypeScript", "Vitest", "Playwright", "NestJS", "Prisma"],
-    note: "In development · private repository",
+      "I was building a muscle map for my own project, so I made it open source. Front and rear views for male and female bodies, 112 named panels covering 32 muscles or muscle groups, heatmap colouring and keyboard-accessible selection. Schematic rather than a dissection-grade atlas. MIT licensed.",
+    stack: ["SVG", "JSON", "JavaScript"],
+    repo: "https://github.com/PerspicaciousGuy/Open-Muscle-Map",
+    live: "https://perspicaciousguy.github.io/Open-Muscle-Map/",
     featured: true,
     year: "2026",
   },
@@ -274,6 +277,7 @@ export const projects: Project[] = [
     description:
       "A SwiftUI app for logging workouts set by set and following a training plan. Five tabs, row-based set logging, a home-screen widget and Live Activity, a shared design-system palette, unit tests in Swift Testing and UI tests that record screenshot tours. Builds against the newest iOS SDK with an iOS 18 deployment target. Working name: Strive.",
     stack: ["Swift", "SwiftUI", "WidgetKit", "Swift Testing"],
+    art: "ios",
     note: "In development · private repository",
     featured: true,
     year: "2026",
@@ -290,24 +294,25 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
-    name: "Open Muscle Map",
-    art: "muscle",
-    blurb: "An open-source, tappable front and rear muscle map: SVG art, JSON data and a small JavaScript controller.",
-    description:
-      "I was building a muscle map for my own project, so I made it open source. Front and rear views for male and female bodies, 112 named panels covering 32 muscles or muscle groups, heatmap colouring and keyboard-accessible selection. Schematic rather than a dissection-grade atlas. MIT licensed.",
-    stack: ["SVG", "JSON", "JavaScript"],
-    repo: "https://github.com/PerspicaciousGuy/Open-Muscle-Map",
-    live: "https://perspicaciousguy.github.io/Open-Muscle-Map/",
-    featured: true,
-    year: "2026",
-  },
-  {
     name: "Gleam",
     blurb: "A fast, local file and app launcher for Windows: press Alt+Space, type, press Enter.",
     description:
       "Searches file, folder, app and Start Menu names, including Microsoft Store apps, from a local SQLite index. Rust and Tauri 2 with a React front end, slash commands and recent searches. Its own code makes no network requests. Early 0.x release with a Windows installer, tested on Windows 11.",
     stack: ["Rust", "Tauri 2", "React", "TypeScript", "SQLite"],
     repo: "https://github.com/PerspicaciousGuy/SpotlightSearch",
+    featured: false,
+    year: "2026",
+  },
+  {
+    name: "Quiet Library",
+    slug: "quiet-library",
+    art: "library",
+    blurb: "A PWA audiobook player that streams from your own Google Drive — and keeps playing offline.",
+    description:
+      "Streams audiobook files straight from a user's Google Drive through an authenticated bounded-Range proxy, without ever copying them to app storage. Versioned progress sync with atomic stale-write rejection, an offline-first PWA (service worker, OPFS/Cache downloads via Dexie, airplane-mode playback), Media Session controls, RLS-backed Supabase, and RFC 9457 errors behind CSP/HSTS.",
+    stack: ["Next.js", "TypeScript", "Supabase", "Dexie", "PWA", "Web Audio", "Zod"],
+    repo: "https://github.com/PerspicaciousGuy/audiobooks-player",
+    live: "https://greasy-bethanne-ebooks-0926d76e.koyeb.app",
     featured: false,
     year: "2026",
   },
