@@ -482,3 +482,14 @@
     display: none !important;
   }
 }
+
+/* On a phone the text is full width, so the city sits right behind it: pull the three
+   building layers back so headings and links stay readable. The sky, sun, moon and
+   weather keep their full strength. */
+@media (max-width: 767px) {
+  .px-ly-far,
+  .px-ly-mid,
+  .px-ly-near {
+    opacity: 0.4;
+  }
+}

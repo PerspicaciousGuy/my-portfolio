@@ -16,10 +16,10 @@ export async function Stats() {
   return (
     <section aria-label="At a glance" className="relative z-[1] pt-[72px]">
       <div className="px-wrap">
-        <dl className="px-panel px-reveal m-0 flex flex-wrap">
+        <dl className="px-panel px-reveal m-0 grid grid-cols-2 md:flex md:flex-wrap">
           {figures.map((f, i) => (
-            <div key={f.label} className={`flex-[1_1_220px] px-[30px] py-[26px] ${i < figures.length - 1 ? "border-r-4 border-raised" : ""}`}>
-              <dd className="m-0 font-display text-[52px] font-bold leading-none text-accent">{f.value}</dd>
+            <div key={f.label} className={`border-raised px-[18px] py-5 md:flex-[1_1_220px] md:px-[30px] md:py-[26px] ${i % 2 === 0 ? "border-r-4" : ""} ${i < 2 ? "border-b-4 md:border-b-0" : ""} ${i < figures.length - 1 ? "md:border-r-4" : "md:border-r-0"}`}>
+              <dd className="m-0 font-display text-[44px] font-bold leading-none text-accent md:text-[52px]">{f.value}</dd>
               <dt className="px-label mt-2">{f.label}</dt>
             </div>
           ))}

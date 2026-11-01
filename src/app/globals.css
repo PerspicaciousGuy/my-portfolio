@@ -357,6 +357,8 @@ label[for],
   font-size: 1.8rem;
   line-height: 1.42;
   max-width: 780px;
+  /* A long URL in a list must wrap on a phone instead of widening the page. */
+  overflow-wrap: anywhere;
 }
 .px-prose > * + * {
   margin-top: 1.1em;
