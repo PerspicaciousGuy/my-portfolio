@@ -13,9 +13,10 @@ export const site = {
     "I build beautiful interfaces and scalable backends — production APIs, and the apps, dashboards and billing around them.",
   location: "Ganganagar, Rajasthan, India",
   email: "joy.0839b@gmail.com",
-  url: "https://harshitbishnoi.dev",
-  // ↑ Used by the OG image, sitemap and schema.org markup. Must match the
-  //   deployed domain or none of the SEO resolves.
+  url: "https://www.harshitbishnoi.dev",
+  // ↑ The canonical host. Vercel redirects harshitbishnoi.dev to www, so this
+  //   must stay www: the sitemap, canonical tags, og:url and schema.org markup
+  //   all read it, and any of them pointing at a redirecting host is a mismatch.
   available: true,
 } as const;
 

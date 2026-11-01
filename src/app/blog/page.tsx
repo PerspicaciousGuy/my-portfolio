@@ -8,6 +8,8 @@ import { Shelf } from "@/components/pixel/shelf";
 export const metadata: Metadata = {
   title: "Writing",
   description: "Notes on backend engineering, APIs and the things I build.",
+  alternates: { canonical: "/blog" },
+  openGraph: { title: "Writing", description: "Notes on backend engineering, APIs and the things I build.", url: "/blog" },
 };
 
 /** The blog index: a shelf of cartridges, newest first, volumes numbered from the oldest. */
