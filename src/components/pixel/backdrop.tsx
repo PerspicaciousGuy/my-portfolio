@@ -2,7 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type AnimationEvent, type CSSProperties } from "react";
 import "@/styles/backdrop.css";
-import { FAR, MID, MOON_LINES, NEAR, PLANE_LINES, SUN_LINES, WINDOW_FACTS, hash3, type Building } from "@/data/skyline";
+import {
+  BIRD_LINES,
+  FAR,
+  MID,
+  MOON_LINES,
+  NEAR,
+  PLANE_LINES,
+  SUN_LINES,
+  UFO_LINES,
+  WINDOW_FACTS,
+  hash3,
+  type Building,
+} from "@/data/skyline";
 import { emit, listen, prefersReducedMotion } from "@/lib/pixel-events";
 import { triggerRain, useWeather } from "@/lib/weather";
 import { useTheme } from "@/lib/use-theme";
@@ -73,6 +85,8 @@ export function Backdrop() {
   const moonClicks = useRef(0);
   const sunClicks = useRef(0);
   const planeClicks = useRef(0);
+  const birdClicks = useRef(0);
+  const ufoClicks = useRef(0);
   const tipRef = useRef<HTMLDivElement>(null);
   const tipTimer = useRef(0);
   const lit = useRef(new Set<string>());
@@ -195,9 +209,9 @@ export function Backdrop() {
       } else if (kind === "bird") {
         setFled(true);
         window.setTimeout(() => setFled(false), 15000);
-        say("tweet", e.clientX, e.clientY);
+        say(BIRD_LINES[birdClicks.current++ % BIRD_LINES.length], e.clientX, e.clientY);
       } else if (kind === "sign") window.location.href = `mailto:${site.email}`;
-      else if (kind === "ufo") say("Take me to your hiring manager.", e.clientX, e.clientY);
+      else if (kind === "ufo") say(UFO_LINES[ufoClicks.current++ % UFO_LINES.length], e.clientX, e.clientY);
     };
 
     const onScroll = () => {
