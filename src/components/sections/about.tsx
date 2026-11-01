@@ -2,6 +2,7 @@ import Image from "next/image";
 import { about, now, portrait, site } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
+import { DeskScene } from "@/components/pixel/desk-scene";
 
 export function About() {
   return (
@@ -11,9 +12,8 @@ export function About() {
           {portrait ? (
             <Image src={portrait} alt={`Portrait of ${site.name}`} width={200} height={200} className="size-[200px] flex-none" />
           ) : (
-            <div className="px-slot size-[200px] flex-none p-2 text-[13px]">
-              <b className="text-accent">Art slot · Portrait</b>
-              <span>400 × 400 px</span>
+            <div className="relative min-h-[200px] w-[200px] flex-none self-stretch overflow-hidden bg-[#171925] shadow-[0_0_0_4px_rgb(var(--border))]">
+              <DeskScene />
             </div>
           )}
           <div className="min-w-0 flex-[1_1_320px]">

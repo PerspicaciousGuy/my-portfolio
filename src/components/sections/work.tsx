@@ -1,24 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import { featuredProjects, highlightProject, otherProjects, type Project } from "@/data/site";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { CardCritter, type CardJob } from "@/components/pixel/card-critter";
+import { SceneArt } from "@/components/pixel/scene-art";
 
 const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-/** A project's thumbnail, or a labelled slot until the art exists. */
-function Media({ project, lead, className }: { project: Project; lead?: boolean; className?: string }) {
-  if (project.preview) {
-    return <Image src={project.preview} alt="" width={1200} height={840} sizes="(max-width: 900px) 100vw, 600px" className={`block w-full object-cover object-top ${className ?? ""}`} />;
-  }
-  return (
-    <div className={`px-slot p-2 text-[13px] ${className ?? ""}`} style={{ borderWidth: 0 }}>
-      <b className="text-accent">Art slot · {lead ? "Lead project" : project.name}</b>
-      {lead && <span>{project.name} — docs site or pixel scene</span>}
-      <span>{lead ? "1200 × 840 px PNG · shown at 600 × 420" : "1200 × 520 px PNG · shown at 600 × 260"}</span>
-    </div>
-  );
+/** The project's pixel scene. It fills its box and sits on the bottom edge. */
+function Media({ project, className }: { project: Project; className?: string }) {
+  return project.art ? <SceneArt kind={project.art} className={className} /> : null;
 }
 
 /** Case study, live and source buttons, as on a card: source only appears when there is nothing else to open. */
@@ -52,8 +43,8 @@ function Lead({ project }: { project: Project }) {
       <div className="pointer-events-none absolute bottom-full right-[27px] z-[3] mb-1.5">
         <CardCritter target={id} job="laptop" phase={0} />
       </div>
-      <div className="min-h-[420px] min-w-0 flex-[1_1_520px] border-r-4 border-dashed border-border">
-        <Media project={project} lead className="h-full min-h-[420px]" />
+      <div className="min-h-[420px] min-w-0 flex-[1_1_520px] border-r-4 border-border">
+        <Media project={project} className="h-full min-h-[420px] w-full" />
       </div>
       <div className="min-w-0 flex-[1_1_560px] px-10 py-9">
         <p className="px-label m-0 text-[15px] tracking-[0.1em] text-accent">★ Featured · {project.year}</p>
@@ -94,7 +85,7 @@ function Card({ project, i }: { project: Project; i: number }) {
         <CardCritter target={id} job={JOBS[i % JOBS.length]} phase={i + 1} />
       </div>
       <div className="border-b-4 border-border">
-        <Media project={project} className="h-[260px]" />
+        <Media project={project} className="h-[260px] w-full" />
       </div>
       <div className="flex flex-1 flex-col px-[30px] pb-[30px] pt-[26px]">
         <div className="flex items-baseline justify-between">

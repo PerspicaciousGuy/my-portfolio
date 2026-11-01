@@ -14,7 +14,7 @@ None.
 ## Pending
 - Mobile layout (desktop-first by decision): the pixel design on narrow screens is not designed yet.
 - Confirm the résumé style (B, the paper sheet, was assumed).
-- Art the user will generate: portrait (`portrait` in src/data/site.ts), project thumbnails (`preview` per project), Open Graph image (src/app/opengraph-image.tsx is still the old non-pixel card).
+- Art: the five project covers and the case-study cover are pixel scenes drawn in code (`art` per project in src/data/site.ts, drawn in src/lib/scene-art.ts). The About portrait is an animated night desk (src/lib/desk-scene.ts, CSS animation in globals.css); a `portrait` image in src/data/site.ts would replace it. Still the old plain card: Open Graph image (src/app/opengraph-image.tsx).
 - Performance pass against the earlier Lighthouse audit (mobile LCP).
 
 ## Known Issues
