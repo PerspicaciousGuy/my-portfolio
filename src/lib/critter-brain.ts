@@ -10,6 +10,7 @@ import type { Arms, Face, Item, Pose } from "./critter-sprite";
  *   click: 1 hop, 2 spin, 3 heart eyes, 4 or more dizzy with stars,
  *   follows a link click with heart eyes, jumps back from a fast scroll,
  *   waves at planes, sulks when rain starts and then opens its umbrella,
+ *   in snow looks up, mouth open, and catches flakes (no umbrella),
  *   idle for a while: wanders (sometimes on tiptoe), drinks coffee, sits,
  *   idle for longer: yawns, stretches and falls asleep,
  *   flips the light switch at the right end of the ground,
@@ -41,6 +42,8 @@ export type CritterView = {
   blink: boolean;
   look: "side" | "up";
   umbrella: boolean;
+  /** Snowflake height above the head (art pixels), 0 for none. */
+  flake: number;
   sleeping: boolean;
   /** Step of the rising z's while asleep (0 to 11). */
   zt: number;
@@ -69,6 +72,7 @@ export class CritterBrain {
   turn = 0;
   over = false;
   rain = false;
+  snow = false;
   near = false;
   above = false;
   lights = false;
@@ -154,9 +158,10 @@ export class CritterBrain {
     if (!this.act && this.mode !== "sleep") this.begin("heart", 1700, now);
   }
 
-  weather(rain: boolean, now: number) {
+  weather(rain: boolean, snow: boolean, now: number) {
     if (rain && !this.rain && this.mode !== "sleep" && !this.locked()) this.begin("sad", 1500, now);
     this.rain = rain;
+    this.snow = snow;
   }
 
   plane(now: number) {
@@ -285,6 +290,7 @@ export class CritterBrain {
     let lift = 0;
     let bubble = "";
     let spin = 1;
+    let flake = 0;
 
     if (a === "jump") {
       face = "happy";
@@ -337,6 +343,10 @@ export class CritterBrain {
     } else if (this.over && !sleeping) {
       face = "happy";
       bubble = "hi!";
+    } else if (this.snow && this.mode === "idle") {
+      // Catching snowflakes: mouth open, a flake drifting down to it every two seconds.
+      face = "surprised";
+      flake = 8 - (Math.floor(now / 250) % 8);
     }
 
     const pose: Pose =
@@ -360,8 +370,9 @@ export class CritterBrain {
       bubble,
       wag: this.mode === "idle" && !a && Math.floor(this.bucket / 2) % 2 === 1,
       blink: !sleeping && this.bucket % 14 === 0,
-      look: this.mode === "idle" && this.above ? "up" : "side",
+      look: this.mode === "idle" && (this.above || this.snow) ? "up" : "side",
       umbrella: this.rain && a !== "sad",
+      flake,
       sleeping,
       zt: Math.floor(now / 200) % 12,
       breathe: Math.floor(this.bucket / 6) % 2 === 1,

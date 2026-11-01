@@ -8,12 +8,12 @@ import { site } from "@/data/site";
 /**
  * Cheats and a command palette in one component.
  *   Konami code (up up down down left right left right B A) -> party
- *   typed words anywhere on the page: party, ufo, rain, lights, critter
+ *   typed words anywhere on the page: party, ufo, rain, snow, lights, critter
  *   "/" or Ctrl/Cmd+K opens the palette: arrows move, Enter runs, Esc closes
  * Every cheat is announced to the rest of the page with a px-cheat event.
  */
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-const WORDS: Record<string, CheatName> = { party: "party", critter: "party", ufo: "ufo", rain: "rain", lights: "lights" };
+const WORDS: Record<string, CheatName> = { party: "party", critter: "party", ufo: "ufo", rain: "rain", snow: "snow", lights: "lights" };
 
 type Command = {
   label: string;
@@ -32,6 +32,7 @@ const COMMANDS: Command[] = [
   { label: "Open the résumé", hint: "page", run: ({ go }) => go("/resume") },
   { label: "Toggle the city lights", hint: "cheat", run: ({ fire }) => fire("lights", "Lights toggled") },
   { label: "Make it rain", hint: "cheat", run: ({ fire }) => fire("rain", "Rain for 25 seconds") },
+  { label: "Make it snow", hint: "cheat", run: ({ fire }) => fire("snow", "Snow for 25 seconds") },
   { label: "Call the UFO", hint: "cheat", run: ({ fire }) => fire("ufo", "Incoming") },
   { label: "Party mode", hint: "cheat", run: ({ fire }) => fire("party", "Party mode") },
   {
@@ -193,7 +194,7 @@ export function Palette() {
                     if (items[active]) run(items[active]);
                   }
                 }}
-                placeholder="type a command: work, rain, lights, ufo, party"
+                placeholder="type a command: work, rain, snow, lights, ufo, party"
                 aria-label="Command"
                 autoComplete="off"
                 spellCheck={false}
