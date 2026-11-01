@@ -6,6 +6,7 @@ import { FAR, MID, NEAR, WINDOW_FACTS, hash3, type Building } from "@/data/skyli
 import { emit, listen, prefersReducedMotion } from "@/lib/pixel-events";
 import { triggerRain, useWeather } from "@/lib/weather";
 import { useTheme } from "@/lib/use-theme";
+import { site } from "@/data/site";
 
 const BIRDS = [
   { left: "22%", top: "75%" },
@@ -16,7 +17,7 @@ const BIRDS = [
 type Tip = { text: string; x: number; y: number };
 type Hit = { kind: string; el: HTMLElement };
 
-const HIT_ORDER = ["ufo", "plane", "bird", "moon", "sun", "win"];
+const HIT_ORDER = ["sign", "ufo", "plane", "bird", "moon", "sun", "win"];
 const INTERACTIVE = "a,button,input,textarea,select,summary,label,.px-panel,.px-panel-hi,.px-btn,[data-nobd]";
 
 function Skyline({ list, seed, cls }: { list: readonly Building[]; seed: number; cls: string }) {
@@ -112,6 +113,8 @@ export function Backdrop() {
         const kind = el.dataset.hit ?? "";
         const r = el.getBoundingClientRect();
         if (!r.width) return;
+        // The UFO's sign only counts while the beam has lit it.
+        if (kind === "sign" && Number(getComputedStyle(el).opacity) < 0.5) return;
         const pad = kind === "win" ? 3 : 8;
         if (x < r.left - pad || x > r.right + pad || y < r.top - pad || y > r.bottom + pad) return;
         if (!best || HIT_ORDER.indexOf(kind) < HIT_ORDER.indexOf(best.kind)) best = { kind, el };
@@ -132,7 +135,7 @@ export function Backdrop() {
       const target = e.target as HTMLElement | null;
       const over = !target?.closest?.(INTERACTIVE);
       const hit = over ? hitAt(e.clientX, e.clientY) : null;
-      const next = hit && hit.kind === "win" ? hit.el : null;
+      const next = hit && (hit.kind === "win" || hit.kind === "sign") ? hit.el : null;
       if (next !== hovered) {
         hovered?.removeAttribute("data-hover");
         next?.setAttribute("data-hover", "");
@@ -167,7 +170,8 @@ export function Backdrop() {
         setFled(true);
         window.setTimeout(() => setFled(false), 15000);
         say("tweet", e.clientX, e.clientY);
-      } else if (kind === "ufo") say("Take me to your hiring manager.", e.clientX, e.clientY);
+      } else if (kind === "sign") window.location.href = `mailto:${site.email}`;
+      else if (kind === "ufo") say("Take me to your hiring manager.", e.clientX, e.clientY);
     };
 
     const onScroll = () => {
@@ -306,6 +310,11 @@ export function Backdrop() {
             }}
           >
             <div className="px-beam" />
+            <div className="px-sign px-hit" data-hit="sign" aria-hidden="true">
+              <b>Psst.</b>
+              <span>I&apos;m open to work.</span>
+              <i>{site.email}</i>
+            </div>
             <svg width="96" height="48" viewBox="0 0 16 8" shapeRendering="crispEdges" style={{ position: "relative", display: "block" }}>
               <path fill="#9FE8FF" d="M5 0h6v1h1v1H4V1h1z" />
               <path fill="#B7BCCB" d="M2 2h12v1h2v1H0V3h2z" />

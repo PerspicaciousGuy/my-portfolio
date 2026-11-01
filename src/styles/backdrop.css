@@ -296,6 +296,53 @@
   70%, 100% { opacity: 0; }
 }
 
+/* The beam lights a sign at its foot: a hidden way to get in touch, clickable while it is lit. */
+.px-sign {
+  position: absolute;
+  left: 50%;
+  top: 372px;
+  width: 196px;
+  margin-left: -98px;
+  padding: 8px 10px 9px;
+  text-align: center;
+  line-height: 1.05;
+  color: #ecedf0;
+  background: rgba(11, 12, 16, 0.88);
+  box-shadow: 0 0 0 3px rgba(190, 255, 215, 0.8), 6px 6px 0 rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  animation: px-sign 12s steps(1, end) forwards;
+}
+.px-sign b {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6bf59a;
+}
+.px-sign span {
+  display: block;
+  font-size: 22px;
+}
+.px-sign i {
+  display: block;
+  font-size: 18px;
+  font-style: normal;
+  color: #ffc933;
+  text-decoration: underline;
+}
+.px-sign[data-hover] {
+  box-shadow: 0 0 0 3px #ffc933, 6px 6px 0 rgba(0, 0, 0, 0.35);
+}
+@keyframes px-sign {
+  0%, 35% { opacity: 0; }
+  36%, 37% { opacity: 0.45; }
+  38%, 65% { opacity: 1; }
+  66%, 67% { opacity: 0.45; }
+  68%, 100% { opacity: 0; }
+}
+
 /* Foreground poles and the birds on the wire */
 .px-bird {
   position: absolute;

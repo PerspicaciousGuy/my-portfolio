@@ -8,7 +8,6 @@ export type SceneKind =
   | "api"
   | "gym"
   | "library"
-  | "auth"
   | "muscle"
   | "journal"
   | "ios";
@@ -381,77 +380,6 @@ function sceneLibrary() {
   return a;
 }
 
-// ------------------------------------------------------------------ Exercise Library API (150 x 65)
-function sceneAuth() {
-  const a = canvas(150, 65);
-  a.r(C.bg, 0, 0, 150, 65);
-  starfield(a, 5, 14, 1, 1, 149, 30);
-  a.r(C.bg2, 0, 58, 150, 7);
-  a.r(C.line, 0, 58, 150, 1);
-  // padlock
-  a.r(C.yellowD, 20, 12, 5, 14);
-  a.r(C.yellow, 20, 12, 3, 14);
-  a.r(C.yellowD, 37, 12, 5, 14);
-  a.r(C.yellow, 37, 12, 3, 14);
-  a.r(C.yellowD, 23, 7, 15, 5);
-  a.r(C.yellow, 23, 7, 15, 3);
-  a.r(C.dark, 14, 29, 36, 28);
-  a.box(C.yellowD, C.yellow, 12, 26, 36, 28);
-  a.r(C.dark, 28, 34, 5, 5);
-  a.r(C.dark, 29, 38, 3, 8);
-  a.r(C.ink, 14, 28, 2, 24);
-  // token
-  const rows: [string, string, number][] = [
-    [C.red, C.pinkD, 20],
-    [C.violet, C.violetD, 26],
-    [C.blue, C.blueD, 18],
-  ];
-  rows.forEach(([c, d, w], i) => {
-    const y = 14 + i * 10;
-    a.r(d, 58, y + 1, w + 2, 6);
-    a.r(c, 58, y, w + 2, 5);
-    a.r(C.ink, 60, y + 1, 4, 1);
-    a.r(C.dark, 66, y + 2, w - 8, 1);
-  });
-  [
-    [80, 22],
-    [86, 32],
-  ].forEach(([x, y]) => a.r(C.mute, x, y, 2, 2));
-  // arrow to status
-  a.r(C.edge, 88, 18, 14, 2);
-  a.spr(["x.", "xx", "x."], 102, 17, { x: C.edge });
-  // status chips
-  a.box(C.greenD, C.green, 108, 12, 30, 12);
-  a.r(C.dark, 112, 16, 3, 3);
-  a.r(C.dark, 118, 16, 14, 2);
-  a.r(C.dark, 118, 20, 8, 1);
-  a.box(C.pinkD, C.red, 108, 28, 30, 12);
-  a.r(C.ink, 112, 32, 3, 3);
-  a.r(C.ink, 118, 32, 14, 2);
-  a.r(C.ink, 118, 36, 8, 1);
-  // shield check on ground
-  a.spr(
-    [
-      "xxxxxxxxxxxxx",
-      "xGGGGGGGGGGGx",
-      "xGGGGGGGGGGGx",
-      "xGGGGGGGGGGGx",
-      ".xGGGGGGGGGx.",
-      "..xGGGGGGGx..",
-      "...xGGGGGx...",
-      "....xGGGx....",
-      ".....xxx.....",
-    ],
-    62,
-    40,
-    { x: C.greenD, G: C.green },
-  );
-  a.spr([".....d", "....dd", "d..dd.", "dddd..", ".dd..."], 66, 45, {
-    d: C.dark,
-  });
-  return a;
-}
-
 // ------------------------------------------------------------------ Open Muscle Map (150 x 65)
 function body(a: Canvas, ox: number, front: boolean) {
   const S = "#7A8094";
@@ -774,11 +702,6 @@ const DEFS: Record<SceneKind, { make: () => Canvas; label: string }> = {
     make: sceneLibrary,
     label:
       "Pixel scene: headphones, a playback waveform, a cloud download and a stack of books",
-  },
-  auth: {
-    make: sceneAuth,
-    label:
-      "Pixel scene: a padlock, a three-part token, 200 and 401 responses and a shield",
   },
   muscle: {
     make: sceneMuscle,
