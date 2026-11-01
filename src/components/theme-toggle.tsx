@@ -32,7 +32,7 @@ export function ThemeToggle() {
       >
         <path d="M4 4h3v3H4zM5 0h1v2H5zM5 9h1v2H5zM0 5h2v1H0zM9 5h2v1H9zM2 2h1v1H2zM8 2h1v1H8zM2 8h1v1H2zM8 8h1v1H8z" />
       </svg>
-      <span className="px-label text-[11px]">{BADGE[mode]}</span>
+      <span className="px-label hidden text-[11px] md:inline">{BADGE[mode]}</span>
     </button>
   );
 }

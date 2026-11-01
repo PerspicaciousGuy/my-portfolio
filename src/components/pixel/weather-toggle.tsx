@@ -40,7 +40,7 @@ export function WeatherToggle() {
       >
         <path d={CLOUD + FALLING[mode]} />
       </svg>
-      <span className="px-label text-[11px]">{mode}</span>
+      <span className="px-label hidden text-[11px] md:inline">{mode}</span>
     </button>
   );
 }
