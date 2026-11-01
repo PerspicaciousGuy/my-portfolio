@@ -61,7 +61,7 @@ export function Console() {
     <section
       id="console"
       aria-label="Live API console"
-      className="my-14 max-w-[780px] bg-raised px-[30px] dark:bg-[#2B2D36] pb-[30px] pt-[26px] shadow-[0_0_0_4px_rgb(var(--edge)),10px_14px_0_4px_rgb(var(--shade))]"
+      className="my-14 max-w-[780px] bg-raised px-5 dark:bg-[#2B2D36] pb-[22px] pt-[22px] shadow-[0_0_0_4px_rgb(var(--edge)),10px_14px_0_4px_rgb(var(--shade))] md:px-[30px] md:pb-[30px] md:pt-[26px]"
     >
       <div className="mb-3 flex items-center justify-between">
         <h3 className="m-0 font-display text-base font-semibold uppercase text-fg dark:text-[#A9ACB8]">ExerciseDB-Boy</h3>
@@ -89,7 +89,7 @@ export function Console() {
         ))}
       </div>
 
-      <div className="bg-[#0E1A14] px-[22px] py-[18px] shadow-[inset_0_0_0_4px_#1B2F25]">
+      <div className="bg-[#0E1A14] px-4 py-4 shadow-[inset_0_0_0_4px_#1B2F25] md:px-[22px] md:py-[18px]">
         <div className="break-all text-[#6BF59A]">
           &gt; GET <span className="text-[#C4FFDD]">{API_BASE.replace("https://", "")}</span>
           {active.path}
@@ -105,9 +105,12 @@ export function Console() {
             )}
           </div>
         )}
-        <pre className="px-bare m-0 mt-2 max-h-80 overflow-auto whitespace-pre text-[21px] leading-tight text-[#C4FFDD]">
-          {error ? <span className="text-[#FFC933]">{error}</span> : result ? JSON.stringify(result.body, null, 2) : "Running…"}
-        </pre>
+        {/* On a phone the JSON scrolls sideways; the fade on the right edge hints at it. */}
+        <div className="relative after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-7 after:bg-gradient-to-r after:from-transparent after:to-[#0E1A14] md:after:hidden">
+          <pre className="px-bare m-0 mt-2 max-h-80 overflow-auto whitespace-pre text-[19px] leading-tight text-[#C4FFDD] md:text-[21px]">
+            {error ? <span className="text-[#FFC933]">{error}</span> : result ? JSON.stringify(result.body, null, 2) : "Running…"}
+          </pre>
+        </div>
       </div>
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -115,7 +118,7 @@ export function Console() {
           type="button"
           onClick={() => run(active.path)}
           disabled={loading}
-          className="px-btn px-btn-primary m-0 min-h-10 cursor-pointer px-[18px] py-2 text-[15px] disabled:opacity-60"
+          className="px-btn px-btn-primary m-0 min-h-11 w-full cursor-pointer justify-center px-[18px] py-2 text-[15px] disabled:opacity-60 md:min-h-10 md:w-auto md:justify-start"
         >
           A · Send
         </button>
