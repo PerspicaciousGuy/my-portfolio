@@ -61,14 +61,14 @@ export function Console() {
     <section
       id="console"
       aria-label="Live API console"
-      className="my-14 max-w-[780px] bg-[#2B2D36] px-[30px] pb-[30px] pt-[26px] shadow-[0_0_0_4px_rgb(var(--edge)),10px_14px_0_4px_rgb(var(--shade))]"
+      className="my-14 max-w-[780px] bg-raised px-[30px] dark:bg-[#2B2D36] pb-[30px] pt-[26px] shadow-[0_0_0_4px_rgb(var(--edge)),10px_14px_0_4px_rgb(var(--shade))]"
     >
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="m-0 font-display text-base font-semibold uppercase text-[#A9ACB8]">ExerciseDB-Boy</h3>
+        <h3 className="m-0 font-display text-base font-semibold uppercase text-fg dark:text-[#A9ACB8]">ExerciseDB-Boy</h3>
         <span className="px-label">{loading ? "● busy" : "● power"}</span>
       </div>
-      <p className="mb-4 mt-0 text-[22px] text-[#A9ACB8]">
-        Not a mock: every request below hits <span className="text-[#ECECF0]">api.harshitbishnoi.dev</span> in production.
+      <p className="mb-4 mt-0 text-[22px] text-fg-muted dark:text-[#A9ACB8]">
+        Not a mock: every request below hits <span className="text-fg dark:text-[#ECECF0]">api.harshitbishnoi.dev</span> in production.
       </p>
 
       <div className="mb-3 flex flex-wrap">
@@ -82,7 +82,7 @@ export function Console() {
               run(r.path);
             }}
             aria-pressed={r.id === active.id}
-            className={`px-chip cursor-pointer border-0 text-[#ECECF0] ${r.id === active.id ? "!bg-accent !text-bg" : ""}`}
+            className={`px-chip cursor-pointer border-0 bg-bg-elevated text-fg dark:bg-raised dark:text-[#ECECF0] ${r.id === active.id ? "!bg-accent !text-bg" : ""}`}
           >
             {r.label}
           </button>
@@ -90,13 +90,13 @@ export function Console() {
       </div>
 
       <div className="bg-[#0E1A14] px-[22px] py-[18px] shadow-[inset_0_0_0_4px_#1B2F25]">
-        <div className="break-all text-green">
+        <div className="break-all text-[#6BF59A]">
           &gt; GET <span className="text-[#C4FFDD]">{API_BASE.replace("https://", "")}</span>
           {active.path}
         </div>
         {result && (
           <div className="mt-1 text-[#A9ACB8]">
-            <span className={ok ? "text-green" : "text-accent"}>{result.status}</span> · {result.ms} ms
+            <span className={ok ? "text-[#6BF59A]" : "text-[#FFC933]"}>{result.status}</span> · {result.ms} ms
             {result.rateLimit.remaining && (
               <>
                 {" "}
@@ -106,7 +106,7 @@ export function Console() {
           </div>
         )}
         <pre className="px-bare m-0 mt-2 max-h-80 overflow-auto whitespace-pre text-[21px] leading-tight text-[#C4FFDD]">
-          {error ? <span className="text-accent">{error}</span> : result ? JSON.stringify(result.body, null, 2) : "Running…"}
+          {error ? <span className="text-[#FFC933]">{error}</span> : result ? JSON.stringify(result.body, null, 2) : "Running…"}
         </pre>
       </div>
 

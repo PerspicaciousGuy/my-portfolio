@@ -217,6 +217,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     name: "Sessionbook",
+    slug: "sessionbook",
     blurb: "A trading journal for forex and prop traders: it records every trade, totals your mistakes and setups, and ends each week with one action.",
     description:
       "A trading journal for forex and prop traders. Statements import from CSV with every row checked and reconciled before anything is saved. Trades carry R multiples, chart snapshots and a strategy checklist; results break down by setup, symbol, session, weekday and mistake; a weekly review puts the week's results next to the trades behind them. Strategies are versioned with adherence per rule, and backtesting studies sit beside live results. Journal data stays in the browser. A NestJS and Prisma API exists but the interface does not use it yet.",
