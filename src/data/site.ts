@@ -283,17 +283,6 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
-    name: "Exercise Library API",
-    art: "auth",
-    blurb: "A REST API with JWT auth, ownership checks, and user-authored content.",
-    description:
-      "Register/login/me endpoints, exercise CRUD with ownership enforcement, category and muscle-group management, plus search, filtering and pagination. Hardened with helmet, CORS, and rate-limited auth routes.",
-    stack: ["Node.js", "Express", "PostgreSQL", "JWT", "bcrypt"],
-    repo: "https://github.com/PerspicaciousGuy/gymlogger_backend",
-    featured: true,
-    year: "2026",
-  },
-  {
     name: "Gleam",
     blurb: "A fast, local file and app launcher for Windows: press Alt+Space, type, press Enter.",
     description:
@@ -313,6 +302,16 @@ export const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Supabase", "Dexie", "PWA", "Web Audio", "Zod"],
     repo: "https://github.com/PerspicaciousGuy/audiobooks-player",
     live: "https://greasy-bethanne-ebooks-0926d76e.koyeb.app",
+    featured: false,
+    year: "2026",
+  },
+  {
+    name: "Exercise Library API",
+    blurb: "A REST API with JWT auth, ownership checks, and user-authored content.",
+    description:
+      "Register/login/me endpoints, exercise CRUD with ownership enforcement, category and muscle-group management, plus search, filtering and pagination. Hardened with helmet, CORS, and rate-limited auth routes.",
+    stack: ["Node.js", "Express", "PostgreSQL", "JWT", "bcrypt"],
+    repo: "https://github.com/PerspicaciousGuy/gymlogger_backend",
     featured: false,
     year: "2026",
   },
