@@ -1,0 +1,67 @@
+---
+summary: "A trading journal for forex and prop-firm traders. I built it because the existing ones cost too much for what they give, and I wanted my own data and my own dashboard."
+facts:
+  - label: "Timeline"
+    value: "October 2026 onwards"
+  - label: "Status"
+    value: "Frontend done for desktop, backend in progress"
+  - label: "Tests"
+    value: "46 unit-test files, 20+ Playwright specs"
+---
+
+**Stack:** Next.js 16, React 19, TypeScript, React Aria Components, Decimal.js, pnpm. Backend in progress: NestJS, Prisma, PostgreSQL.
+
+## The problem
+
+I trade forex on prop-firm accounts. The journals I found were overpriced for what you get back, so I built my own. It gives you full control of your data and builds a dashboard around it, so you get proper insight into how your trading is doing overall.
+
+Forex and prop traders need more from a journal than a list of trades:
+
+- A broker exports individual deals, not trades. One position can have several entries and exits.
+- Prop accounts have their own costs, payouts and rules to track.
+- Reviewing a day or a week matters as much as reviewing a single trade.
+
+## What I built
+
+One app with these screens: dashboard (customisable cards), trades, trade detail, day view, calendar, weekly review, reports, notebook, strategies, backtesting, progress, prop business, accounts, import center and settings, plus a public landing page.
+
+Specific features:
+
+- **MT5 import.** A deal-history CSV becomes closed trades. Deals are grouped by position; the net result, lot-weighted entry and exit prices, fees and swap come from the deals. A position imported twice is reported as "Already imported". Anything ambiguous (open or partly closed positions, unknown instruments, a different currency) is reported, not guessed.
+- **Reports and review.** Breakdowns, trends, comparing groups, a weekly review, and a day plan with a checklist.
+- **Strategies and backtesting.** Strategies with readiness criteria, a backtest trade editor and a replay log, and a comparison of backtest against live results.
+- **Customisation.** Draggable dashboard cards, and a header background picked from shipped designs or an uploaded image.
+- **Demo workspace.** Anyone can try the app without an account; demo data is kept separate from a real journal.
+
+## Decisions and why
+
+- **Journal data stays in the browser at first** (localStorage, IndexedDB for images). The app works with no account and no server. The cost: no sync between devices until the backend is connected.
+- **Business logic lives in a UI-free `src/domain` folder, with tests.** Metrics, imports and migrations can be tested without a browser, and the backend can reuse the same rules.
+- **Money uses `Decimal`, never floats.** Float rounding errors are not acceptable in a P&L figure.
+- **Strict schema validation and explicit migrations; invalid data blocks writes instead of being discarded.** A journal is a record. Silently dropping data on a schema change is worse than refusing to save.
+- **MT5 server time has no default; the user chooses the clock.** The export carries no time-zone offset and it cannot be derived from the file. A wrong guess moves trades to the wrong day.
+- **React Aria Components with a custom CSS kit.** It was the only option I found with date pickers and a sortable, selectable table, and it gives control over the markup. Light theme only.
+- **NestJS, Prisma and PostgreSQL for the API.** Decided on October 24, 2026 after weighing Rust and Supabase. Decisions are recorded as ADRs in the repository.
+
+## Process
+
+- Screens were designed as boards in a design canvas first and then built to match them, one PR per screen.
+- Two workstreams, frontend and backend, shared a written handoff (`HANDOFF.md`, an interface contract and a data inventory) and used `main` as the source of truth.
+- Each feature carries tests: 46 unit-test files for the domain logic and more than 20 Playwright end-to-end specs, each with an accessibility (axe) scan.
+
+## Details that took work
+
+- **Row click versus selection on the trades table.** Clicking a row opens a preview, the checkbox selects, and the bulk-action bar floats at the bottom so it does not push the content down.
+- **Scrollbars.** A thin, light scrollbar on every screen, clipped to rounded corners. Chromium has no way to inset a scrollbar track, so the scroller is clipped with `clip-path` instead.
+- **Consistency by test.** A unit test fails the build if a stylesheet uses a raw font size, radius or spacing value instead of a design token.
+
+## What is not done
+
+- The UI does not use the backend yet; sign-in is the only call, and only when switched on.
+- Phone layouts are on hold; the app is desktop only for now.
+- Economic events (a planned dashboard addition) are not built.
+
+## Links
+
+- Demo: [openzilla.vercel.app/dashboard](https://openzilla.vercel.app/dashboard)
+- Contact: [joy.0839b@gmail.com](mailto:joy.0839b@gmail.com)
