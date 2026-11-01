@@ -46,7 +46,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
     <>
       <ChapterBar ids={chapters.map((c) => c.id)} />
       <main className="relative z-[1] flex-1">
-        <div className="px-wrap flex flex-wrap items-stretch gap-14 pt-[60px]">
+        <div className="px-wrap flex flex-wrap items-stretch gap-9 pt-5 md:gap-14 md:pt-[60px]">
           <div className="min-w-0 flex-[1.3_1_440px]">
             <Link href="/#work" className="px-label inline-flex min-h-11 items-center gap-2 hover:text-accent">
               <Icon name="left" />
@@ -56,27 +56,27 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
               Case file {pad(index + 1)} of {pad(slugs.length)} · {project.year}
             </p>
             <h1 className="m-0 font-display text-[clamp(52px,7vw,88px)] font-bold uppercase leading-[0.92]">{project.name}</h1>
-            <p className="mb-0 mt-6 max-w-[640px] text-[29px] text-fg-muted">{study.summary}</p>
-            <div className="mt-6 flex flex-wrap items-center">
+            <p className="mb-0 mt-6 max-w-[640px] text-[26px] text-fg-muted md:text-[29px]">{study.summary}</p>
+            <div className="mt-6 grid grid-cols-2 gap-x-2 md:flex md:flex-wrap md:items-center md:gap-x-0">
               {chapters.length > 0 && (
-                <a href="#ch-1" className="px-btn px-btn-primary">
+                <a href="#ch-1" className="px-btn px-btn-primary col-span-2 justify-center md:col-auto md:justify-start">
                   Start reading
                   <Icon name="down" />
                 </a>
               )}
               {hasConsole && (
-                <a href="#console" className="px-btn px-btn-ghost">
+                <a href="#console" className="px-btn px-btn-ghost col-span-2 justify-center md:col-auto md:justify-start">
                   Try the live console
                 </a>
               )}
               {project.repo && (
-                <a href={project.repo} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
+                <a href={project.repo} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm justify-center md:justify-start">
                   <Icon name="code" />
                   Source
                 </a>
               )}
               {project.live && (
-                <a href={project.live} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm">
+                <a href={project.live} target="_blank" rel="noreferrer" className="px-btn px-btn-ghost px-btn-sm justify-center md:justify-start">
                   <Icon name="upright" />
                   Live
                 </a>
@@ -84,7 +84,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             </div>
           </div>
 
-          <aside className="px-panel-hi min-w-0 flex-[1_1_380px] p-7" aria-label="Project sheet">
+          <aside className="px-panel-hi min-w-0 flex-[1_1_380px] p-[22px] md:p-7" aria-label="Project sheet">
             <div className="flex items-center justify-between">
               <span className="font-display text-[22px] font-bold uppercase text-accent">Project sheet</span>
               {project.live && <span className="px-label text-green">● live</span>}
@@ -121,7 +121,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
         <div className="px-wrap pb-5">
           {intro && (
-            <div className="mt-[70px]">
+            <div className="mt-14 md:mt-[70px]">
               <Prose source={intro} />
             </div>
           )}
@@ -131,7 +131,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                 {pad(c.n)}
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="m-0 mb-4 font-display text-[38px] font-bold uppercase leading-none">{c.title}</h2>
+                <h2 className="m-0 mb-4 font-display text-[34px] font-bold uppercase leading-none md:text-[38px]">{c.title}</h2>
                 <Prose source={c.body} />
               </div>
             </section>
@@ -139,15 +139,15 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         </div>
 
         {next && (
-          <div className="px-wrap mt-[70px]">
+          <div className="px-wrap mt-14 md:mt-[70px]">
             <div className="px-label mb-3.5">Next case file</div>
-            <Link href={`/work/${next.slug}`} className="px-panel flex flex-wrap items-center gap-[26px] px-7 py-[22px]">
+            <Link href={`/work/${next.slug}`} className="px-panel flex flex-col items-stretch gap-3 p-[22px] md:flex-row md:flex-wrap md:items-center md:gap-[26px] md:px-7 md:py-[22px]">
               <span className="font-display text-[60px] font-bold leading-none text-edge">{pad(((index + 1) % slugs.length) + 1)}</span>
               <div className="min-w-0 flex-1">
-                <div className="font-display text-[32px] font-bold uppercase">{next.project.name}</div>
+                <div className="font-display text-[28px] font-bold uppercase md:text-[32px]">{next.project.name}</div>
                 <div className="text-fg-muted">{next.project.blurb}</div>
               </div>
-              <span className="px-btn px-btn-primary">
+              <span className="px-btn px-btn-primary justify-center md:justify-start">
                 Open file
                 <Icon name="right" />
               </span>

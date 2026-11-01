@@ -32,7 +32,9 @@ export function Shelf({ posts }: Props) {
 
   return (
     <>
-      <div role="tablist" aria-label="Filter posts by tag" className="mb-14 mt-8 flex flex-wrap gap-y-3">
+      <div className="relative mb-9 mt-6 md:mb-14 md:mt-8">
+      {/* One scrolling row on phones (the fade on the right hints at it); wraps from md up. */}
+      <div role="tablist" aria-label="Filter posts by tag" className="-mx-5 flex overflow-x-auto px-5 py-1.5 [scrollbar-width:none] md:mx-0 md:flex-wrap md:gap-y-3 md:overflow-visible md:px-0 md:py-0">
         {[["all", posts.length] as const, ...tags].map(([t, n]) => (
           <button
             key={t}
@@ -40,7 +42,7 @@ export function Shelf({ posts }: Props) {
             role="tab"
             aria-selected={tag === t}
             onClick={() => setTag(t)}
-            className={`mr-2 min-h-11 cursor-pointer px-[18px] py-2.5 font-display text-base font-semibold uppercase tracking-wide ${
+            className={`mr-2 min-h-11 flex-none cursor-pointer px-[18px] py-2.5 font-display text-base font-semibold uppercase tracking-wide ${
               tag === t ? "bg-accent text-bg shadow-[0_0_0_3px_rgb(var(--accent))]" : "bg-raised text-fg-muted shadow-[0_0_0_3px_rgb(var(--border))] hover:text-fg"
             }`}
           >
@@ -48,11 +50,13 @@ export function Shelf({ posts }: Props) {
           </button>
         ))}
       </div>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 -right-5 w-9 bg-gradient-to-r from-transparent to-bg md:hidden" />
+      </div>
 
       {shown.length === 0 ? (
         <p className="text-fg-muted">Nothing on this shelf yet.</p>
       ) : (
-        <ul className="m-0 grid list-none gap-x-[34px] gap-y-14 p-0 pt-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="m-0 grid list-none gap-x-[34px] gap-y-9 p-0 pt-6 sm:grid-cols-2 md:gap-y-14 lg:grid-cols-3">
           {shown.map((p) => {
             // Newest cartridge first gets the first colour.
             const [bg, fg] = STRIPES[(posts[0].volume - p.volume) % STRIPES.length];
@@ -60,13 +64,13 @@ export function Shelf({ posts }: Props) {
               <li key={p.slug}>
                 <Link href={`/blog/${p.slug}`} className="px-cart block h-full" style={{ "--stripe": bg } as CSSProperties}>
                   <div aria-hidden="true" className="px-cart-grip" />
-                  <div className="mx-[18px] mt-[18px] flex justify-between px-3.5 py-1.5 font-display text-[15px] uppercase tracking-wider" style={{ background: bg, color: fg }}>
+                  <div className="mx-3.5 mt-0 flex justify-between px-3.5 py-1.5 font-display text-[15px] uppercase tracking-wider md:mx-[18px] md:mt-[18px]" style={{ background: bg, color: fg }}>
                     <b className="font-bold">Vol {String(p.volume).padStart(2, "0")}</b>
                     <span>{formatDate(p.date, "short")}</span>
                   </div>
-                  <div className="mx-[18px] flex flex-1 flex-col gap-2.5 bg-panel p-5 shadow-[inset_0_0_0_4px_rgb(var(--border))]">
-                    <h2 className="m-0 font-display text-[28px] font-bold uppercase leading-[1.05]">{p.title}</h2>
-                    <p className="m-0 text-[22px] text-fg-muted">{p.summary}</p>
+                  <div className="mx-3.5 flex flex-1 flex-col gap-2.5 bg-panel p-4 shadow-[inset_0_0_0_4px_rgb(var(--border))] md:mx-[18px] md:p-5">
+                    <h2 className="m-0 font-display text-2xl font-bold uppercase leading-[1.05] md:text-[28px]">{p.title}</h2>
+                    <p className="m-0 line-clamp-3 text-[21px] text-fg-muted md:line-clamp-none md:text-[22px]">{p.summary}</p>
                     <div className="mt-auto flex flex-wrap items-center">
                       {p.tags.slice(0, 3).map((t) => (
                         <span key={t} className="m-0.5 bg-black/30 px-[9px] pb-1 pt-[5px] text-[19px] leading-none">

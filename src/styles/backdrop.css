@@ -492,4 +492,10 @@
   .px-ly-near {
     opacity: 0.4;
   }
+  /* The sun and moon cross behind headings and long text, so they sit back too. */
+  .px-sun,
+  .px-ray,
+  .px-moon {
+    opacity: 0.35;
+  }
 }

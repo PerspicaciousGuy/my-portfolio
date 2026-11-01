@@ -33,6 +33,7 @@ export function ReadingBar() {
   }, []);
 
   const pct = Math.round(p * 1000) / 10;
+  const step = Math.floor(pct * 3) % 4;
   return (
     <div
       role="progressbar"
@@ -40,11 +41,15 @@ export function ReadingBar() {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(pct)}
-      className="sticky top-[80px] z-40 h-[18px] bg-raised print:hidden"
+      className="sticky top-[64px] z-40 h-[30px] overflow-hidden bg-raised print:hidden md:top-[80px] md:h-[18px] md:overflow-visible"
     >
-      <div className="h-full bg-green" style={{ width: `${pct}%` }} />
-      <div className="pointer-events-none absolute -top-[30px]" style={{ left: `calc(${pct}% - 52px)` }}>
-        <Critter u={3} pose="walk" step={Math.floor(pct * 3) % 4} />
+      <div className="absolute bottom-0 left-0 h-1.5 bg-green md:static md:h-full" style={{ width: `${pct}%` }} />
+      {/* Phone: a small critter standing on the green line, inside the band so it never covers the nav. */}
+      <div className="pointer-events-none absolute bottom-1.5 md:hidden" style={{ left: `calc(${pct}% - 13px)` }}>
+        <Critter u={1} pose="walk" step={step} />
+      </div>
+      <div className="pointer-events-none absolute -top-[30px] hidden md:block" style={{ left: `calc(${pct}% - 52px)` }}>
+        <Critter u={3} pose="walk" step={step} />
       </div>
     </div>
   );

@@ -69,7 +69,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       />
       <ReadingBar />
       <ChapterDots ids={chapters.map((c) => c.id)} titles={chapters.map((c) => c.title)} />
-      <main className="px-wrap relative z-[1] flex-1 pt-14">
+      <main className="px-wrap relative z-[1] flex-1 pt-5 md:pt-14">
         <div className="mx-auto max-w-[780px]">
           <Link href="/blog" className="px-label inline-flex min-h-11 items-center gap-2 hover:text-accent">
             <Icon name="left" />
@@ -79,7 +79,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <time dateTime={post.date}>{formatDate(post.date)}</time> · {post.readingTime} min read
           </p>
           <h1 className="m-0 mt-3.5 font-display text-[clamp(44px,6vw,76px)] font-bold uppercase leading-[0.98]">{post.title}</h1>
-          <p className="mb-0 mt-6 text-[30px] text-fg-muted">{post.summary}</p>
+          <p className="mb-0 mt-6 text-[26px] text-fg-muted md:text-[30px]">{post.summary}</p>
           <div className="mt-6 flex items-center gap-4">
             {portrait ? (
               <Image src={portrait} alt="" width={56} height={56} className="size-14 flex-none" />
@@ -97,7 +97,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <Prose source={intro} />
             {chapters.map((c) => (
               <section key={c.id} id={c.id}>
-                <h2 className="mb-[18px] mt-14 font-display text-4xl font-bold uppercase leading-[1.05]">
+                <h2 className="mb-[18px] mt-14 font-display text-[34px] font-bold uppercase leading-[1.05] md:text-4xl">
                   <span className="px-label mb-2 block text-[15px] font-medium tracking-[0.1em] text-green">Chapter {c.n}</span>
                   {c.title}
                 </h2>
@@ -107,7 +107,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           </div>
 
           {next && next.slug !== slug && (
-            <Link href={`/blog/${next.slug}`} className="px-panel mt-[50px] flex flex-wrap items-center gap-6 px-[30px] py-[26px]">
+            <Link href={`/blog/${next.slug}`} className="px-panel mt-[50px] flex flex-wrap items-center gap-4 p-[22px] md:gap-6 md:px-[30px] md:py-[26px]">
               <div className="relative h-[51px] w-[78px] flex-none">
                 <div className="absolute bottom-0 left-0">
                   <Critter u={3} face="heart" />
@@ -117,7 +117,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 <div className="font-display text-[22px] font-bold uppercase">Enjoyed it?</div>
                 <div className="text-fg-muted">Next up: {next.title}.</div>
               </div>
-              <span className="px-btn px-btn-primary">
+              <span className="px-btn px-btn-primary w-full justify-center md:w-auto md:justify-start">
                 Next post
                 <Icon name="right" />
               </span>
