@@ -20,7 +20,16 @@ export type Scene = {
   layers: SceneLayer[];
 };
 
-const C = {
+export type SceneTheme = "night" | "day";
+
+/**
+ * Two palettes for the same drawings. Night is the original. Day keeps every object and position and
+ * swaps the colours for the light theme: a pale sky with clouds and a sun, cream windows with dark text,
+ * deeper greens and yellows that hold up on a light ground, soft blue shadows, a lighter floor.
+ *   floor / floorLine  the ground the objects stand on     shadow  the hard drop shadow behind a box
+ *   cloud / cloudShade white shapes and highlights (ink and mute at night)
+ */
+const NIGHT = {
   bg: "#14151B",
   bg2: "#1A1B21",
   raised: "#23252D",
@@ -41,7 +50,44 @@ const C = {
   orange: "#FF7A45",
   red: "#E5484D",
   dark: "#0B0C10",
+  floor: "#1A1B21",
+  floorLine: "#353844",
+  shadow: "#0B0C10",
+  sun: "#FFC933",
+  cloud: "#ECECF0",
+  cloudShade: "#A9ACB8",
 };
+const DAY_PALETTE: typeof NIGHT = {
+  bg: "#CFE0F0",
+  bg2: "#FBF9F3",
+  raised: "#E8E1CE",
+  line: "#C7D0DD",
+  edge: "#5A6478",
+  ink: "#23262F",
+  mute: "#7B8497",
+  yellow: "#F2B01E",
+  yellowD: "#A66F00",
+  green: "#1FA35B",
+  greenD: "#0E7A40",
+  violet: "#6D4BE0",
+  violetD: "#4527B0",
+  blue: "#2F86D6",
+  blueD: "#1B5C9E",
+  pink: "#F06A92",
+  pinkD: "#B83A66",
+  orange: "#F2672B",
+  red: "#D93A3F",
+  dark: "#1B1D24",
+  floor: "#B4C3D6",
+  floorLine: "#8FA0B8",
+  shadow: "#9CAEC6",
+  sun: "#FFC933",
+  cloud: "#FFFFFF",
+  cloudShade: "#E1EAF5",
+};
+// The scene being drawn. composeScene sets these before it calls a scene, and the scenes are synchronous.
+let C: typeof NIGHT = NIGHT;
+let DAY = false;
 export function canvas(w: number, h: number) {
   // Draw order is kept: consecutive rects of one colour share a path, a new colour starts a new one.
   const L: SceneLayer[] = [];
@@ -112,6 +158,47 @@ function starfield(
       Math.floor(y0 + rnd() * (y1 - y0)),
     );
 }
+// Clouds for the day sky, same call and region as the starfield: about one cloud per five stars.
+function clouds(a: Canvas, seed: number, n: number, x0: number, y0: number, x1: number, y1: number) {
+  let s = seed;
+  const rnd = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
+  const SHAPES = [
+    ["..xxxx..", ".xxxxxx.", "xxxxxxxx", ".ssssss."],
+    ["...xx....", "..xxxxx..", ".xxxxxxxx", "xxxxxxxxx", ".sssssss."],
+  ];
+  for (let i = 0; i < Math.max(1, Math.round(n / 5)); i++) {
+    const rows = SHAPES[Math.floor(rnd() * SHAPES.length)];
+    a.spr(rows, Math.floor(x0 + rnd() * (x1 - x0 - 10)), Math.floor(y0 + rnd() * Math.max(1, y1 - y0 - 6)), {
+      x: C.cloud,
+      s: C.cloudShade,
+    });
+  }
+}
+function skyDecor(a: Canvas, seed: number, n: number, x0: number, y0: number, x1: number, y1: number) {
+  if (DAY) clouds(a, seed, n, x0, y0, x1, y1);
+  else starfield(a, seed, n, x0, y0, x1, y1);
+}
+/** A crescent moon at night (a disc with a disc of sky cut out of it) and a sun with rays by day. */
+function moon(a: Canvas, cx: number, cy: number, r: number, col: string, cutX: number, cutY: number, cutR: number) {
+  if (!DAY) {
+    a.disc(col, cx, cy, r);
+    a.disc(C.bg, cutX, cutY, cutR);
+    return;
+  }
+  a.disc(C.sun, cx, cy, r);
+  const d = r + 2;
+  [[0, -d], [0, d], [-d, 0], [d, 0], [-d + 1, -d + 1], [d - 1, -d + 1], [-d + 1, d - 1], [d - 1, d - 1]].forEach(([dx, dy]) =>
+    a.p(C.sun, cx + dx, cy + dy),
+  );
+}
+/** Little four-point twinkles belong to the night sky. */
+function twinkles(a: Canvas, list: number[][]) {
+  if (DAY) return;
+  list.forEach(([x, y]) => {
+    a.r(C.yellow, x, y, 1, 3);
+    a.r(C.yellow, x - 1, y + 1, 3, 1);
+  });
+}
 function dumbbell(a: Canvas, x: number, y: number, big: boolean) {
   // horizontal dumbbell, 34 wide x 12 tall (big) or 26 x 8
   if (big) {
@@ -169,14 +256,13 @@ function dbCylinder(
 function sceneApi() {
   const a = canvas(160, 105);
   a.r(C.bg, 0, 0, 160, 105);
-  starfield(a, 7, 22, 2, 2, 158, 40);
+  skyDecor(a, 7, 22, 2, 2, 158, 40);
   // moon
-  a.disc(C.ink, 142, 12, 5);
-  a.disc(C.bg, 145, 10, 4);
+  moon(a, 142, 12, 5, C.ink, 145, 10, 4);
   // floor
-  a.r(C.bg2, 0, 90, 160, 15);
-  a.r(C.line, 0, 90, 160, 2);
-  for (let x = 4; x < 160; x += 16) a.r(C.line, x, 96, 8, 1);
+  a.r(C.floor, 0, 90, 160, 15);
+  a.r(C.floorLine, 0, 90, 160, 2);
+  for (let x = 4; x < 160; x += 16) a.r(C.floorLine, x, 96, 8, 1);
   // rack
   a.box(C.line, C.raised, 8, 26, 28, 64);
   for (let i = 0; i < 6; i++) {
@@ -192,7 +278,7 @@ function sceneApi() {
   a.r(C.edge, 36, 70, 9, 1);
   a.r(C.edge, 40, 58, 1, 13);
   // terminal window
-  a.r(C.dark, 47, 21, 76, 62);
+  a.r(C.shadow, 47, 21, 76, 62);
   a.box(C.edge, C.bg2, 45, 19, 76, 62);
   a.r(C.raised, 46, 20, 74, 8);
   a.r(C.red, 49, 22, 3, 3);
@@ -234,7 +320,7 @@ function sceneApi() {
   a.r(C.line, 144, 64, 2, 22);
   // dumbbell
   dumbbell(a, 124, 78, true);
-  a.r(C.dark, 124, 90, 34, 1);
+  a.r(C.shadow, 124, 90, 34, 1);
   return a;
 }
 
@@ -242,12 +328,12 @@ function sceneApi() {
 function sceneGym() {
   const a = canvas(150, 65);
   a.r(C.bg, 0, 0, 150, 65);
-  starfield(a, 11, 16, 1, 1, 149, 40);
-  a.r(C.bg2, 0, 58, 150, 7);
-  a.r(C.line, 0, 58, 150, 1);
+  skyDecor(a, 11, 16, 1, 1, 149, 40);
+  a.r(C.floor, 0, 58, 150, 7);
+  a.r(C.floorLine, 0, 58, 150, 1);
   // dumbbell + plates
   dumbbell(a, 8, 45, true);
-  a.r(C.dark, 9, 57, 32, 1);
+  a.r(C.shadow, 9, 57, 32, 1);
   a.disc(C.edge, 26, 22, 11);
   a.disc(C.bg2, 26, 22, 9);
   a.r(C.mute, 25, 14, 2, 1);
@@ -258,7 +344,7 @@ function sceneGym() {
   a.r(C.green, 25, 22, 7, 2);
   a.p(C.red, 25, 22);
   // phone
-  a.r(C.dark, 61, 6, 38, 58);
+  a.r(C.shadow, 61, 6, 38, 58);
   a.box(C.edge, C.bg2, 59, 4, 38, 58);
   a.r(C.dark, 72, 6, 12, 2);
   a.r(C.green, 62, 10, 32, 6);
@@ -288,7 +374,7 @@ function sceneGym() {
     a.r(i === 0 ? C.green : C.line, x, 55, 3, 3),
   );
   // calendar
-  a.r(C.dark, 107, 14, 36, 40);
+  a.r(C.shadow, 107, 14, 36, 40);
   a.box(C.edge, C.bg2, 105, 12, 36, 40);
   a.r(C.pink, 106, 13, 34, 7);
   a.r(C.dark, 110, 10, 2, 5);
@@ -303,14 +389,7 @@ function sceneGym() {
       a.r(col, 108 + c * 6, 23 + r * 7, 4, 4);
     }
   // sparkles
-  [
-    [48, 14],
-    [144, 6],
-    [94, 2],
-  ].forEach(([x, y]) => {
-    a.r(C.yellow, x, y, 1, 3);
-    a.r(C.yellow, x - 1, y + 1, 3, 1);
-  });
+  twinkles(a, [[48, 14], [144, 6], [94, 2]]);
   return a;
 }
 
@@ -318,12 +397,11 @@ function sceneGym() {
 function sceneLibrary() {
   const a = canvas(150, 65);
   a.r(C.bg, 0, 0, 150, 65);
-  starfield(a, 23, 18, 1, 1, 149, 36);
-  a.r(C.bg2, 0, 58, 150, 7);
-  a.r(C.line, 0, 58, 150, 1);
-  // crescent moon
-  a.disc(C.yellow, 15, 14, 6);
-  a.disc(C.bg, 18, 12, 5);
+  skyDecor(a, 23, 18, 1, 1, 149, 36);
+  a.r(C.floor, 0, 58, 150, 7);
+  a.r(C.floorLine, 0, 58, 150, 1);
+  // crescent moon, or a sun by day
+  moon(a, 15, 14, 6, C.yellow, 18, 12, 5);
   // waveform with progress
   const hs = [4, 8, 14, 9, 18, 24, 15, 10, 20, 13, 7, 4];
   hs.forEach((h, i) => {
@@ -344,10 +422,10 @@ function sceneLibrary() {
   }
   a.r(C.violet, cx - 12, 8, 24, 2);
   a.box(C.pinkD, C.pink, cx - 24, 28, 12, 22);
-  a.r(C.ink, cx - 22, 30, 2, 6);
+  a.r(C.cloud, cx - 22, 30, 2, 6);
   a.r(C.pinkD, cx - 14, 32, 2, 14);
   a.box(C.pinkD, C.pink, cx + 12, 28, 12, 22);
-  a.r(C.ink, cx + 14, 30, 2, 6);
+  a.r(C.cloud, cx + 14, 30, 2, 6);
   a.r(C.pinkD, cx + 22, 32, 2, 14);
   // book stack
   a.r(C.violetD, 56, 54, 38, 4);
@@ -367,7 +445,7 @@ function sceneLibrary() {
     ],
     106,
     18,
-    { x: C.ink, m: C.mute },
+    { x: C.cloud, m: C.cloudShade },
   );
   a.r(C.violetD, 113, 21, 3, 6);
   a.spr(["xxxxxxx", ".xxxxx.", "..xxx..", "...x..."], 111, 27, {
@@ -496,7 +574,7 @@ function sceneMuscle() {
     ] as [string, number][]
   ).forEach(([c, w], i) => {
     const y = 12 + i * 10;
-    a.r(C.dark, 5, y + 1, 7, 6);
+    a.r(C.shadow, 5, y + 1, 7, 6);
     a.r(c, 4, y, 7, 6);
     a.r(C.mute, 14, y + 2, w + 3, 2);
   });
@@ -509,7 +587,7 @@ function sceneMuscle() {
     ] as [string, number][]
   ).forEach(([c, w], i) => {
     const y = 12 + i * 10;
-    a.r(C.dark, 140, y + 1, 7, 6);
+    a.r(C.shadow, 140, y + 1, 7, 6);
     a.r(c, 139, y, 7, 6);
     a.r(C.mute, 135 - w - 1, y + 2, w + 3, 2);
   });
@@ -543,12 +621,12 @@ function ring(
 function sceneJournal() {
   const a = canvas(160, 105);
   a.r(C.bg, 0, 0, 160, 105);
-  starfield(a, 31, 18, 1, 1, 159, 12);
-  a.r(C.bg2, 0, 90, 160, 15);
-  a.r(C.line, 0, 90, 160, 2);
-  for (let x = 4; x < 160; x += 16) a.r(C.line, x, 96, 8, 1);
+  skyDecor(a, 31, 18, 1, 1, 159, 12);
+  a.r(C.floor, 0, 90, 160, 15);
+  a.r(C.floorLine, 0, 90, 160, 2);
+  for (let x = 4; x < 160; x += 16) a.r(C.floorLine, x, 96, 8, 1);
   // chart window
-  a.r(C.dark, 11, 17, 96, 70);
+  a.r(C.shadow, 11, 17, 96, 70);
   a.box(C.edge, C.bg2, 9, 15, 96, 70);
   a.r(C.raised, 10, 16, 94, 8);
   a.r(C.red, 13, 18, 3, 3);
@@ -587,11 +665,11 @@ function sceneJournal() {
   a.spr(["..x..", ".xxx.", "xxxxx"], 31, 62, { x: C.yellow });
   a.spr(["xxxxx", ".xxx.", "..x.."], 91, 17 + 6, { x: C.green });
   // calendar of results
-  a.r(C.dark, 114, 17, 44, 44);
+  a.r(C.shadow, 114, 17, 44, 44);
   a.box(C.edge, C.bg2, 112, 15, 44, 44);
   a.r(C.violetD, 113, 16, 42, 7);
   a.r(C.violet, 113, 16, 42, 5);
-  a.r(C.ink, 116, 18, 12, 1);
+  a.r(C.cloud, 116, 18, 12, 1);
   for (let r = 0; r < 5; r++)
     for (let c = 0; c < 7; c++) {
       const v = (r * 7 + c * 3 + r) % 5;
@@ -614,13 +692,7 @@ function sceneJournal() {
     a.r(C.line, x + 3, 76, 6, 1);
     a.r(c, x + 3, 79, Math.round(w / 3), 2);
   });
-  [
-    [102, 6],
-    [152, 9],
-  ].forEach(([x, y]) => {
-    a.r(C.yellow, x, y, 1, 3);
-    a.r(C.yellow, x - 1, y + 1, 3, 1);
-  });
+  twinkles(a, [[102, 6], [152, 9]]);
   return a;
 }
 
@@ -628,9 +700,9 @@ function sceneJournal() {
 function sceneIos() {
   const a = canvas(150, 65);
   a.r(C.bg, 0, 0, 150, 65);
-  starfield(a, 17, 14, 1, 1, 149, 40);
-  a.r(C.bg2, 0, 58, 150, 7);
-  a.r(C.line, 0, 58, 150, 1);
+  skyDecor(a, 17, 14, 1, 1, 149, 40);
+  a.r(C.floor, 0, 58, 150, 7);
+  a.r(C.floorLine, 0, 58, 150, 1);
   // rest timer and dumbbell
   a.disc(C.edge, 25, 22, 12);
   a.disc(C.bg2, 25, 22, 10);
@@ -638,14 +710,14 @@ function sceneIos() {
   a.r(C.ink, 22, 20, 6, 1);
   a.r(C.mute, 21, 24, 8, 1);
   dumbbell(a, 8, 45, true);
-  a.r(C.dark, 9, 57, 32, 1);
+  a.r(C.shadow, 9, 57, 32, 1);
   // phone
-  a.r(C.dark, 58, 4, 38, 62);
+  a.r(C.shadow, 58, 4, 38, 62);
   a.box(C.edge, C.dark, 56, 2, 38, 62);
   a.r(C.bg2, 58, 4, 34, 58);
   a.r(C.dark, 69, 5, 12, 3);
   a.r(C.violet, 59, 10, 32, 5);
-  a.r(C.ink, 61, 12, 12, 1);
+  a.r(C.cloud, 61, 12, 12, 1);
   const block = (y: number, rows: number) => {
     a.r(C.raised, 59, y, 32, 5 + rows * 4);
     a.r(C.ink, 61, y + 2, 14, 2);
@@ -663,30 +735,23 @@ function sceneIos() {
     a.r(i === 1 ? C.green : C.line, x, 55, 3, 3),
   );
   // widget tile and live activity pill
-  a.r(C.dark, 106, 10, 32, 32);
+  a.r(C.shadow, 106, 10, 32, 32);
   a.box(C.edge, C.bg2, 104, 8, 32, 32);
   a.disc(C.edge, 120, 22, 9);
   a.disc(C.bg2, 120, 22, 7);
   ring(a, 120, 22, 6, 8, 0.6, C.green);
   a.r(C.mute, 110, 33, 20, 1);
   a.r(C.line, 110, 35, 12, 1);
-  a.r(C.dark, 104, 46, 40, 10);
+  a.r(C.shadow, 104, 46, 40, 10);
   a.box(C.edge, C.dark, 102, 44, 40, 10);
   a.r(C.green, 105, 47, 4, 4);
-  a.r(C.ink, 112, 47, 16, 2);
+  a.r(C.cloud, 112, 47, 16, 2);
   a.r(C.mute, 112, 51, 10, 1);
   a.r(C.yellow, 131, 47, 8, 4);
-  [
-    [48, 8],
-    [142, 3],
-  ].forEach(([x, y]) => {
-    a.r(C.yellow, x, y, 1, 3);
-    a.r(C.yellow, x - 1, y + 1, 3, 1);
-  });
+  twinkles(a, [[48, 8], [142, 3]]);
   return a;
 }
 
-const BG = C.bg;
 const DEFS: Record<SceneKind, { make: () => Canvas; label: string }> = {
   api: {
     make: sceneApi,
@@ -717,20 +782,24 @@ const DEFS: Record<SceneKind, { make: () => Canvas; label: string }> = {
   },
 };
 
-const cache = new Map<SceneKind, Scene>();
+const cache = new Map<string, Scene>();
 
-export function composeScene(kind: SceneKind): Scene {
-  let scene = cache.get(kind);
+/** One scene in one theme. Night is the default, and is what the share cards use. */
+export function composeScene(kind: SceneKind, theme: SceneTheme = "night"): Scene {
+  const key = `${theme}:${kind}`;
+  let scene = cache.get(key);
   if (!scene) {
+    DAY = theme === "day";
+    C = DAY ? DAY_PALETTE : NIGHT;
     const a = DEFS[kind].make();
     scene = {
       w: a.w,
       h: a.h,
-      bg: BG,
+      bg: C.bg,
       label: DEFS[kind].label,
       layers: a.out(),
     };
-    cache.set(kind, scene);
+    cache.set(key, scene);
   }
   return scene;
 }
