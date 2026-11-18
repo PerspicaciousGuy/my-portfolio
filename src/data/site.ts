@@ -285,6 +285,16 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
+    name: "ClaudeCodeThemes",
+    blurb: "Themes for the Claude Code desktop app: custom colors, animated SVG backdrops and a /ccthemes switcher.",
+    description:
+      "An open-source library of 26 themes, installable as one plugin with a /ccthemes switcher (apply, preview, random, off) or one theme at a time. Each theme sets the app's colors and an optional backdrop, usually an SVG scene animated with CSS that runs no script. Includes a contributor guide, a starter template and a Node script that builds the previews, gallery, marketplace file and README tables. MIT licensed.",
+    stack: ["TypeScript", "JavaScript", "SVG", "CSS", "Node.js"],
+    repo: "https://github.com/PerspicaciousGuy/ClaudeCodeThemes",
+    featured: false,
+    year: "2026",
+  },
+  {
     name: "Gleam",
     blurb: "A fast, local file and app launcher for Windows: press Alt+Space, type, press Enter.",
     description:
